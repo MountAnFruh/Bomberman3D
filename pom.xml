@@ -10,6 +10,7 @@
 
     <properties>
         <lwjgl.version>LATEST</lwjgl.version>
+        <junit.version>LATEST</junit.version>
     </properties>
 
     <profiles>
@@ -49,6 +50,7 @@
     </profiles>
 
     <dependencies>
+        <!--core module-->
         <dependency>
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl</artifactId>
@@ -56,18 +58,26 @@
             <classifier>${native.target}</classifier>
         </dependency>
 
+        <!--glfw module (fuer GUI)-->
         <dependency>
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl-glfw</artifactId>
             <version>${lwjgl.version}</version>
-            <classifier>${native.target}</classifier>
         </dependency>
 
+        <!--opengl module-->
         <dependency>
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl-opengl</artifactId>
             <version>${lwjgl.version}</version>
-            <classifier>${native.target}</classifier>
+        </dependency>
+
+        <!--junit (fuer testen)-->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
