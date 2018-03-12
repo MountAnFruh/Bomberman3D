@@ -1,3 +1,5 @@
+package proj.pos.bomberman;
+
 import static org.lwjgl.opengl.GL11.*;
 
 public class Main {
