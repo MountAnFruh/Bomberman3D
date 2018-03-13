@@ -12,6 +12,7 @@
         <lwjgl.version>LATEST</lwjgl.version>
         <junit.version>LATEST</junit.version>
         <joml.version>LATEST</joml.version>
+        <pngdecoder.version>LATEST</pngdecoder.version>
     </properties>
 
     <profiles>
@@ -86,6 +87,13 @@
             <groupId>org.joml</groupId>
             <artifactId>joml</artifactId>
             <version>${joml.version}</version>
+        </dependency>
+
+        <!--pngdecoder (fuer die Texturen)-->
+        <dependency>
+            <groupId>org.l33tlabs.twl</groupId>
+            <artifactId>pngdecoder</artifactId>
+            <version>${pngdecoder.version}</version>
         </dependency>
     </dependencies>
 </project>
