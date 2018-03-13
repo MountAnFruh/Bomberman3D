@@ -11,6 +11,7 @@
     <properties>
         <lwjgl.version>LATEST</lwjgl.version>
         <junit.version>LATEST</junit.version>
+        <joml.version>LATEST</joml.version>
     </properties>
 
     <profiles>
@@ -78,6 +79,13 @@
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <!--joml (fuer Matrizen/Vektoren)-->
+        <dependency>
+            <groupId>org.joml</groupId>
+            <artifactId>joml</artifactId>
+            <version>${joml.version}</version>
         </dependency>
     </dependencies>
 </project>
