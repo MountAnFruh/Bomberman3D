@@ -1,12 +1,37 @@
 package proj.pos.bomberman.engine;
 
+import proj.pos.bomberman.engine.graphics.Window;
+
 public interface IGameLogic {
 
-    void init();
+  /**
+   * Initialisiert Alles für das Spiel
+   */
+  void init();
 
-    void input(Window window);
+  /**
+   * Bearbeitet die Eingabe
+   *
+   * @param window Das Window-Objekt
+   */
+  void input(Window window);
 
-    void update(double delta);
+  /**
+   * Aktualisiert die Spiele-Logik
+   *
+   * @param delta Millisekunden die zwischen dem letzten Update vergangen sind
+   */
+  void update(double delta);
 
-    void render(Window window);
+  /**
+   * Rendert die Spiele-Logik
+   *
+   * @param window Das Window-Objekt
+   */
+  void render(Window window);
+
+  /**
+   * Räumt Alles für das Spiel auf
+   */
+  void cleanup();
 }

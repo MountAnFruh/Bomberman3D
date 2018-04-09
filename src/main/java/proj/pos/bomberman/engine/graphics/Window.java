@@ -1,17 +1,14 @@
-package proj.pos.bomberman.engine;
+package proj.pos.bomberman.engine.graphics;
 
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.Configuration;
-import org.lwjgl.system.MemoryStack;
-
-import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.system.MemoryStack.*;
-import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.opengl.GL11.GL_TRUE;
+import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {
 
@@ -38,7 +35,7 @@ public class Window {
     GLFWErrorCallback.createPrint(System.err).set();
 
     // Initialize GLFW
-    if(!glfwInit()) {
+    if (!glfwInit()) {
       throw new IllegalStateException("Unable to initialize GLFW");
     }
 
@@ -52,13 +49,13 @@ public class Window {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
     windowHandle = glfwCreateWindow(width, height, title, NULL, NULL);
-    if(windowHandle == NULL) {
+    if (windowHandle == NULL) {
       throw new RuntimeException("Failed to create GLFW window");
     }
 
     // Key callback for key press
     glfwSetKeyCallback(windowHandle, (windowHandle, key, scancode, action, mods) -> {
-      if(key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) // wenn ESC gedrückt wird
+      if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) // wenn ESC gedrückt wird
         glfwSetWindowShouldClose(windowHandle, true);
     });
 
@@ -90,7 +87,7 @@ public class Window {
     GL.createCapabilities();
 
     // clear color
-    glClearColor(0.0f,0.0f,0.0f,0.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   }
 
   public void update() {
@@ -111,7 +108,7 @@ public class Window {
   }
 
   public void setClearColor(float r, float g, float b, float a) {
-    glClearColor(r,g,b,a);
+    glClearColor(r, g, b, a);
   }
 
   public boolean isResized() {
