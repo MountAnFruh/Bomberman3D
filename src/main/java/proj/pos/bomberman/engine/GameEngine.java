@@ -73,7 +73,7 @@ public class GameEngine implements Runnable {
       }
 
       if (System.currentTimeMillis() - timer > 1_000) {
-        System.out.println(String.format("UPS: %s, FPS: %s", fps, ups));
+        System.out.println(String.format("UPS: %s, FPS: %s", ups, fps));
         fps = 0;
         ups = 0;
         timer += 1_000;

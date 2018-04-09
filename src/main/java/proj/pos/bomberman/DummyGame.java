@@ -1,6 +1,7 @@
 package proj.pos.bomberman;
 
 import proj.pos.bomberman.engine.IGameLogic;
+import proj.pos.bomberman.engine.graphics.Mesh;
 import proj.pos.bomberman.engine.graphics.Renderer;
 import proj.pos.bomberman.engine.graphics.Window;
 
@@ -11,11 +12,13 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
 
 public class DummyGame implements IGameLogic {
 
+  private final Renderer renderer;
+
   private int direction = 0;
 
   private float color = 0.0f;
 
-  private final Renderer renderer;
+  private Mesh mesh;
 
   public DummyGame() {
     this.renderer = new Renderer();
@@ -28,6 +31,22 @@ public class DummyGame implements IGameLogic {
     } catch (IOException ex) {
       ex.printStackTrace();
     }
+    float[] positions = new float[]{
+            -0.5f, 0.5f, 0.0f,
+            -0.5f, -0.5f, 0.0f,
+            0.5f, -0.5f, 0.0f,
+            0.5f, 0.5f, 0.0f,
+    };
+    float[] colors = new float[]{
+            0.5f, 0.0f, 0.0f,
+            0.0f, 0.5f, 0.0f,
+            0.0f, 0.0f, 0.5f,
+            0.0f, 0.5f, 0.5f,
+    };
+    int[] indices = new int[]{
+            0, 1, 3, 3, 1, 2,
+    };
+    mesh = new Mesh(positions, colors, indices);
   }
 
   @Override
@@ -54,11 +73,12 @@ public class DummyGame implements IGameLogic {
   @Override
   public void render(Window window) {
     window.setClearColor(color, color, color, 0.0f);
-    renderer.render(window);
+    renderer.render(window, mesh);
   }
 
   @Override
   public void cleanup() {
     renderer.cleanup();
+    mesh.cleanup();
   }
 }
