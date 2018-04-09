@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <lwjgl.version>LATEST</lwjgl.version>
+        <lwjgl.version>3.1.6</lwjgl.version>
         <junit.version>LATEST</junit.version>
         <joml.version>LATEST</joml.version>
         <pngdecoder.version>LATEST</pngdecoder.version>
@@ -19,36 +19,30 @@
 
     <profiles>
         <profile>
-            <id>windows-profile</id>
+            <id>lwjgl-natives-linux</id>
             <activation>
-                <os>
-                    <family>Windows</family>
-                </os>
+                <os><family>unix</family></os>
             </activation>
             <properties>
-                <native.target>natives-windows</native.target>
+                <lwjgl.natives>natives-linux</lwjgl.natives>
             </properties>
         </profile>
         <profile>
-            <id>linux-profile</id>
+            <id>lwjgl-natives-macos</id>
             <activation>
-                <os>
-                    <family>Linux</family>
-                </os>
+                <os><family>mac</family></os>
             </activation>
             <properties>
-                <native.target>natives-linux</native.target>
+                <lwjgl.natives>natives-macos</lwjgl.natives>
             </properties>
         </profile>
         <profile>
-            <id>OSX-profile</id>
+            <id>lwjgl-natives-windows</id>
             <activation>
-                <os>
-                    <family>mac</family>
-                </os>
+                <os><family>windows</family></os>
             </activation>
             <properties>
-                <native.target>natives-osx</native.target>
+                <lwjgl.natives>natives-windows</lwjgl.natives>
             </properties>
         </profile>
     </profiles>
@@ -59,7 +53,13 @@
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl</artifactId>
             <version>${lwjgl.version}</version>
-            <classifier>${native.target}</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl</artifactId>
+            <version>${lwjgl.version}</version>
+            <classifier>${lwjgl.natives}</classifier>
         </dependency>
 
         <!--glfw module (fuer GUI)-->
@@ -69,11 +69,25 @@
             <version>${lwjgl.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl-glfw</artifactId>
+            <version>${lwjgl.version}</version>
+            <classifier>${lwjgl.natives}</classifier>
+        </dependency>
+
         <!--opengl module-->
         <dependency>
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl-opengl</artifactId>
             <version>${lwjgl.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl-opengl</artifactId>
+            <version>${lwjgl.version}</version>
+            <classifier>${lwjgl.natives}</classifier>
         </dependency>
 
         <!--junit (fuer testen)-->
