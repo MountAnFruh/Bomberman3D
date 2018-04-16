@@ -6,8 +6,7 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.system.Configuration;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.GL_TRUE;
-import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {
@@ -88,6 +87,9 @@ public class Window {
 
     // clear color
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+    // Enable depth test
+    glEnable(GL_DEPTH_TEST);
   }
 
   public void update() {

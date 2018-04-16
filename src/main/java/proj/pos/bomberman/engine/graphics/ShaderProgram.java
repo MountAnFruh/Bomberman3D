@@ -1,5 +1,12 @@
 package proj.pos.bomberman.engine.graphics;
 
+import org.joml.Matrix4f;
+import org.lwjgl.system.MemoryStack;
+
+import java.nio.FloatBuffer;
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.lwjgl.opengl.GL20.*;
 
 public class ShaderProgram {
@@ -9,11 +16,35 @@ public class ShaderProgram {
   private int vertexShaderId;
   private int fragmentShaderId;
 
+  private final Map<String, Integer> uniforms;
+
   public ShaderProgram() {
     programId = glCreateProgram();
     if (programId == 0) {
       throw new RuntimeException("Could not create Shader");
     }
+    uniforms = new HashMap<>();
+  }
+
+  public void createUniform(String uniformName) {
+    int uniformLocation = glGetUniformLocation(programId, uniformName);
+    if (uniformLocation < 0) {
+      throw new RuntimeException("Could not find uniform: " + uniformName);
+    }
+    uniforms.put(uniformName, uniformLocation);
+  }
+
+  public void setUniform(String uniformName, Matrix4f value) {
+    try (MemoryStack stack = MemoryStack.stackPush()) {
+      // Dump the matrix into a float buffer
+      FloatBuffer fb = stack.mallocFloat(16);
+      value.get(fb);
+      glUniformMatrix4fv(uniforms.get(uniformName), false, fb);
+    }
+  }
+
+  public void setUniform(String uniformName, int value) {
+      glUniform1f(uniforms.get(uniformName), value);
   }
 
   public void createVertexShader(String shaderCode) {
