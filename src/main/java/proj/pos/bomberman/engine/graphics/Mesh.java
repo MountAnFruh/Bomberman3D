@@ -8,12 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.opengl.GL13.*;
 
 public class Mesh {
 
@@ -86,7 +85,7 @@ public class Mesh {
     // Activate first texture bank
     glActiveTexture(GL_TEXTURE0);
     // Bind the texture
-    glBindTexture(GL_TEXTURE_2D, texture.getId());
+    texture.bind();
 
     // Bind to the VAO
     glBindVertexArray(getVaoId());
@@ -100,6 +99,8 @@ public class Mesh {
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
     glBindVertexArray(0);
+
+    texture.unbind();
   }
 
   public int getVaoId() {

@@ -2,11 +2,10 @@ package proj.pos.bomberman.engine.graphics;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
 
-import static org.lwjgl.opengl.ARBFramebufferObject.*;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import static org.lwjgl.opengl.ARBFramebufferObject.glGenerateMipmap;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Texture {
@@ -23,6 +22,10 @@ public class Texture {
 
     public void bind() {
         glBindTexture(GL_TEXTURE_2D, id);
+    }
+
+    public void unbind() {
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     public int getId() {
