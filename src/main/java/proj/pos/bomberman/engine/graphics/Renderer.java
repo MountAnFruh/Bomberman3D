@@ -27,7 +27,7 @@ public class Renderer {
     transformation = new Transformation();
   }
 
-  public void init() throws IOException {
+  public void init(Window window) throws IOException {
     // Create shader
     shaderProgram = new ShaderProgram();
     shaderProgram.createVertexShader(Utils.loadResource("/shaders/vertex.vert"));
@@ -38,6 +38,9 @@ public class Renderer {
     shaderProgram.createUniform("projectionMatrix");
     shaderProgram.createUniform("modelViewMatrix");
     shaderProgram.createUniform("texture_sampler");
+    // Create uniform for default color and the flag that controls it
+    shaderProgram.createUniform("color");
+    shaderProgram.createUniform("useColor");
   }
 
   public void clear() {
@@ -66,11 +69,14 @@ public class Renderer {
 
     // Render each gameItem
     for(GameItem gameItem : gameItems) {
+      Mesh mesh = gameItem.getMesh();
       // Set world matrix for this item
       Matrix4f modelViewMatrix = transformation.getModelViewMatrix(gameItem, viewMatrix);
       shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
       // Render the mesh for this game item
-      gameItem.getMesh().render();
+      shaderProgram.setUniform("color", mesh.getColor());
+      shaderProgram.setUniform("useColor", mesh.isTextured() ? 0 : 1);
+      mesh.render();
     }
 
     shaderProgram.unbind();

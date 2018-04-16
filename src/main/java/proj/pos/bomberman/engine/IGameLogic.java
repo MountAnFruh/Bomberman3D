@@ -6,8 +6,10 @@ public interface IGameLogic {
 
   /**
    * Initialisiert Alles für das Spiel
+   *
+   * @param window Das Window-Objekt
    */
-  void init();
+  void init(Window window);
 
   /**
    * Bearbeitet die Eingabe

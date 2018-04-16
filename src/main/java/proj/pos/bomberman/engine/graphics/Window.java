@@ -90,6 +90,9 @@ public class Window {
 
     // Enable depth test
     glEnable(GL_DEPTH_TEST);
+
+    // Enable polygon mode
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   }
 
   public void update() {
