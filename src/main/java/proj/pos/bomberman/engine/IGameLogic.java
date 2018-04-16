@@ -13,15 +13,17 @@ public interface IGameLogic {
    * Bearbeitet die Eingabe
    *
    * @param window Das Window-Objekt
+   * @param mouseInput Das MouseInput-Objekt
    */
-  void input(Window window);
+  void input(Window window, MouseInput mouseInput);
 
   /**
    * Aktualisiert die Spiele-Logik
    *
    * @param delta Millisekunden die zwischen dem letzten Update vergangen sind
+   * @param mouseInput Das MouseInput-Objekt
    */
-  void update(double delta);
+  void update(double delta, MouseInput mouseInput);
 
   /**
    * Rendert die Spiele-Logik

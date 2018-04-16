@@ -10,6 +10,7 @@ public class GameEngine implements Runnable {
   private final Window window;
   private final Thread gameLoopThread;
   private final IGameLogic gameLogic;
+  private final MouseInput mouseInput;
 
   private boolean running;
 
@@ -17,6 +18,7 @@ public class GameEngine implements Runnable {
                     IGameLogic gameLogic) {
     this.gameLoopThread = new Thread(this, "GAME_LOOP_THREAD");
     this.window = new Window(windowTitle, width, height);
+    this.mouseInput = new MouseInput();
     this.gameLogic = gameLogic;
     this.running = true;
   }
@@ -83,15 +85,17 @@ public class GameEngine implements Runnable {
 
   protected void init() {
     window.init();
+    mouseInput.init(window);
     gameLogic.init();
   }
 
   protected void input() {
-    gameLogic.input(window);
+    mouseInput.input(window);
+    gameLogic.input(window, mouseInput);
   }
 
   protected void update(double delta) {
-    gameLogic.update(delta);
+    gameLogic.update(delta, mouseInput);
   }
 
   protected void render() {
