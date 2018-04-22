@@ -5,19 +5,23 @@ import proj.pos.bomberman.engine.graphics.Mesh;
 
 public class GameItem {
 
-    private final Mesh mesh;
+    private Mesh mesh;
 
-    private final Vector3f position;
+    private Vector3f position;
 
     private float scale;
 
-    private final Vector3f rotation;
+    private Vector3f rotation;
 
-    public GameItem(Mesh mesh) {
-        this.mesh = mesh;
+    public GameItem() {
         position = new Vector3f(0, 0, 0);
         scale = 1;
         rotation = new Vector3f(0, 0, 0);
+    }
+
+    public GameItem(Mesh mesh) {
+        this();
+        this.mesh = mesh;
     }
 
     public Vector3f getPosition() {
@@ -50,5 +54,9 @@ public class GameItem {
 
     public Mesh getMesh() {
         return mesh;
+    }
+
+    public void setMesh(Mesh mesh) {
+        this.mesh = mesh;
     }
 }

@@ -26,6 +26,10 @@ public class DummyGame implements IGameLogic {
 
   private float color = 0.0f;
 
+  private Vector3f ambientLight;
+
+  private PointLight pointLight;
+
   private GameItem[] gameItems;
 
   public DummyGame() {
@@ -39,18 +43,28 @@ public class DummyGame implements IGameLogic {
     try {
       renderer.init(window);
       // Create the Mesh
-      Mesh mesh1 = OBJLoader.loadMesh("/models/bunny.obj");
-      Mesh mesh2 = OBJLoader.loadMesh("/models/cube.obj");
+      float reflectance = 1f;
+
+      Mesh mesh = OBJLoader.loadMesh("/models/cube.obj");
       Texture texture = new Texture("/textures/brick2.png");
-      mesh2.setTexture(texture);
-      mesh1.setColor(new Vector3f(1f, 0.64f, 0f));
-      GameItem gameItem1 = new GameItem(mesh1);
-      GameItem gameItem2 = new GameItem(mesh2);
-      gameItem1.setScale(0.5f);
-      gameItem1.setPosition(0, 0, -2);
-      gameItem2.setScale(2.0f);
-      gameItem2.setPosition(0, 0, -2);
-      gameItems = new GameItem[]{gameItem1, gameItem2};
+      Material material = new Material(texture, reflectance);
+      mesh.setMaterial(material);
+
+      GameItem gameItem = new GameItem(mesh);
+      gameItem.setRotation(0, 90, 0);
+      gameItem.setScale(0.5f);
+      gameItem.setPosition(0, 0, -2);
+
+      gameItems = new GameItem[]{gameItem};
+
+      ambientLight = new Vector3f(0.3f, 0.3f, 0.3f);
+      Vector3f lightColor = new Vector3f(1, 1, 1);
+      Vector3f lightPosition = new Vector3f(0, 0, 0);
+      float lightIntensity = 1.0f;
+      pointLight = new PointLight(lightColor, lightPosition, lightIntensity);
+      PointLight.Attenuation att = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
+      pointLight.setAttenuation(att);
+
     } catch (IOException ex) {
       ex.printStackTrace();
     }
@@ -81,6 +95,12 @@ public class DummyGame implements IGameLogic {
     } else {
       colDirection = 0;
     }
+    float lightPosZ = pointLight.getPosition().z;
+    if (window.isKeyPressed(GLFW_KEY_UP)) {
+      this.pointLight.getPosition().z = lightPosZ + 0.1f;
+    } else if (window.isKeyPressed(GLFW_KEY_DOWN)) {
+      this.pointLight.getPosition().z = lightPosZ - 0.1f;
+    }
   }
 
   @Override
@@ -101,19 +121,19 @@ public class DummyGame implements IGameLogic {
       color = 0.0f;
     }
     // Update rotation angle
-    for(GameItem gameItem : gameItems) {
-      float rotation = gameItem.getRotation().x + 1.5f;
-      if (rotation > 360) {
-        rotation = 0;
-      }
-      gameItem.setRotation(rotation, rotation, rotation);
-    }
+//    for(GameItem gameItem : gameItems) {
+//      float rotation = gameItem.getRotation().x + 1.5f;
+//      if (rotation > 360) {
+//        rotation = 0;
+//      }
+//      gameItem.setRotation(rotation, rotation, rotation);
+//    }
   }
 
   @Override
   public void render(Window window) {
     window.setClearColor(color, color, color, 0.0f);
-    renderer.render(window, camera, gameItems);
+    renderer.render(window, camera, gameItems, ambientLight, pointLight);
   }
 
   @Override
