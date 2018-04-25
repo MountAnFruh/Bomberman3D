@@ -61,7 +61,7 @@ public class Window {
     // Taskbar Icon
 
     try {
-      PNGDecoder decoder = new PNGDecoder(Window.class.getResourceAsStream("/textures/brick_eins.png"));
+      PNGDecoder decoder = new PNGDecoder(Window.class.getResourceAsStream("/textures/brick_eins_v2.png"));
       ByteBuffer buf = ByteBuffer.allocateDirect(4 * decoder.getWidth() * decoder.getHeight());
       decoder.decode(buf, decoder.getWidth() * 4, PNGDecoder.Format.RGBA);
       buf.flip();
