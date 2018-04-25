@@ -1,9 +1,15 @@
 package proj.pos.bomberman.engine.graphics;
 
+import de.matthiasmann.twl.utils.PNGDecoder;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.Configuration;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -50,6 +56,22 @@ public class Window {
     windowHandle = glfwCreateWindow(width, height, title, NULL, NULL);
     if (windowHandle == NULL) {
       throw new RuntimeException("Failed to create GLFW window");
+    }
+
+    // Taskbar Icon
+
+    try {
+      PNGDecoder decoder = new PNGDecoder(Window.class.getResourceAsStream("/textures/brick_eins.png"));
+      ByteBuffer buf = ByteBuffer.allocateDirect(4 * decoder.getWidth() * decoder.getHeight());
+      decoder.decode(buf, decoder.getWidth() * 4, PNGDecoder.Format.RGBA);
+      buf.flip();
+
+      GLFWImage image = GLFWImage.malloc();
+      GLFWImage.Buffer imagebf = GLFWImage.malloc(1);
+      image.set(decoder.getWidth(), decoder.getHeight(), buf);
+      imagebf.put(0, image);
+      glfwSetWindowIcon(windowHandle, imagebf);
+    } catch (IOException e) {
     }
 
     // Key callback for key press
