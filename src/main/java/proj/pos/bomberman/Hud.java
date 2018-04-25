@@ -12,36 +12,34 @@ import java.io.IOException;
 
 public class Hud implements IHud {
 
-    private static final Font FONT = new Font("Arial", Font.PLAIN, 20);
+    private static final Font FONT = new Font("Consolas", Font.PLAIN, 20);
 
     private static final String CHARSET = "ISO-8859-1";
 
     private final GameItem[] gameItems;
 
-    private GameItem compassItem;
-
     private final TextItem statusTextItem;
+
+    private final GameItem compassItem;
 
     public Hud(String statusText) throws IOException {
         FontTexture fontTexture = new FontTexture(FONT, CHARSET);
         this.statusTextItem = new TextItem(statusText, fontTexture);
 
         this.statusTextItem.getMesh().getMaterial().setAmbientColor(new Vector4f(1,1,1,1));
-        this.statusTextItem.setScale(5f);
 
         // Create compass
-        Mesh mesh = OBJLoader.loadMesh("/models/bunny.obj");
+        Mesh mesh = OBJLoader.loadMesh("/models/compass.obj");
         Material material = new Material();
         material.setAmbientColor(new Vector4f(1, 0, 0, 1));
         mesh.setMaterial(material);
         compassItem = new GameItem(mesh);
         compassItem.setScale(40.0f);
-
         // Rotate to transform it to screen coordinates
         compassItem.setRotation(0f, 0f, 180f);
 
         // Create list that holds the items that compose of the HUD
-        gameItems = new GameItem[]{ statusTextItem, compassItem };
+        gameItems = new GameItem[]{ statusTextItem, compassItem};
     }
 
     public void setStatusText(String statusText) {
