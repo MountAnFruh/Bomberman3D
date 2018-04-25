@@ -50,4 +50,19 @@ public class Utils {
     }
     return list;
   }
+
+  /**
+   * Wandelt eine Float List in ein float Array um
+   *
+   * @param list Die Liste, welche zum umwandeln ist
+   * @return float Array mit selben Inhalt
+   */
+  public static float[] floatListToArray(List<Float> list) {
+    int size = list != null ? list.size() : 0;
+    float[] floatArr = new float[size];
+    for(int i = 0;i < size;i++) {
+      floatArr[i] = list.get(i);
+    }
+    return floatArr;
+  }
 }

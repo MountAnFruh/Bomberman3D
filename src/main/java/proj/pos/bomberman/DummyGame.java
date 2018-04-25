@@ -22,15 +22,13 @@ public class DummyGame implements IGameLogic {
 
   private final Camera camera;
 
-  private Vector3f ambientLight;
-
   private float lightAngle;
 
+  private SceneLight sceneLight;
+
+  private Hud hud;
+
   private GameItem[] gameItems;
-
-  private PointLight[] pointLights;
-
-  private DirectionalLight directionalLight;
 
   public DummyGame() {
     this.renderer = new Renderer();
@@ -56,15 +54,21 @@ public class DummyGame implements IGameLogic {
       gameItem.setScale(0.5f);
       gameItem.setPosition(0, 0, -2);
 
-      gameItems = new GameItem[]{gameItem};
-      ambientLight = new Vector3f(0.3f, 0.3f, 0.3f);
+      gameItems = new GameItem[]{ gameItem };
+
+      sceneLight = new SceneLight();
+
+      // Ambient Light
+      Vector3f ambientLight = new Vector3f(0.01f, 0.01f, 0.01f); // 0.3f
+      sceneLight.setAmbientLight(ambientLight);
 
       Vector3f lightColor = new Vector3f(1, 1, 1);
       Vector3f lightPosition = new Vector3f(0, 0, 0);
-      float lightIntensity = 1.0f;
+      float lightIntensity = 1.0f; // 1.0f
       PointLight pointLight = new PointLight(lightColor, lightPosition, lightIntensity);
       PointLight.Attenuation att = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
       pointLight.setAttenuation(att);
+      pointLight.setPosition(camera.getPosition());
 
       Vector3f lightColor2 = new Vector3f(0, 1, 1);
       Vector3f lightPosition2 = new Vector3f(-2, 0, -1);
@@ -72,11 +76,16 @@ public class DummyGame implements IGameLogic {
       PointLight.Attenuation att2 = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
       pointLight2.setAttenuation(att2);
 
-      pointLights = new PointLight[]{pointLight, pointLight2};
+      PointLight[] pointLights = new PointLight[]{ pointLight, pointLight2 };
+      sceneLight.setPointLightList(pointLights);
 
       lightPosition = new Vector3f(-1, 0, 0);
       lightColor = new Vector3f(1, 1, 1);
-      directionalLight = new DirectionalLight(lightColor, lightPosition, lightIntensity);
+      DirectionalLight directionalLight = new DirectionalLight(lightColor, lightPosition, lightIntensity);
+      sceneLight.setDirectionalLight(directionalLight);
+
+      // Create Hud
+      hud = new Hud("Bomberman3D - Dev Version");
 
     } catch (IOException ex) {
       ex.printStackTrace();
@@ -96,21 +105,21 @@ public class DummyGame implements IGameLogic {
     } else if (window.isKeyPressed(GLFW_KEY_D)) {
       cameraInc.x = 1;
     }
-    if (window.isKeyPressed(GLFW_KEY_Z)) {
+    if (window.isKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
       cameraInc.y = -1;
-    } else if (window.isKeyPressed(GLFW_KEY_X)) {
+    } else if (window.isKeyPressed(GLFW_KEY_SPACE)) {
       cameraInc.y = 1;
     }
 
-    if (window.isKeyPressed(GLFW_KEY_UP)) {
-      for (PointLight pointLight : pointLights) {
-        pointLight.getPosition().z = pointLight.getPosition().z + 0.1f;
-      }
-    } else if (window.isKeyPressed(GLFW_KEY_DOWN)) {
-      for (PointLight pointLight : pointLights) {
-        pointLight.getPosition().z = pointLight.getPosition().z - 0.1f;
-      }
-    }
+//    if (window.isKeyPressed(GLFW_KEY_UP)) {
+//      for (PointLight pointLight : pointLights) {
+//        pointLight.getPosition().z = pointLight.getPosition().z + 0.1f;
+//      }
+//    } else if (window.isKeyPressed(GLFW_KEY_DOWN)) {
+//      for (PointLight pointLight : pointLights) {
+//        pointLight.getPosition().z = pointLight.getPosition().z - 0.1f;
+//      }
+//    }
   }
 
   @Override
@@ -124,6 +133,10 @@ public class DummyGame implements IGameLogic {
       camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
     }
 
+    hud.rotateCompass(camera.getRotation().y);
+
+    // Update directional light direction, intensity and color
+    DirectionalLight directionalLight = sceneLight.getDirectionalLight();
     lightAngle += 1.1f;
     if (lightAngle > 90) {
       directionalLight.setIntensity(0);
@@ -148,7 +161,8 @@ public class DummyGame implements IGameLogic {
 
   @Override
   public void render(Window window) {
-    renderer.render(window, camera, gameItems, ambientLight, pointLights, directionalLight);
+    hud.updateSize(window);
+    renderer.render(window, camera, gameItems, sceneLight, hud);
   }
 
   @Override
@@ -157,5 +171,6 @@ public class DummyGame implements IGameLogic {
     for (GameItem gameItem : gameItems) {
       gameItem.getMesh().cleanup();
     }
+    hud.cleanup();
   }
 }
