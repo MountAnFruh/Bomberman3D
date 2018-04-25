@@ -7,7 +7,6 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.Configuration;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -71,7 +70,8 @@ public class Window {
       image.set(decoder.getWidth(), decoder.getHeight(), buf);
       imagebf.put(0, image);
       glfwSetWindowIcon(windowHandle, imagebf);
-    } catch (IOException e) {
+    } catch (IOException ex) {
+      ex.printStackTrace();
     }
 
     // Key callback for key press
@@ -119,6 +119,9 @@ public class Window {
     // Support for transparencies
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
   }
 
   public void update() {

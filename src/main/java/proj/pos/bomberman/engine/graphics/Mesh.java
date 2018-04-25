@@ -2,11 +2,13 @@ package proj.pos.bomberman.engine.graphics;
 
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryUtil;
+import proj.pos.bomberman.engine.GameItem;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
@@ -113,6 +115,15 @@ public class Mesh {
   }
 
   public void render() {
+    initRender();
+
+    // Draw the vertices
+    glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
+
+    endRender();
+  }
+
+  private void initRender() {
     Texture texture = material.getTexture();
     if (texture != null) {
       // Activate first texture bank
@@ -126,16 +137,29 @@ public class Mesh {
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
     glEnableVertexAttribArray(2);
+  }
 
-    // Draw the vertices
-    glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
-
+  private void endRender() {
     // Restore the state
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(2);
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
+  }
+
+  public void renderList(List<GameItem> gameItems, Consumer<GameItem> consumer) {
+    initRender();
+
+    for (GameItem gameItem : gameItems) {
+      // Set up data required by gameItem
+      consumer.accept(gameItem);
+
+      // Render this gameItem
+      glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
+    }
+
+    endRender();
   }
 
   public void cleanup() {

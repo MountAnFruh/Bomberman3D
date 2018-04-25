@@ -2,12 +2,11 @@ package proj.pos.bomberman;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import proj.pos.bomberman.engine.GameItem;
-import proj.pos.bomberman.engine.IGameLogic;
-import proj.pos.bomberman.engine.MouseInput;
+import proj.pos.bomberman.engine.*;
 import proj.pos.bomberman.engine.graphics.*;
 
-import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -24,11 +23,9 @@ public class DummyGame implements IGameLogic {
 
   private float lightAngle;
 
-  private SceneLight sceneLight;
+  private Scene scene;
 
   private Hud hud;
-
-  private GameItem[] gameItems;
 
   public DummyGame() {
     this.renderer = new Renderer();
@@ -41,6 +38,9 @@ public class DummyGame implements IGameLogic {
   public void init(Window window) {
     try {
       renderer.init(window);
+
+      scene = new Scene();
+
       // Create the Mesh
       float reflectance = 1f;
 
@@ -54,12 +54,14 @@ public class DummyGame implements IGameLogic {
       gameItem.setScale(0.5f);
       gameItem.setPosition(0, 0, -2);
 
-      gameItems = new GameItem[]{ gameItem };
+      GameItem[] gameItems = new GameItem[]{gameItem};
+      scene.setGameItems(gameItems);
 
-      sceneLight = new SceneLight();
+      SceneLight sceneLight = new SceneLight();
+      scene.setSceneLight(sceneLight);
 
       // Ambient Light
-      Vector3f ambientLight = new Vector3f(0.01f, 0.01f, 0.01f); // 0.3f
+      Vector3f ambientLight = new Vector3f(.5f, .5f, .5f); // 0.3f
       sceneLight.setAmbientLight(ambientLight);
 
       Vector3f lightColor = new Vector3f(1, 1, 1);
@@ -84,10 +86,15 @@ public class DummyGame implements IGameLogic {
       DirectionalLight directionalLight = new DirectionalLight(lightColor, lightPosition, lightIntensity);
       sceneLight.setDirectionalLight(directionalLight);
 
+      // Setup SkyBox
+      SkyBox skyBox = new SkyBox("/models/skybox.obj", "/textures/skybox.png");
+      skyBox.setScale(10.0f);
+      scene.setSkyBox(skyBox);
+
       // Create Hud
       hud = new Hud("Bomberman3D - Dev Version");
 
-    } catch (IOException ex) {
+    } catch (Exception ex) {
       ex.printStackTrace();
     }
   }
@@ -136,7 +143,7 @@ public class DummyGame implements IGameLogic {
     hud.rotateCompass(camera.getRotation().y);
 
     // Update directional light direction, intensity and color
-    DirectionalLight directionalLight = sceneLight.getDirectionalLight();
+    DirectionalLight directionalLight = scene.getSceneLight().getDirectionalLight();
     lightAngle += 1.1f;
     if (lightAngle > 90) {
       directionalLight.setIntensity(0);
@@ -162,14 +169,15 @@ public class DummyGame implements IGameLogic {
   @Override
   public void render(Window window) {
     hud.updateSize(window);
-    renderer.render(window, camera, gameItems, sceneLight, hud);
+    renderer.render(window, camera, scene, hud);
   }
 
   @Override
   public void cleanup() {
     renderer.cleanup();
-    for (GameItem gameItem : gameItems) {
-      gameItem.getMesh().cleanup();
+    Map<Mesh, List<GameItem>> mapMeshes = scene.getGameMeshes();
+    for (Mesh mesh : mapMeshes.keySet()) {
+      mesh.cleanup();
     }
     hud.cleanup();
   }
