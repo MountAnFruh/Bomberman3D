@@ -36,7 +36,7 @@ public class Hud implements IHud {
         compassItem = new GameItem(mesh);
         compassItem.setScale(40.0f);
         // Rotate to transform it to screen coordinates
-        compassItem.setRotation(0f, 0f, 180f);
+      compassItem.setRotation(0f, 180f, 180f);
 
         // Create list that holds the items that compose of the HUD
         gameItems = new GameItem[]{ statusTextItem, compassItem};
@@ -57,6 +57,6 @@ public class Hud implements IHud {
     }
 
     public void rotateCompass(float angle) {
-        this.compassItem.setRotation(0, 0, 180 - angle);
+      this.compassItem.setRotation(0f, 180f, 180 - angle);
     }
 }

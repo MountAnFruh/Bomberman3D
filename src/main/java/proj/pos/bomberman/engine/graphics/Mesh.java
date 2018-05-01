@@ -1,6 +1,5 @@
 package proj.pos.bomberman.engine.graphics;
 
-import org.joml.Vector3f;
 import org.lwjgl.system.MemoryUtil;
 import proj.pos.bomberman.engine.GameItem;
 
@@ -19,17 +18,18 @@ import static org.lwjgl.opengl.GL30.*;
 
 public class Mesh {
 
-  private static final Vector3f DEFAULT_COLOR = new Vector3f(1.0f, 1.0f, 1.0f);
-
   private final int vaoId;
 
   private final List<Integer> vboIdList;
 
   private final int vertexCount;
 
+  private final float[] positions;
+
   private Material material;
 
   public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices) {
+    this.positions = positions;
     FloatBuffer posBuffer = null;
     FloatBuffer textBuffer = null;
     FloatBuffer vecNormalsBuffer = null;
@@ -112,6 +112,10 @@ public class Mesh {
 
   public int getVertexCount() {
     return vertexCount;
+  }
+
+  public float[] getPositions() {
+    return positions;
   }
 
   public void render() {

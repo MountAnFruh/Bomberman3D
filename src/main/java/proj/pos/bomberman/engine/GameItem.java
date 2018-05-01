@@ -1,17 +1,18 @@
 package proj.pos.bomberman.engine;
 
 import org.joml.Vector3f;
+import proj.pos.bomberman.engine.graphics.BoundingBox;
 import proj.pos.bomberman.engine.graphics.Mesh;
 
-public class GameItem {
+public class GameItem implements Collidable {
 
-    private Mesh mesh;
+    protected Mesh mesh;
 
-    private Vector3f position;
+    protected Vector3f position;
 
-    private float scale;
+    protected float scale;
 
-    private Vector3f rotation;
+    protected Vector3f rotation;
 
     public GameItem() {
         position = new Vector3f(0, 0, 0);
@@ -58,5 +59,12 @@ public class GameItem {
 
     public void setMesh(Mesh mesh) {
         this.mesh = mesh;
+    }
+
+    @Override
+    public BoundingBox getBoundingBox() {
+        BoundingBox boundingBox = new BoundingBox();
+        boundingBox.createFromGameItem(this);
+        return boundingBox;
     }
 }

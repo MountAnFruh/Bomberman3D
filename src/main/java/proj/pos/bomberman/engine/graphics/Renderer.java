@@ -28,7 +28,7 @@ public class Renderer {
 
   private static final int MAX_POINT_LIGHTS = 10;
 
-  private Transformation transformation;
+  private static final Transformation transformation = Transformation.getInstance();
 
   private ShaderProgram sceneShaderProgram;
 
@@ -39,7 +39,6 @@ public class Renderer {
   private final float specularPower;
 
   public Renderer() {
-    transformation = new Transformation();
     specularPower = 10f;
   }
 

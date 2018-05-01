@@ -1,6 +1,5 @@
 package proj.pos.bomberman;
 
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 import proj.pos.bomberman.engine.*;
 import proj.pos.bomberman.engine.graphics.*;
@@ -12,9 +11,6 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class DummyGame implements IGameLogic {
 
-  private static final float MOUSE_SENSITIVITY = 0.2f;
-  private static final float CAMERA_POS_STEP = 0.05f;
-
   private final Vector3f cameraInc;
 
   private final Renderer renderer;
@@ -25,12 +21,15 @@ public class DummyGame implements IGameLogic {
 
   private Scene scene;
 
+  private Player player;
+
   private Hud hud;
 
   public DummyGame() {
     this.renderer = new Renderer();
     this.camera = new Camera();
     this.cameraInc = new Vector3f(0, 0, 0);
+    this.player = new Player(camera);
     lightAngle = -90;
   }
 
@@ -87,7 +86,7 @@ public class DummyGame implements IGameLogic {
       sceneLight.setDirectionalLight(directionalLight);
 
       // Setup SkyBox
-      SkyBox skyBox = new SkyBox("/models/skybox.obj", "/textures/skybox.png");
+      SkyBox skyBox = new SkyBox("/models/skybox.obj", "/textures/alienmap.png");
       skyBox.setScale(10.0f);
       scene.setSkyBox(skyBox);
 
@@ -101,21 +100,21 @@ public class DummyGame implements IGameLogic {
 
   @Override
   public void input(Window window, MouseInput mouseInput) {
-    cameraInc.set(0, 0, 0);
+    player.getMovementVec().set(0, 0, 0);
     if (window.isKeyPressed(GLFW_KEY_W)) {
-      cameraInc.z = -1;
+      player.getMovementVec().z = -1;
     } else if (window.isKeyPressed(GLFW_KEY_S)) {
-      cameraInc.z = 1;
+      player.getMovementVec().z = 1;
     }
     if (window.isKeyPressed(GLFW_KEY_A)) {
-      cameraInc.x = -1;
+      player.getMovementVec().x = -1;
     } else if (window.isKeyPressed(GLFW_KEY_D)) {
-      cameraInc.x = 1;
+      player.getMovementVec().x = 1;
     }
     if (window.isKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
-      cameraInc.y = -1;
+      player.getMovementVec().y = -1;
     } else if (window.isKeyPressed(GLFW_KEY_SPACE)) {
-      cameraInc.y = 1;
+      player.getMovementVec().y = 1;
     }
 
 //    if (window.isKeyPressed(GLFW_KEY_UP)) {
@@ -131,16 +130,10 @@ public class DummyGame implements IGameLogic {
 
   @Override
   public void update(double delta, MouseInput mouseInput) {
-    // Update camera position
-    camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP,
-            cameraInc.z * CAMERA_POS_STEP);
-    // Update camera based on mouse
-    if (mouseInput.isRightButtonPressed()) {
-      Vector2f rotVec = mouseInput.getDisplVec();
-      camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
-    }
+    // Update player position
+    player.update(delta, mouseInput, scene);
 
-    hud.rotateCompass(camera.getRotation().y);
+    hud.rotateCompass(player.getRotation().y);
 
     // Update directional light direction, intensity and color
     DirectionalLight directionalLight = scene.getSceneLight().getDirectionalLight();

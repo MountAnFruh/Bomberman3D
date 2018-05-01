@@ -6,6 +6,8 @@ import proj.pos.bomberman.engine.GameItem;
 
 public class Transformation {
 
+  private static Transformation instance;
+
   private final Matrix4f projectionMatrix;
 
   private final Matrix4f modelMatrix;
@@ -18,13 +20,21 @@ public class Transformation {
 
   private final Matrix4f orthoModelMatrix;
 
-  public Transformation() {
+  private final Matrix4f worldMatrix;
+
+  private Transformation() {
     projectionMatrix = new Matrix4f();
     modelMatrix = new Matrix4f();
     modelViewMatrix = new Matrix4f();
     viewMatrix = new Matrix4f();
     orthoMatrix = new Matrix4f();
     orthoModelMatrix = new Matrix4f();
+    worldMatrix = new Matrix4f();
+  }
+
+  public static Transformation getInstance() {
+    if (instance == null) instance = new Transformation();
+    return instance;
   }
 
   public Matrix4f getProjectionMatrix() {
@@ -54,6 +64,16 @@ public class Transformation {
     // Then do the translation
     viewMatrix.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
     return viewMatrix;
+  }
+
+  public final Matrix4f getWorldMatrix(GameItem gameItem) {
+    Vector3f rotation = gameItem.getRotation();
+    worldMatrix.identity().translate(gameItem.getPosition())
+            .rotateX((float) Math.toRadians(rotation.x))
+            .rotateY((float) Math.toRadians(rotation.y))
+            .rotateZ((float) Math.toRadians(rotation.z))
+            .scale(gameItem.getScale());
+    return new Matrix4f(worldMatrix);
   }
 
   public final Matrix4f getOrthoProjectionMatrix(float left, float right, float bottom, float top) {
