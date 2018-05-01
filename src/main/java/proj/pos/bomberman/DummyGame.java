@@ -77,7 +77,7 @@ public class DummyGame implements IGameLogic {
       PointLight.Attenuation att2 = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
       pointLight2.setAttenuation(att2);
 
-      PointLight[] pointLights = new PointLight[]{ pointLight, pointLight2 };
+      PointLight[] pointLights = new PointLight[]{pointLight, pointLight2};
       sceneLight.setPointLightList(pointLights);
 
       lightPosition = new Vector3f(-1, 0, 0);

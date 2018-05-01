@@ -2,12 +2,12 @@ package proj.pos.bomberman.engine;
 
 public interface IHud {
 
-    GameItem[] getGameItems();
+  GameItem[] getGameItems();
 
-    default void cleanup() {
-        GameItem[] gameItems = getGameItems();
-        for (GameItem gameItem : gameItems) {
-            gameItem.getMesh().cleanup();
-        }
+  default void cleanup() {
+    GameItem[] gameItems = getGameItems();
+    for (GameItem gameItem : gameItems) {
+      gameItem.getMesh().cleanup();
     }
+  }
 }

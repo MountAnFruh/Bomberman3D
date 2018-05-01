@@ -171,7 +171,7 @@ public class Mesh {
 
     // Delete the VBOs
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    for(int vboId : vboIdList) {
+    for (int vboId : vboIdList) {
       glDeleteBuffers(vboId);
     }
 
