@@ -66,10 +66,10 @@ public class DummyGame implements IGameLogic {
       Vector3f lightColor = new Vector3f(1, 1, 1);
       Vector3f lightPosition = new Vector3f(0, 0, 0);
       float lightIntensity = 1.0f; // 1.0f
-      PointLight pointLight = new PointLight(lightColor, lightPosition, lightIntensity);
-      PointLight.Attenuation att = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
-      pointLight.setAttenuation(att);
-      pointLight.setPosition(camera.getPosition());
+//      PointLight pointLight = new PointLight(lightColor, lightPosition, lightIntensity);
+//      PointLight.Attenuation att = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
+//      pointLight.setAttenuation(att);
+//      pointLight.setPosition(camera.getPosition());
 
       Vector3f lightColor2 = new Vector3f(0, 1, 1);
       Vector3f lightPosition2 = new Vector3f(-2, 0, -1);
@@ -77,7 +77,7 @@ public class DummyGame implements IGameLogic {
       PointLight.Attenuation att2 = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
       pointLight2.setAttenuation(att2);
 
-      PointLight[] pointLights = new PointLight[]{pointLight, pointLight2};
+      PointLight[] pointLights = new PointLight[]{/*pointLight,*/ pointLight2};
       sceneLight.setPointLightList(pointLights);
 
       lightPosition = new Vector3f(-1, 0, 0);

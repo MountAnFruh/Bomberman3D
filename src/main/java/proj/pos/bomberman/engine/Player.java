@@ -36,43 +36,52 @@ public class Player extends GameItem {
   }
 
   private void changePosition(Scene scene) {
+    this.movePosition(scene, movementVec.x * speed, movementVec.y * speed, movementVec.z * speed);
+  }
+
+  public void doCollisions(Scene scene, Vector3f oldPos, Vector3f currentPos) {
     boolean collision = false;
+    Vector3f newPos = new Vector3f(currentPos);
+    currentPos.x = newPos.x;
+    currentPos.y = oldPos.y;
+    currentPos.z = oldPos.z;
     float moveX = 0, moveY = 0, moveZ = 0;
-    Vector3f oldPos = new Vector3f(this.getPosition());
-    this.movePosition(movementVec.x * speed, 0, 0);
     for (Mesh mesh : scene.getGameMeshes().keySet()) {
       for (GameItem gameItem : scene.getGameMeshes().get(mesh)) {
         if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
       }
     }
     if (collision == false) {
-      moveX = movementVec.x * speed;
+      moveX = 1;
     }
     collision = false;
-    this.setPosition(oldPos.x, oldPos.y, oldPos.z);
-    this.movePosition(0, movementVec.y * speed, 0);
+    currentPos.x = oldPos.x;
+    currentPos.y = newPos.y;
+    currentPos.z = oldPos.z;
     for (Mesh mesh : scene.getGameMeshes().keySet()) {
       for (GameItem gameItem : scene.getGameMeshes().get(mesh)) {
         if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
       }
     }
     if (collision == false) {
-      moveY = movementVec.y * speed;
+      moveY = 1;
     }
     collision = false;
-    this.setPosition(oldPos.x, oldPos.y, oldPos.z);
-    this.movePosition(0, 0, movementVec.z * speed);
+    currentPos.x = oldPos.x;
+    currentPos.y = oldPos.y;
+    currentPos.z = newPos.z;
     for (Mesh mesh : scene.getGameMeshes().keySet()) {
       for (GameItem gameItem : scene.getGameMeshes().get(mesh)) {
         if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
       }
     }
     if (collision == false) {
-      moveZ = movementVec.z * speed;
+      moveZ = 1;
     }
-    this.setPosition(oldPos.x, oldPos.y, oldPos.z);
-    System.out.println(moveX + " " + moveY + " " + moveZ);
-    this.movePosition(moveX, moveY, moveZ);
+    Vector3f between = new Vector3f(newPos).sub(oldPos);
+    currentPos.x = oldPos.x + between.x * moveX;
+    currentPos.y = oldPos.y + between.y * moveY;
+    currentPos.z = oldPos.z + between.z * moveZ;
   }
 
   @Override
@@ -96,7 +105,8 @@ public class Player extends GameItem {
     refreshCamera();
   }
 
-  public void movePosition(float offsetX, float offsetY, float offsetZ) {
+  public void movePosition(Scene scene, float offsetX, float offsetY, float offsetZ) {
+    Vector3f oldPos = new Vector3f(this.getPosition());
     if (offsetZ != 0) {
       position.x += (float) Math.sin(Math.toRadians(rotation.y)) * -1.0f * offsetZ;
       position.z += (float) Math.cos(Math.toRadians(rotation.y)) * offsetZ;
@@ -106,7 +116,15 @@ public class Player extends GameItem {
       position.z += (float) Math.cos(Math.toRadians(rotation.y - 90)) * offsetX;
     }
     position.y += offsetY;
+    Vector3f currPos = this.getPosition();
+    if(scene != null) {
+      doCollisions(scene, oldPos, currPos);
+    }
     refreshCamera();
+  }
+
+  public void movePosition(float offsetX, float offsetY, float offsetZ) {
+    movePosition(null, offsetX, offsetY, offsetZ);
   }
 
   @Override
