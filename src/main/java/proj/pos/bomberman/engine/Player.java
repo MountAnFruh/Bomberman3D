@@ -18,7 +18,7 @@ public class Player extends GameItem {
 
   public Player(Camera camera) {
     super();
-    this.setScale(0.1f);
+    this.setScale(0.0001f);
     this.camera = camera;
     this.movementVec = new Vector3f(0, 0, 0);
     this.speed = CAMERA_POS_STEP;
@@ -46,6 +46,7 @@ public class Player extends GameItem {
     currentPos.y = oldPos.y;
     currentPos.z = oldPos.z;
     float moveX = 0, moveY = 0, moveZ = 0;
+    float moveXY = 0, moveYZ = 0, moveZX = 0;
     for (Mesh mesh : scene.getGameMeshes().keySet()) {
       for (GameItem gameItem : scene.getGameMeshes().get(mesh)) {
         if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
@@ -77,6 +78,51 @@ public class Player extends GameItem {
     }
     if (collision == false) {
       moveZ = 1;
+    }
+    collision = false;
+    currentPos.x = newPos.x;
+    currentPos.y = newPos.y;
+    currentPos.z = oldPos.z;
+    for (Mesh mesh : scene.getGameMeshes().keySet()) {
+      for (GameItem gameItem : scene.getGameMeshes().get(mesh)) {
+        if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
+      }
+    }
+    if (collision == false) {
+      moveXY = 1;
+    }
+    collision = false;
+    currentPos.x = oldPos.x;
+    currentPos.y = newPos.y;
+    currentPos.z = newPos.z;
+    for (Mesh mesh : scene.getGameMeshes().keySet()) {
+      for (GameItem gameItem : scene.getGameMeshes().get(mesh)) {
+        if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
+      }
+    }
+    if (collision == false) {
+      moveYZ = 1;
+    }
+    collision = false;
+    currentPos.x = newPos.x;
+    currentPos.y = oldPos.y;
+    currentPos.z = newPos.z;
+    for (Mesh mesh : scene.getGameMeshes().keySet()) {
+      for (GameItem gameItem : scene.getGameMeshes().get(mesh)) {
+        if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
+      }
+    }
+    if (collision == false) {
+      moveZX = 1;
+    }
+    if(moveXY != 0 && moveX == 0 && moveY == 0) {
+      moveX = 1; moveY = 1;
+    }
+    if(moveYZ != 0 && moveY == 0 && moveZ == 0) {
+      moveY = 1; moveZ = 1;
+    }
+    if(moveZX != 0 && moveZ == 0 && moveX == 0) {
+      moveZ = 1; moveX = 1;
     }
     Vector3f between = new Vector3f(newPos).sub(oldPos);
     currentPos.x = oldPos.x + between.x * moveX;

@@ -191,7 +191,7 @@ public class TestBoundingBox {
 
     GameItem gameItem2 = new GameItem();
     gameItem2.setPosition(0, 0, 0);
-    gameItem2.setRotation(0f, 0f, 0f);
+    gameItem2.setRotation(45f, 45f, 45f);
     gameItem2.setScale(0.5f);
 
     testCollisionOfGameItems(gameItem1, gameItem2, true);

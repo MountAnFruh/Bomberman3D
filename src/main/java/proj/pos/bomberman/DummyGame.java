@@ -4,6 +4,7 @@ import org.joml.Vector3f;
 import proj.pos.bomberman.engine.*;
 import proj.pos.bomberman.engine.graphics.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -48,12 +49,19 @@ public class DummyGame implements IGameLogic {
       Material material = new Material(texture, reflectance);
       mesh.setMaterial(material);
 
-      GameItem gameItem = new GameItem(mesh);
-      gameItem.setRotation(0, 90, 0);
-      gameItem.setScale(0.5f);
-      gameItem.setPosition(0, 0, -2);
+      List<GameItem> gameItemsList = new ArrayList<>();
 
-      GameItem[] gameItems = new GameItem[]{gameItem};
+      for(int i = 0;i < 10;i++) {
+        for (int j = 0; j < 10; j++) {
+          GameItem gameItem = new GameItem(mesh);
+          gameItem.setRotation(0, 90, 0);
+          gameItem.setScale(0.5f);
+          gameItem.setPosition(i, -10, -2 + j);
+          gameItemsList.add(gameItem);
+        }
+      }
+
+      GameItem[] gameItems = gameItemsList.toArray(new GameItem[0]);
       scene.setGameItems(gameItems);
 
       SceneLight sceneLight = new SceneLight();
@@ -86,7 +94,7 @@ public class DummyGame implements IGameLogic {
       sceneLight.setDirectionalLight(directionalLight);
 
       // Setup SkyBox
-      SkyBox skyBox = new SkyBox("/models/skybox.obj", "/textures/alienmap.png");
+      SkyBox skyBox = new SkyBox("/models/skybox.obj", "/textures/skybox.png");
       skyBox.setScale(10.0f);
       scene.setSkyBox(skyBox);
 
