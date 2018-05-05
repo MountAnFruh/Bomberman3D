@@ -14,8 +14,6 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class DummyGame implements IGameLogic {
 
-  private final Vector3f cameraInc;
-
   private final Renderer renderer;
 
   private final Camera camera;
@@ -31,7 +29,6 @@ public class DummyGame implements IGameLogic {
   public DummyGame() {
     this.renderer = new Renderer();
     this.camera = new Camera();
-    this.cameraInc = new Vector3f(0, 0, 0);
     this.player = new Player(camera);
     lightAngle = -90;
   }
@@ -46,22 +43,28 @@ public class DummyGame implements IGameLogic {
       // Create the Mesh
       float reflectance = 1f;
 
-      Mesh mesh = OBJLoader.loadMesh("/models/cube.obj");
-      Texture texture = new Texture("/textures/brick2.png");
+      Mesh fixBlock = OBJLoader.loadMesh("/models/Boden.obj");
+      Texture texture = new Texture("/textures/steinboden.png");
       Material material = new Material(texture, reflectance);
-      mesh.setMaterial(material);
+      fixBlock.setMaterial(material);
+
+      Mesh destBlock = OBJLoader.loadMesh("/models/cube.obj");
+      texture = new Texture("/textures/brick2.png");
+      material = new Material(texture, reflectance);
+      destBlock.setMaterial(material);
 
       List<GameItem> gameItemsList = new ArrayList<>();
 
-      for(int i = 0;i < 10;i++) {
-        for (int j = 0; j < 10; j++) {
-          GameItem gameItem = new GameItem(mesh);
-          gameItem.setRotation(0, 90, 0);
-          gameItem.setScale(0.5f);
-          gameItem.setPosition(i, -10, -2 + j);
-          gameItemsList.add(gameItem);
-        }
-      }
+      Level level = LevelLoader.loadMap(0.2f, "/textures/maps/map_one.png");
+      level.setConstantBlockMesh(fixBlock);
+      level.setDestroyableBlockMesh(destBlock);
+      level.setFloorBlockMesh(fixBlock);
+      level.buildMap(new Vector3f(0, -2, 0), 0.5f);
+      gameItemsList.addAll(level.getGameItemMap());
+
+      List<Vector3f> spawnPoints = level.getSpawnPoints();
+      Vector3f firstSpawnpoint = spawnPoints.get(0);
+      player.setPosition(firstSpawnpoint.x, firstSpawnpoint.y, firstSpawnpoint.z);
 
       GameItem[] gameItems = gameItemsList.toArray(new GameItem[0]);
       scene.setGameItems(gameItems);
@@ -97,7 +100,7 @@ public class DummyGame implements IGameLogic {
 
       // Setup SkyBox
       SkyBox skyBox = new SkyBox("/models/skybox.obj", "/textures/skybox.png");
-      skyBox.setScale(10.0f);
+      skyBox.setScale(20.0f);
       scene.setSkyBox(skyBox);
 
       // Create Hud
