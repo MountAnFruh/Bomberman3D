@@ -1,4 +1,4 @@
-package proj.pos.bomberman;
+package proj.pos.bomberman.utils;
 
 import java.io.*;
 import java.util.ArrayList;

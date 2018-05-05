@@ -1,7 +1,9 @@
-package proj.pos.bomberman;
+package proj.pos.bomberman.game;
 
 import org.joml.Vector3f;
-import proj.pos.bomberman.engine.*;
+import proj.pos.bomberman.engine.GameItem;
+import proj.pos.bomberman.engine.IGameLogic;
+import proj.pos.bomberman.engine.MouseInput;
 import proj.pos.bomberman.engine.graphics.*;
 
 import java.util.ArrayList;

@@ -1,8 +1,9 @@
-package proj.pos.bomberman.engine.graphics;
+package proj.pos.bomberman.utils;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import proj.pos.bomberman.engine.GameItem;
+import proj.pos.bomberman.engine.graphics.Camera;
 
 public class Transformation {
 

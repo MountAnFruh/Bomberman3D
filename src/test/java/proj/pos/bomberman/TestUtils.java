@@ -1,6 +1,7 @@
 package proj.pos.bomberman;
 
 import org.junit.Test;
+import proj.pos.bomberman.utils.Utils;
 
 import java.io.FileNotFoundException;
 import java.util.List;

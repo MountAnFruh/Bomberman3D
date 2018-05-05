@@ -1,9 +1,8 @@
-package proj.pos.bomberman;
+package proj.pos.bomberman.game;
 
 import org.joml.Vector4f;
 import proj.pos.bomberman.engine.GameItem;
 import proj.pos.bomberman.engine.IHud;
-import proj.pos.bomberman.engine.TextItem;
 import proj.pos.bomberman.engine.graphics.*;
 import proj.pos.bomberman.engine.graphics.Window;
 

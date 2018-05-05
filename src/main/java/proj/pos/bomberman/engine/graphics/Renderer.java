@@ -3,11 +3,11 @@ package proj.pos.bomberman.engine.graphics;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import proj.pos.bomberman.Utils;
 import proj.pos.bomberman.engine.GameItem;
 import proj.pos.bomberman.engine.IHud;
-import proj.pos.bomberman.engine.Scene;
-import proj.pos.bomberman.engine.SkyBox;
+import proj.pos.bomberman.game.SkyBox;
+import proj.pos.bomberman.utils.Transformation;
+import proj.pos.bomberman.utils.Utils;
 
 import java.io.IOException;
 import java.util.List;

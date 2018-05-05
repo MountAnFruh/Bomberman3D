@@ -1,9 +1,12 @@
-package proj.pos.bomberman.engine;
+package proj.pos.bomberman.game;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import proj.pos.bomberman.engine.GameItem;
+import proj.pos.bomberman.engine.MouseInput;
 import proj.pos.bomberman.engine.graphics.Camera;
 import proj.pos.bomberman.engine.graphics.Mesh;
+import proj.pos.bomberman.engine.graphics.Scene;
 
 public class Player extends GameItem {
 

@@ -1,7 +1,7 @@
-package proj.pos.bomberman.engine;
+package proj.pos.bomberman.engine.graphics;
 
-import proj.pos.bomberman.engine.graphics.Mesh;
-import proj.pos.bomberman.engine.graphics.SceneLight;
+import proj.pos.bomberman.engine.GameItem;
+import proj.pos.bomberman.game.SkyBox;
 
 import java.util.ArrayList;
 import java.util.HashMap;

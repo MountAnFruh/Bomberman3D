@@ -2,7 +2,7 @@ package proj.pos.bomberman.engine.graphics;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import proj.pos.bomberman.Utils;
+import proj.pos.bomberman.utils.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;

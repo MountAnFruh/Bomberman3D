@@ -1,5 +1,6 @@
-package proj.pos.bomberman.engine;
+package proj.pos.bomberman.game;
 
+import proj.pos.bomberman.engine.GameItem;
 import proj.pos.bomberman.engine.graphics.Material;
 import proj.pos.bomberman.engine.graphics.Mesh;
 import proj.pos.bomberman.engine.graphics.OBJLoader;

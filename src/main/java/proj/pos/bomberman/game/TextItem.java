@@ -1,9 +1,10 @@
-package proj.pos.bomberman.engine;
+package proj.pos.bomberman.game;
 
-import proj.pos.bomberman.Utils;
+import proj.pos.bomberman.engine.GameItem;
 import proj.pos.bomberman.engine.graphics.FontTexture;
 import proj.pos.bomberman.engine.graphics.Material;
 import proj.pos.bomberman.engine.graphics.Mesh;
+import proj.pos.bomberman.utils.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;

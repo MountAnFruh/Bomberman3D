@@ -2,6 +2,7 @@ package proj.pos.bomberman;
 
 import proj.pos.bomberman.engine.GameEngine;
 import proj.pos.bomberman.engine.IGameLogic;
+import proj.pos.bomberman.game.DummyGame;
 
 public class Main {
 
