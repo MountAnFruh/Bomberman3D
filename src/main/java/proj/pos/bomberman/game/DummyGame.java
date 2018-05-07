@@ -43,8 +43,9 @@ public class DummyGame implements IGameLogic {
       // Create the Mesh
       float reflectance = 1f;
 
-      Mesh fixBlock = OBJLoader.loadMesh("/models/Boden.obj");
-      Texture texture = new Texture("/textures/steinboden.png");
+      //Mesh fixBlock = OBJLoader.loadMesh("/models/Boden.obj");
+      Mesh fixBlock = OBJLoader.loadMesh("/models/cube.obj");
+      Texture texture = new Texture("/textures/steinboden2.png");
       Material material = new Material(texture, reflectance);
       fixBlock.setMaterial(material);
 
