@@ -13,15 +13,18 @@ public class Player extends GameItem {
   private static final float MOUSE_SENSITIVITY = 0.2f;
   private static final float CAMERA_POS_STEP = 0.05f;
 
+  private final Level level;
+
   private final Camera camera;
 
   private final Vector3f movementVec;
 
   private float speed;
 
-  public Player(Camera camera) {
+  public Player(Camera camera, Level level) {
     super();
     this.setScale(0.0001f);
+    this.level = level;
     this.camera = camera;
     this.movementVec = new Vector3f(0, 0, 0);
     this.speed = CAMERA_POS_STEP;

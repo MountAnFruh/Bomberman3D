@@ -24,12 +24,11 @@ public class DummyGame implements IGameLogic {
 
   private Player player;
 
-  private Hud hud;
+  private Minimap minimap;
 
   public DummyGame() {
     this.renderer = new Renderer();
     this.camera = new Camera();
-    this.player = new Player(camera);
     lightAngle = -90;
   }
 
@@ -45,18 +44,19 @@ public class DummyGame implements IGameLogic {
 
       //Mesh fixBlock = OBJLoader.loadMesh("/models/Boden.obj");
       Mesh fixBlock = OBJLoader.loadMesh("/models/cube.obj");
-      Texture texture = new Texture("/textures/steinboden2.png");
+      Texture texture = new Texture("/textures/stone.png");
       Material material = new Material(texture, reflectance);
       fixBlock.setMaterial(material);
 
       Mesh destBlock = OBJLoader.loadMesh("/models/cube.obj");
-      texture = new Texture("/textures/brick2.png");
+      texture = new Texture("/textures/brick.png");
       material = new Material(texture, reflectance);
       destBlock.setMaterial(material);
 
       List<GameItem> gameItemsList = new ArrayList<>();
 
       Level level = LevelLoader.loadMap(0.2f, "/textures/maps/map_one.png");
+      this.player = new Player(camera, level);
       level.setConstantBlockMesh(fixBlock);
       level.setDestroyableBlockMesh(destBlock);
       level.setFloorBlockMesh(fixBlock);
@@ -105,7 +105,7 @@ public class DummyGame implements IGameLogic {
       scene.setSkyBox(skyBox);
 
       // Create Hud
-      hud = new Hud("Bomberman3D - Dev Version");
+      minimap = new Minimap(level/*, fixBlock, destBlock*/);
 
     } catch (Exception ex) {
       ex.printStackTrace();
@@ -147,8 +147,6 @@ public class DummyGame implements IGameLogic {
     // Update player position
     player.update(delta, mouseInput, scene);
 
-    hud.rotateCompass(player.getRotation().y);
-
     // Update directional light direction, intensity and color
     DirectionalLight directionalLight = scene.getSceneLight().getDirectionalLight();
     lightAngle += 1.1f;
@@ -175,8 +173,8 @@ public class DummyGame implements IGameLogic {
 
   @Override
   public void render(Window window) {
-    hud.updateSize(window);
-    renderer.render(window, camera, scene, hud);
+    minimap.updateSize(window);
+    renderer.render(window, camera, scene, minimap);
   }
 
   @Override
@@ -186,6 +184,6 @@ public class DummyGame implements IGameLogic {
     for (Mesh mesh : mapMeshes.keySet()) {
       mesh.cleanup();
     }
-    hud.cleanup();
+    minimap.cleanup();
   }
 }

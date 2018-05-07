@@ -52,7 +52,7 @@ public class Hud implements IHud {
 
   public void updateSize(Window window) {
     this.statusTextItem.setPosition(5f, 5f, 0);
-    this.compassItem.setPosition(window.getWidth() - 40f, 50f, 0);
+    this.compassItem.setPosition(window.getWidth() - 40f, 50f, 0f);
   }
 
   public void rotateCompass(float angle) {
