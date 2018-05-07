@@ -48,15 +48,15 @@ public class Player extends GameItem {
     currentPos.x = newPos.x;
     currentPos.y = oldPos.y;
     currentPos.z = oldPos.z;
-    float moveX = 0, moveY = 0, moveZ = 0;
-    float moveXY = 0, moveYZ = 0, moveZX = 0;
+    boolean moveX = false, moveY = false, moveZ = false;
+    boolean moveXY = false, moveYZ = false, moveZX = false;
     for (Mesh mesh : scene.getGameMeshes().keySet()) {
       for (GameItem gameItem : scene.getGameMeshes().get(mesh)) {
         if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
       }
     }
-    if (collision == false) {
-      moveX = 1;
+    if (!collision) {
+      moveX = true;
     }
     collision = false;
     currentPos.x = oldPos.x;
@@ -67,8 +67,8 @@ public class Player extends GameItem {
         if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
       }
     }
-    if (collision == false) {
-      moveY = 1;
+    if (!collision) {
+      moveY = true;
     }
     collision = false;
     currentPos.x = oldPos.x;
@@ -79,8 +79,8 @@ public class Player extends GameItem {
         if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
       }
     }
-    if (collision == false) {
-      moveZ = 1;
+    if (!collision) {
+      moveZ = true;
     }
     collision = false;
     currentPos.x = newPos.x;
@@ -91,8 +91,8 @@ public class Player extends GameItem {
         if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
       }
     }
-    if (collision == false) {
-      moveXY = 1;
+    if (!collision) {
+      moveXY = true;
     }
     collision = false;
     currentPos.x = oldPos.x;
@@ -103,8 +103,8 @@ public class Player extends GameItem {
         if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
       }
     }
-    if (collision == false) {
-      moveYZ = 1;
+    if (!collision) {
+      moveYZ = true;
     }
     collision = false;
     currentPos.x = newPos.x;
@@ -115,22 +115,22 @@ public class Player extends GameItem {
         if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
       }
     }
-    if (collision == false) {
-      moveZX = 1;
+    if (!collision) {
+      moveZX = true;
     }
-    if(moveXY != 0 && moveX == 0 && moveY == 0) {
-      moveX = 1; moveY = 1;
+    if(!moveXY && moveX && moveY) {
+      moveX = false; moveY = false;
     }
-    if(moveYZ != 0 && moveY == 0 && moveZ == 0) {
-      moveY = 1; moveZ = 1;
+    if(!moveYZ && moveY && moveZ) {
+      moveY = false; moveZ = false;
     }
-    if(moveZX != 0 && moveZ == 0 && moveX == 0) {
-      moveZ = 1; moveX = 1;
+    if(!moveZX && moveZ && moveX) {
+      moveZ = false; moveX = false;
     }
     Vector3f between = new Vector3f(newPos).sub(oldPos);
-    currentPos.x = oldPos.x + between.x * moveX;
-    currentPos.y = oldPos.y + between.y * moveY;
-    currentPos.z = oldPos.z + between.z * moveZ;
+    currentPos.x = oldPos.x + between.x * (moveX ? 1 : 0);
+    currentPos.y = oldPos.y + between.y * (moveY ? 1 : 0);
+    currentPos.z = oldPos.z + between.z * (moveZ ? 1 : 0);
   }
 
   @Override

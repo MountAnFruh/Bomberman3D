@@ -74,7 +74,7 @@ public class DummyGame implements IGameLogic {
       scene.setSceneLight(sceneLight);
 
       // Ambient Light
-      Vector3f ambientLight = new Vector3f(.5f, .5f, .5f); // 0.3f
+      Vector3f ambientLight = new Vector3f(1f, 1f, 1f); // 0.3f
       sceneLight.setAmbientLight(ambientLight);
 
       Vector3f lightColor = new Vector3f(1, 1, 1);
