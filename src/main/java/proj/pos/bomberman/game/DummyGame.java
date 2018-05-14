@@ -59,11 +59,13 @@ public class DummyGame implements IGameLogic {
       gameItemsList = new ArrayList<>();
 
       Level level = LevelLoader.loadMap(0.2f, "/textures/maps/map_one.png");
+      float scaleLevel = 0.5f;
+      Vector3f movedLevel = new Vector3f(0, -2, 0);
       this.player = new Player(camera, level);
       level.setConstantBlockMesh(fixBlock);
       level.setDestroyableBlockMesh(destBlock);
       level.setFloorBlockMesh(fixBlock);
-      level.buildMap(new Vector3f(0, -2, 0), 0.5f);
+      level.buildMap(movedLevel, scaleLevel);
       gameItemsList.addAll(level.getGameItemMap());
 
       List<Vector3f> spawnPoints = level.getSpawnPoints();
@@ -108,7 +110,7 @@ public class DummyGame implements IGameLogic {
       scene.setSkyBox(skyBox);
 
       // Create Hud
-      minimap = new Minimap(level/*, fixBlock, destBlock*/);
+      minimap = new Minimap(level, movedLevel, scaleLevel, player);
 
     } catch (Exception ex) {
       ex.printStackTrace();
@@ -151,6 +153,7 @@ public class DummyGame implements IGameLogic {
   public void update(double delta, MouseInput mouseInput) {
     // Update player position
     player.update(delta, mouseInput, scene);
+    minimap.rotateCompass(player.getRotation().y);
 
     // Update directional light direction, intensity and color
     DirectionalLight directionalLight = scene.getSceneLight().getDirectionalLight();
@@ -178,7 +181,7 @@ public class DummyGame implements IGameLogic {
 
   @Override
   public void render(Window window) {
-    minimap.updateSize(window);
+    minimap.update(window);
     renderer.render(window, camera, scene, minimap);
   }
 
