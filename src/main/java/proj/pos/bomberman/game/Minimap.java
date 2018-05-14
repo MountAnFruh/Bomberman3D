@@ -1,5 +1,6 @@
 package proj.pos.bomberman.game;
 
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 import proj.pos.bomberman.engine.GameItem;
 import proj.pos.bomberman.engine.IHud;
@@ -9,7 +10,6 @@ import proj.pos.bomberman.engine.graphics.Window;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Minimap implements IHud {
@@ -20,6 +20,9 @@ public class Minimap implements IHud {
 
     private static final float BLOCKSCALE = 20f;
 
+    private static final float MINIMAPMOVEDX = 10f;
+    private static final float MINIMAPMOVEDY = 90f;
+
     private final Level level;
 
     private final GameItem[][] blockItems;
@@ -29,19 +32,42 @@ public class Minimap implements IHud {
    // private final GameItem[] hudItems;
 
     private final TextItem minimapText;
+    private final TextItem coordinateText;
+    private final GameItem compassItem;
 
-    public Minimap(Level level/*, Mesh fixBlock, Mesh destBlock*/) throws IOException {
+    private final Player player;
+    private final Vector3f movedLevel;
+    private final float scaleLevel;
+
+    public Minimap(Level level, Vector3f movedLevel, float scaleLevel, Player player) throws IOException {
         FontTexture fontTexture = new FontTexture(FONT, CHARSET);
         this.level = level;
+        this.movedLevel = movedLevel;
+        this.scaleLevel = scaleLevel;
+        this.player = player;
+
+        // Create compass
+        Mesh mesh = OBJLoader.loadMesh("/models/compass.obj");
+        Material material = new Material();
+        material.setAmbientColor(new Vector4f(1, 0, 0, 1));
+        mesh.setMaterial(material);
+        compassItem = new GameItem(mesh);
+        compassItem.setScale(BLOCKSCALE);
+        // Rotate to transform it to screen coordinates
+        compassItem.setRotation(0f, 180f, 180f);
+        gameItems.add(compassItem);
 
         this.minimapText = new TextItem("Minimap: ", fontTexture);
+        this.coordinateText = new TextItem("Coordinates: ", fontTexture);
 
         this.minimapText.getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
+        this.coordinateText.getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
         gameItems.add(minimapText);
+        gameItems.add(coordinateText);
 
         Mesh fixBlock = OBJLoader.loadMesh("/models/rectangle.obj");
         Texture texture = new Texture("/textures/stone_small.png");
-        Material material = new Material(texture, 0.0f);
+        material = new Material(texture, 0.0f);
         fixBlock.setMaterial(material);
 
         Mesh destBlock = OBJLoader.loadMesh("/models/rectangle.obj");
@@ -69,7 +95,7 @@ public class Minimap implements IHud {
                 }
                 gameItem.setScale(BLOCKSCALE);
                 gameItem.setRotation(0f, 180f, 180f);
-                blockItems[y][blockItems[y].length - 1 - x] = gameItem;
+                blockItems[x][y] = gameItem;
                 gameItems.add(gameItem);
             }
         }
@@ -80,15 +106,27 @@ public class Minimap implements IHud {
         return gameItems.toArray(new GameItem[0]);
     }
 
-    public void updateSize(Window window) {
+    public void update(Window window) {
         this.minimapText.setPosition(10f, 10f, 0);
+        this.coordinateText.setPosition(10f, 30f, 0);
+        this.coordinateText.setText("Coordinates: " + player.getPosition().toString());
         for(int i = 0;i < blockItems.length;i++) {
             for (int j = 0; j < blockItems[i].length; j++) {
                 if(blockItems[i][j] != null) {
-                    blockItems[i][j].setPosition(10f + i * BLOCKSCALE, 60f + j * BLOCKSCALE, 0);
+                    blockItems[i][j].setPosition(MINIMAPMOVEDX + i * BLOCKSCALE, MINIMAPMOVEDY + j * BLOCKSCALE, 0);
                 }
             }
         }
-        //this.compassItem.setPosition(window.getWidth() - 40f, 50f, 0);
+        if(level.insideXZ(player, movedLevel, scaleLevel)) {
+            if(!gameItems.contains(compassItem)) gameItems.add(compassItem);
+            this.compassItem.setPosition(MINIMAPMOVEDX + (player.getPosition().x - movedLevel.x * scaleLevel) * BLOCKSCALE,
+                    MINIMAPMOVEDY - BLOCKSCALE + (player.getPosition().z - movedLevel.z * scaleLevel) * BLOCKSCALE, 0.0001f);
+        } else {
+            if(gameItems.contains(compassItem)) gameItems.remove(compassItem);
+        }
+    }
+
+    public void rotateCompass(float angle) {
+        this.compassItem.setRotation(0f, 180f, 180f + angle);
     }
 }

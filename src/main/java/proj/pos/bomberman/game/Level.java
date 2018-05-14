@@ -13,6 +13,7 @@ public class Level {
   private static final Random rand = new Random();
 
   private int[][] layout;
+
   private List<GameItem> gameItemMap = new ArrayList<>();
   private List<Vector3f> spawnPoints = new ArrayList<>();
 
@@ -33,11 +34,24 @@ public class Level {
         float scaleValue = (scale * 2);
         GameItem gameItem = new GameItem(floorBlockMesh);
         gameItemMap.add(gameItem);
-        gameItem.setPosition(xCoord * scaleValue, (yCoord - 1.0f) * scaleValue, zCoord * scaleValue);
+        gameItem.setPosition(xCoord * scaleValue + scale, (yCoord - 1.0f) * scaleValue + scale, zCoord * scaleValue + scale);
         gameItem.setScale(scale);
         gameItem.setRotation(0, 0, 0);
       }
     }
+  }
+
+  public boolean insideXZ(Player player, Vector3f moved, float scale) {
+    float x = player.getPosition().x - moved.x;
+    float z = player.getPosition().z - moved.z;
+    float levelMaxX = moved.x + layout[0].length * (scale*2);
+    float levelMaxZ = moved.z + layout.length * (scale*2);
+    if(x >= 0 && x <= levelMaxX) {
+      if(z >= 0 && z <= levelMaxZ) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public void buildMap(Vector3f moved, float scale) {
@@ -60,12 +74,12 @@ public class Level {
             gameItem = new GameItem(destroyableBlockMesh);
           }
           gameItemMap.add(gameItem);
-          gameItem.setPosition(xCoord * scaleValue, yCoord * scaleValue, zCoord * scaleValue);
+          gameItem.setPosition(xCoord * scaleValue + scale, yCoord * scaleValue + scale, zCoord * scaleValue + scale);
           gameItem.setScale(scale);
           gameItem.setRotation(0, 0, 0);
         } else if (id == 2) {
           // Spawnpoint
-          spawnPoints.add(new Vector3f((xCoord) * scaleValue, yCoord * scaleValue, (zCoord) * scaleValue));
+          spawnPoints.add(new Vector3f((xCoord) * scaleValue + scale, yCoord * scaleValue + scale, (zCoord) * scaleValue + scale));
         }
       }
     }
