@@ -6,6 +6,7 @@ import proj.pos.bomberman.engine.IGameLogic;
 import proj.pos.bomberman.engine.MouseInput;
 import proj.pos.bomberman.engine.graphics.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,8 @@ public class DummyGame implements IGameLogic {
     lightAngle = -90;
   }
 
+  List<GameItem> gameItemsList = new ArrayList<>();
+
   @Override
   public void init(Window window) {
     try {
@@ -53,7 +56,7 @@ public class DummyGame implements IGameLogic {
       material = new Material(texture, reflectance);
       destBlock.setMaterial(material);
 
-      List<GameItem> gameItemsList = new ArrayList<>();
+      gameItemsList = new ArrayList<>();
 
       Level level = LevelLoader.loadMap(0.2f, "/textures/maps/map_one.png");
       this.player = new Player(camera, level);
@@ -129,6 +132,8 @@ public class DummyGame implements IGameLogic {
       player.getMovementVec().y = -1;
     } else if (window.isKeyPressed(GLFW_KEY_SPACE)) {
       player.getMovementVec().y = 1;
+    } else if (window.isKeyPressed(GLFW_KEY_ENTER)) {
+      setBomb();
     }
 
 //    if (window.isKeyPressed(GLFW_KEY_UP)) {
@@ -185,5 +190,32 @@ public class DummyGame implements IGameLogic {
       mesh.cleanup();
     }
     minimap.cleanup();
+  }
+
+  public void setBomb() {
+    try {
+      Vector3f pos = new Vector3f(player.getPosition());
+      System.out.println(pos.x);
+      pos.x = pos.x + 1;
+      pos.z = pos.z + 1;
+      System.out.println(pos.x);
+      float reflectance = 1f;
+      Mesh fixBlock = null;
+      fixBlock = OBJLoader.loadMesh("/models/bomb.obj");
+      Texture texture = new Texture("/textures/bomb.png");
+      Material material = new Material(texture, reflectance);
+
+      fixBlock.setMaterial(material);
+
+      GameItem gameItem = new GameItem(fixBlock);
+      gameItem.setPosition(pos.x, pos.y, pos.z);
+      gameItemsList.add(gameItem);
+      GameItem[] gameItems = gameItemsList.toArray(new GameItem[0]);
+
+      scene.setGameItems(gameItems);
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 }
