@@ -53,10 +53,10 @@ public class Level {
   public boolean insideXZ(Player player) {
     float x = player.getPosition().x - moved.x;
     float z = player.getPosition().z - moved.z;
-    float levelMaxX = moved.x + layout[0].length * (scale*2);
-    float levelMaxZ = moved.z + layout.length * (scale*2);
-    if(x >= 0 && x <= levelMaxX) {
-      if(z >= 0 && z <= levelMaxZ) {
+    float levelMaxX = moved.x + layout[0].length * (scale * 2);
+    float levelMaxZ = moved.z + layout.length * (scale * 2);
+    if (x >= 0 && x <= levelMaxX) {
+      if (z >= 0 && z <= levelMaxZ) {
         return true;
       }
     }

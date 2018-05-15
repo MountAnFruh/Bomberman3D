@@ -122,14 +122,17 @@ public class Player extends GameItem {
     if (!collision) {
       moveZX = true;
     }
-    if(!moveXY && moveX && moveY) {
-      moveX = false; moveY = false;
+    if (!moveXY && moveX && moveY) {
+      moveX = false;
+      moveY = false;
     }
-    if(!moveYZ && moveY && moveZ) {
-      moveY = false; moveZ = false;
+    if (!moveYZ && moveY && moveZ) {
+      moveY = false;
+      moveZ = false;
     }
-    if(!moveZX && moveZ && moveX) {
-      moveZ = false; moveX = false;
+    if (!moveZX && moveZ && moveX) {
+      moveZ = false;
+      moveX = false;
     }
     Vector3f between = new Vector3f(newPos).sub(oldPos);
     currentPos.x = oldPos.x + between.x * (moveX ? 1 : 0);
@@ -170,7 +173,7 @@ public class Player extends GameItem {
     }
     position.y += offsetY;
     Vector3f currPos = this.getPosition();
-    if(scene != null) {
+    if (scene != null) {
       doCollisions(scene, oldPos, currPos);
     }
     refreshCamera();
