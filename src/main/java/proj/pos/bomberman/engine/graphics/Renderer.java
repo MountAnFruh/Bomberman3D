@@ -10,8 +10,6 @@ import proj.pos.bomberman.utils.Transformation;
 import proj.pos.bomberman.utils.Utils;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -130,15 +128,14 @@ public class Renderer {
 
     sceneShaderProgram.setUniform("texture_sampler", 0);
 
-    // Render each mesh with associated gameItems
-    Map<Mesh, List<GameItem>> mapMeshes = scene.getGameMeshes();
-    for (Mesh mesh : mapMeshes.keySet()) {
+    // Render each gameItems
+    for (GameItem gameItem : scene.getGameItems()) {
+      Mesh mesh = gameItem.getMesh();
       sceneShaderProgram.setUniform("material", mesh.getMaterial());
-      mesh.renderList(mapMeshes.get(mesh), (GameItem gameItem) -> {
-        // Set world matrix for this item
-        Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(gameItem, viewMatrix);
-        sceneShaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
-      });
+      // Set world matrix for this item
+      Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(gameItem, viewMatrix);
+      sceneShaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
+      mesh.render();
     }
 
     sceneShaderProgram.unbind();

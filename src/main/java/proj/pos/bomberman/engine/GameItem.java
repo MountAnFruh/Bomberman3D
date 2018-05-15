@@ -25,6 +25,10 @@ public class GameItem implements Collidable {
     this.mesh = mesh;
   }
 
+  public void update(double delta) {
+    // add update for other items
+  }
+
   public Vector3f getPosition() {
     return position;
   }

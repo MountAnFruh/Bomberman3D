@@ -74,9 +74,9 @@ public class LevelLoader {
    *
    * @param remPercent Prozentanzahl wie viele Blöcke von den zufälligen gelöscht werden soll
    * @param fileName   Der Pfad zum Level-Bild
-   * @return Das Level-Objekt
+   * @return Das Layout vom Level
    */
-  public static Level loadMap(float remPercent, String fileName) throws IOException {
+  public static int[][] loadLayout(float remPercent, String fileName) throws IOException {
     int[][] ids = loadIDs(fileName);
     List<Vector2i> rCoordinates = new ArrayList<>();
     for (int y = 0; y < ids.length; y++) {
@@ -96,8 +96,7 @@ public class LevelLoader {
     for (Vector2i coordinate : rCoordinates) {
       ids[coordinate.y][coordinate.x] = 4;
     }
-    Level level = new Level(ids);
-    return level;
+    return ids;
   }
 
 }

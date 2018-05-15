@@ -1,13 +1,11 @@
 package proj.pos.bomberman.engine.graphics;
 
 import org.lwjgl.system.MemoryUtil;
-import proj.pos.bomberman.engine.GameItem;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
@@ -150,20 +148,6 @@ public class Mesh {
     glDisableVertexAttribArray(2);
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
-  }
-
-  public void renderList(List<GameItem> gameItems, Consumer<GameItem> consumer) {
-    initRender();
-
-    for (GameItem gameItem : gameItems) {
-      // Set up data required by gameItem
-      consumer.accept(gameItem);
-
-      // Render this gameItem
-      glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
-    }
-
-    endRender();
   }
 
   public void cleanup() {

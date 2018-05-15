@@ -4,37 +4,31 @@ import proj.pos.bomberman.engine.GameItem;
 import proj.pos.bomberman.game.SkyBox;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Scene {
 
-  private Map<Mesh, List<GameItem>> meshMap;
+  private List<GameItem> gameItems;
 
   private SkyBox skyBox;
 
   private SceneLight sceneLight;
 
   public Scene() {
-    meshMap = new HashMap<>();
+    gameItems = new ArrayList<>();
   }
 
-  public Map<Mesh, List<GameItem>> getGameMeshes() {
-    return meshMap;
+  public List<GameItem> getGameItems() {
+    return gameItems;
   }
 
-  public void setGameItems(GameItem[] gameItems) {
-    int numGameItems = gameItems != null ? gameItems.length : 0;
-    for (int i = 0; i < numGameItems; i++) {
-      GameItem gameItem = gameItems[i];
-      Mesh mesh = gameItem.getMesh();
-      List<GameItem> list = meshMap.get(mesh);
-      if (list == null) {
-        list = new ArrayList<>();
-        meshMap.put(mesh, list);
-      }
-      list.add(gameItem);
+  public void setGameItems(List<GameItem> gameItems) {
+    this.gameItems = gameItems;
+  }
+
+  public void cleanupAllGameItems() {
+    for (GameItem gameItem : gameItems) {
+      gameItem.getMesh().cleanup();
     }
   }
 

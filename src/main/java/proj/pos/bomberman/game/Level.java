@@ -11,21 +11,30 @@ import java.util.Random;
 public class Level {
 
   private static final Random rand = new Random();
+  private static final float bombScale = 0.3f;
+
+  private Minimap minimap;
 
   private int[][] layout;
 
-  private List<GameItem> gameItemMap = new ArrayList<>();
+  private Vector3f moved;
+  private float scale;
+
+  private List<GameItem> gameItemsLevel = new ArrayList<>();
   private List<Vector3f> spawnPoints = new ArrayList<>();
 
   private Mesh destroyableBlockMesh = null;
   private Mesh constantBlockMesh = null;
   private Mesh floorBlockMesh = null;
+  private Mesh bombMesh = null;
 
-  public Level(int[][] layout) {
+  public Level(int[][] layout, Vector3f moved, float scale) {
+    this.moved = moved;
+    this.scale = scale;
     this.layout = layout;
   }
 
-  private void buildFloor(Vector3f moved, float scale) {
+  private void buildFloor() {
     for (int y = 0; y < layout.length; y++) {
       for (int x = 0; x < layout[y].length; x++) {
         float xCoord = (x + moved.x);
@@ -33,7 +42,7 @@ public class Level {
         float zCoord = (y + moved.z);
         float scaleValue = (scale * 2);
         GameItem gameItem = new GameItem(floorBlockMesh);
-        gameItemMap.add(gameItem);
+        gameItemsLevel.add(gameItem);
         gameItem.setPosition(xCoord * scaleValue + scale, (yCoord - 1.0f) * scaleValue + scale, zCoord * scaleValue + scale);
         gameItem.setScale(scale);
         gameItem.setRotation(0, 0, 0);
@@ -41,7 +50,7 @@ public class Level {
     }
   }
 
-  public boolean insideXZ(Player player, Vector3f moved, float scale) {
+  public boolean insideXZ(Player player) {
     float x = player.getPosition().x - moved.x;
     float z = player.getPosition().z - moved.z;
     float levelMaxX = moved.x + layout[0].length * (scale*2);
@@ -54,10 +63,40 @@ public class Level {
     return false;
   }
 
-  public void buildMap(Vector3f moved, float scale) {
+  public void placeBomb(Player player) {
+    if (bombMesh == null)
+      throw new RuntimeException("Bomb Mesh not set!");
+    if (insideXZ(player)) {
+      float scaleValue = (scale * 2);
+      float yCoord = moved.y;
+      float xCoord = player.getPosition().x - moved.x;
+      float zCoord = player.getPosition().z - moved.z;
+      int xLevel = (int) (xCoord / scaleValue);
+      int yLevel = (int) (zCoord / scaleValue);
+      layout[yLevel][xLevel] = 5;
+      if (minimap != null) minimap.doDrawing();
+      Bomb bombItem = new Bomb(bombMesh, this);
+      gameItemsLevel.add(bombItem);
+      bombItem.setPosition((xLevel * scaleValue) * scaleValue + 0.5f,
+              yCoord * scaleValue + bombScale, (yLevel * scaleValue) * scaleValue + 0.5f);
+      bombItem.setScale(bombScale);
+      bombItem.setRotation(0, 0, 0);
+    }
+  }
+
+  public void removeBomb(Bomb bomb) {
+    float scaleValue = (scale * 2);
+    int xLevel = (int) (bomb.getPosition().x - 0.5f / (scaleValue * 2));
+    int yLevel = (int) (bomb.getPosition().z - 0.5f / (scaleValue * 2));
+    layout[yLevel][xLevel] = 0;
+    gameItemsLevel.remove(bomb);
+    if (minimap != null) minimap.doDrawing();
+  }
+
+  public void buildMap() {
     if (constantBlockMesh == null || floorBlockMesh == null || destroyableBlockMesh == null)
-      throw new RuntimeException("Block Textures not set!");
-    buildFloor(moved, scale);
+      throw new RuntimeException("Block Meshes not set!");
+    buildFloor();
     for (int y = 0; y < layout.length; y++) {
       for (int x = 0; x < layout[y].length; x++) {
         int id = layout[y][x];
@@ -73,16 +112,20 @@ public class Level {
           } else {
             gameItem = new GameItem(destroyableBlockMesh);
           }
-          gameItemMap.add(gameItem);
-          gameItem.setPosition(xCoord * scaleValue + scale, yCoord * scaleValue + scale, zCoord * scaleValue + scale);
+          gameItemsLevel.add(gameItem);
+          gameItem.setPosition(xCoord * scaleValue + 0.5f, yCoord * scaleValue + 0.5f, zCoord * scaleValue + 0.5f);
           gameItem.setScale(scale);
           gameItem.setRotation(0, 0, 0);
         } else if (id == 2) {
           // Spawnpoint
-          spawnPoints.add(new Vector3f((xCoord) * scaleValue + scale, yCoord * scaleValue + scale, (zCoord) * scaleValue + scale));
+          spawnPoints.add(new Vector3f((xCoord) * scaleValue + 0.5f, yCoord * scaleValue + 0.5f, (zCoord) * scaleValue + 0.5f));
         }
       }
     }
+  }
+
+  public void setMinimap(Minimap minimap) {
+    this.minimap = minimap;
   }
 
   public void setConstantBlockMesh(Mesh constantBlockMesh) {
@@ -97,12 +140,16 @@ public class Level {
     this.floorBlockMesh = floorBlockMesh;
   }
 
+  public void setBombMesh(Mesh bombMesh) {
+    this.bombMesh = bombMesh;
+  }
+
   public int[][] getLayout() {
     return layout;
   }
 
-  public List<GameItem> getGameItemMap() {
-    return gameItemMap;
+  public List<GameItem> getGameItemsLevel() {
+    return gameItemsLevel;
   }
 
   public List<Vector3f> getSpawnPoints() {

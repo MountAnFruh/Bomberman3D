@@ -37,8 +37,7 @@ public class TestLevelLoader {
   public void testLevelLoadingWithIDs() throws IOException {
     String loadedMap = "", originalMap = "";
     int[][] idsOriginal = LevelLoader.loadIDs("/map_test.png");
-    Level level = LevelLoader.loadMap(0.8f, "/map_test.png");
-    int[][] ids = level.getLayout();
+    int[][] ids = LevelLoader.loadLayout(0.8f, "/map_test.png");
     for (int y = 0; y < ids.length; y++) {
       for (int x = 0; x < ids[y].length; x++) {
         loadedMap += ids[y][x];

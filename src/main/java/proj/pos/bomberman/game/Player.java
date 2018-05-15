@@ -5,7 +5,6 @@ import org.joml.Vector3f;
 import proj.pos.bomberman.engine.GameItem;
 import proj.pos.bomberman.engine.MouseInput;
 import proj.pos.bomberman.engine.graphics.Camera;
-import proj.pos.bomberman.engine.graphics.Mesh;
 import proj.pos.bomberman.engine.graphics.Scene;
 
 public class Player extends GameItem {
@@ -18,6 +17,8 @@ public class Player extends GameItem {
   private final Camera camera;
 
   private final Vector3f movementVec;
+
+  private float bombPlaceCooldown = 0.0f;
 
   private float speed;
 
@@ -34,6 +35,11 @@ public class Player extends GameItem {
     changePosition(scene);
     // Update camera based on mouse
     changeRotation(mouseInput);
+    if (bombPlaceCooldown > 0) {
+      bombPlaceCooldown -= delta;
+    } else {
+      bombPlaceCooldown = 0;
+    }
   }
 
   private void changeRotation(MouseInput mouseInput) {
@@ -45,6 +51,13 @@ public class Player extends GameItem {
     this.movePosition(scene, movementVec.x * speed, movementVec.y * speed, movementVec.z * speed);
   }
 
+  public void placeBomb() {
+    if (bombPlaceCooldown == 0) {
+      level.placeBomb(this);
+      bombPlaceCooldown = 30.0f;
+    }
+  }
+
   public void doCollisions(Scene scene, Vector3f oldPos, Vector3f currentPos) {
     boolean collision = false;
     Vector3f newPos = new Vector3f(currentPos);
@@ -53,10 +66,8 @@ public class Player extends GameItem {
     currentPos.z = oldPos.z;
     boolean moveX = false, moveY = false, moveZ = false;
     boolean moveXY = false, moveYZ = false, moveZX = false;
-    for (Mesh mesh : scene.getGameMeshes().keySet()) {
-      for (GameItem gameItem : scene.getGameMeshes().get(mesh)) {
-        if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
-      }
+    for (GameItem gameItem : scene.getGameItems()) {
+      if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
     }
     if (!collision) {
       moveX = true;
@@ -65,10 +76,8 @@ public class Player extends GameItem {
     currentPos.x = oldPos.x;
     currentPos.y = newPos.y;
     currentPos.z = oldPos.z;
-    for (Mesh mesh : scene.getGameMeshes().keySet()) {
-      for (GameItem gameItem : scene.getGameMeshes().get(mesh)) {
-        if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
-      }
+    for (GameItem gameItem : scene.getGameItems()) {
+      if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
     }
     if (!collision) {
       moveY = true;
@@ -77,10 +86,8 @@ public class Player extends GameItem {
     currentPos.x = oldPos.x;
     currentPos.y = oldPos.y;
     currentPos.z = newPos.z;
-    for (Mesh mesh : scene.getGameMeshes().keySet()) {
-      for (GameItem gameItem : scene.getGameMeshes().get(mesh)) {
-        if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
-      }
+    for (GameItem gameItem : scene.getGameItems()) {
+      if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
     }
     if (!collision) {
       moveZ = true;
@@ -89,10 +96,8 @@ public class Player extends GameItem {
     currentPos.x = newPos.x;
     currentPos.y = newPos.y;
     currentPos.z = oldPos.z;
-    for (Mesh mesh : scene.getGameMeshes().keySet()) {
-      for (GameItem gameItem : scene.getGameMeshes().get(mesh)) {
-        if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
-      }
+    for (GameItem gameItem : scene.getGameItems()) {
+      if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
     }
     if (!collision) {
       moveXY = true;
@@ -101,10 +106,8 @@ public class Player extends GameItem {
     currentPos.x = oldPos.x;
     currentPos.y = newPos.y;
     currentPos.z = newPos.z;
-    for (Mesh mesh : scene.getGameMeshes().keySet()) {
-      for (GameItem gameItem : scene.getGameMeshes().get(mesh)) {
-        if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
-      }
+    for (GameItem gameItem : scene.getGameItems()) {
+      if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
     }
     if (!collision) {
       moveYZ = true;
@@ -113,10 +116,8 @@ public class Player extends GameItem {
     currentPos.x = newPos.x;
     currentPos.y = oldPos.y;
     currentPos.z = newPos.z;
-    for (Mesh mesh : scene.getGameMeshes().keySet()) {
-      for (GameItem gameItem : scene.getGameMeshes().get(mesh)) {
-        if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
-      }
+    for (GameItem gameItem : scene.getGameItems()) {
+      if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
     }
     if (!collision) {
       moveZX = true;
