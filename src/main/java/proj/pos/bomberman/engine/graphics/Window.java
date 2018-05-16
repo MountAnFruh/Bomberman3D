@@ -7,10 +7,12 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.Configuration;
 
+import java.awt.*;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -52,7 +54,12 @@ public class Window {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-    windowHandle = glfwCreateWindow(width, height, title, NULL, NULL);
+    //Set Window in FullScreen mode
+    GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+    width = gd.getDisplayMode().getWidth();
+    height = gd.getDisplayMode().getHeight();
+    windowHandle = glfwCreateWindow(width, height, title, glfwGetPrimaryMonitor(), NULL);
+
     if (windowHandle == NULL) {
       throw new RuntimeException("Failed to create GLFW window");
     }
@@ -94,6 +101,7 @@ public class Window {
     glfwSetWindowPos(windowHandle,
             (vidmode.width() - width) / 2,
             (vidmode.height() - height) / 2);
+
 
     // Make OpenGL context current
     glfwMakeContextCurrent(windowHandle);
