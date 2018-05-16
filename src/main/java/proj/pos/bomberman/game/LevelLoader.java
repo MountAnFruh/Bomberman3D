@@ -19,6 +19,7 @@ public class LevelLoader {
    * 3 | BLAU    | Block per Zufall
    * 4 | ROT     | Zerstörbarer Block
    */
+
   private static Color[] colors = new Color[]{
           Color.WHITE, Color.BLACK, Color.GREEN, Color.BLUE, Color.RED
   };
@@ -81,7 +82,7 @@ public class LevelLoader {
     List<Vector2i> rCoordinates = new ArrayList<>();
     for (int y = 0; y < ids.length; y++) {
       for (int x = 0; x < ids[y].length; x++) {
-        if (ids[y][x] == 3) {
+        if (ids[y][x] == Level.RANDOM_ID) {
           rCoordinates.add(new Vector2i(x, y));
           ids[y][x] = 0;
         }

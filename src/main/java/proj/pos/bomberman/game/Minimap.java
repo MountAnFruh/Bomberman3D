@@ -79,8 +79,8 @@ public class Minimap implements IHud {
     destBlock.setMaterial(material);
 
     bombBlock = OBJLoader.loadMesh("/models/rectangle.obj");
-    material = new Material();
-    material.setAmbientColor(new Vector4f(1, 0, 0, 1));
+    texture = new Texture("/textures/maps/map_one.png");
+    material = new Material(texture, 0.0f);
     bombBlock.setMaterial(material);
 
     emptyBlock = OBJLoader.loadMesh("/models/rectangle.obj");
