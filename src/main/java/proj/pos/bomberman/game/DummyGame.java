@@ -140,6 +140,7 @@ public class DummyGame implements IGameLogic {
     }
     if (window.isKeyPressed(GLFW_KEY_ENTER)) {
       player.placeBomb();
+      System.out.println("place");
     }
 
 //    if (window.isKeyPressed(GLFW_KEY_UP)) {
