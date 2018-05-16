@@ -41,6 +41,7 @@ public class Minimap implements IHud {
   private final Mesh bombBlock;
 
   private GameItem[][] blockItems;
+  private GameItem[][] specialItems;
 
   public Minimap(Level level, Vector3f movedLevel, float scaleLevel, Player player) throws IOException {
     FontTexture fontTexture = new FontTexture(FONT, CHARSET);
@@ -79,7 +80,7 @@ public class Minimap implements IHud {
     destBlock.setMaterial(material);
 
     bombBlock = OBJLoader.loadMesh("/models/rectangle.obj");
-    texture = new Texture("/textures/bomb_minimap.png");
+    texture = new Texture("/textures/bomb_small.png");
     material = new Material(texture, 0.0f);
     bombBlock.setMaterial(material);
 
@@ -99,12 +100,10 @@ public class Minimap implements IHud {
     for (int y = 0; y < blockItems.length; y++) {
       for (int x = 0; x < blockItems[y].length; x++) {
         GameItem gameItem;
-        if (layout[y][x] == 1) {
+        if (layout[y][x] == Level.CONSTANT_ID) {
           gameItem = new GameItem(fixBlock);
-        } else if (layout[y][x] == 4) {
+        } else if (layout[y][x] == Level.DESTROYABLE_ID) {
           gameItem = new GameItem(destBlock);
-        } else if (layout[y][x] == 5) {
-          gameItem = new GameItem(bombBlock);
         } else {
           gameItem = new GameItem(emptyBlock);
         }
@@ -112,6 +111,22 @@ public class Minimap implements IHud {
         gameItem.setRotation(0f, 180f, 180f);
         blockItems[x][y] = gameItem;
         gameItems.add(gameItem);
+      }
+    }
+    int[][] specialLayout = level.getItemLayout();
+    specialItems = new GameItem[specialLayout.length][specialLayout[0].length];
+    for (int y = 0; y < specialItems.length; y++) {
+      for (int x = 0; x < specialItems[y].length; x++) {
+        GameItem gameItem = null;
+        if (specialLayout[y][x] == Level.BOMB_ID) {
+          gameItem = new GameItem(bombBlock);
+        }
+        if(gameItem != null) {
+          gameItem.setScale(BLOCKSCALE);
+          gameItem.setRotation(0f, 180f, 180f);
+          specialItems[x][y] = gameItem;
+          gameItems.add(gameItem);
+        }
       }
     }
   }
@@ -128,7 +143,14 @@ public class Minimap implements IHud {
     for (int i = 0; i < blockItems.length; i++) {
       for (int j = 0; j < blockItems[i].length; j++) {
         if (blockItems[i][j] != null) {
-          blockItems[i][j].setPosition(MINIMAPMOVEDX + i * BLOCKSCALE, MINIMAPMOVEDY + j * BLOCKSCALE, 0.99f);
+          blockItems[i][j].setPosition(MINIMAPMOVEDX + i * BLOCKSCALE, MINIMAPMOVEDY + j * BLOCKSCALE, 0.997f);
+        }
+      }
+    }
+    for (int i = 0; i < specialItems.length; i++) {
+      for (int j = 0; j < specialItems[i].length; j++) {
+        if (specialItems[i][j] != null) {
+          specialItems[i][j].setPosition(MINIMAPMOVEDX + i * BLOCKSCALE, MINIMAPMOVEDY + j * BLOCKSCALE, 0.998f);
         }
       }
     }

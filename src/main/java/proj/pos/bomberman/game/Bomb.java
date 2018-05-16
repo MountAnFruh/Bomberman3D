@@ -5,6 +5,7 @@ import proj.pos.bomberman.engine.graphics.Mesh;
 
 public class Bomb extends GameItem {
 
+  private boolean exploded = false;
   private float timeLived = 0.0f;
   private Level level;
 
@@ -20,8 +21,11 @@ public class Bomb extends GameItem {
   @Override
   public void update(double delta) {
     timeLived += delta;
-    if (timeLived > 90.0f) {
+    if (timeLived > 90.0f && !exploded) {
       level.explodeBomb(this);
+    }
+    if(exploded) {
+      level.removeBomb(this);
     }
   }
 
@@ -31,5 +35,13 @@ public class Bomb extends GameItem {
 
   public int getPower() {
     return power;
+  }
+
+  public void setExploded(boolean exploded) {
+    this.exploded = exploded;
+  }
+
+  public boolean isExploded() {
+    return exploded;
   }
 }

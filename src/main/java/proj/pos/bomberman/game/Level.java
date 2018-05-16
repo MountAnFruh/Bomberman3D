@@ -23,7 +23,8 @@ public class Level {
   private Minimap minimap;
 
   private int[][] layout;
-  private GameItem[][] destroyableBlocks;
+  private int[][] itemLayout;
+  private GameItem[][] destroyableItems;
 
   private Vector3f moved;
   private float scale;
@@ -40,6 +41,7 @@ public class Level {
     this.moved = moved;
     this.scale = scale;
     this.layout = layout;
+    this.itemLayout = new int[layout.length][layout[0].length];
   }
 
   private void buildFloor() {
@@ -81,9 +83,10 @@ public class Level {
       float zCoord = player.getPosition().z - moved.z;
       int xLevel = (int) (xCoord / scaleValue);
       int yLevel = (int) (zCoord / scaleValue);
-      layout[yLevel][xLevel] = BOMB_ID;
+      itemLayout[yLevel][xLevel] = BOMB_ID;
       if (minimap != null) minimap.doDrawing();
       Bomb bombItem = new Bomb(bombMesh, this, 1);
+      destroyableItems[yLevel][xLevel] = bombItem;
       gameItemsLevel.add(bombItem);
       bombItem.setPosition((xLevel * scaleValue) * scaleValue + 0.5f,
               yCoord * scaleValue + bombScale, (yLevel * scaleValue) * scaleValue + 0.5f);
@@ -93,65 +96,65 @@ public class Level {
   }
 
   public void removeBomb(Bomb bomb) {
-    float scaleValue = (scale * 2);
-    int xLevel = (int) (bomb.getPosition().x - 0.5f / (scaleValue * 2));
-    int yLevel = (int) (bomb.getPosition().z - 0.5f / (scaleValue * 2));
-    layout[yLevel][xLevel] = EMPTY_ID;
-    gameItemsLevel.remove(bomb);
-    if (minimap != null) minimap.doDrawing();
+    if(bomb.isExploded()) {
+      float scaleValue = (scale * 2);
+      int xLevel = (int) (bomb.getPosition().x - 0.5f / (scaleValue * 2));
+      int yLevel = (int) (bomb.getPosition().z - 0.5f / (scaleValue * 2));
+      itemLayout[yLevel][xLevel] = EMPTY_ID;
+      destroyableItems[yLevel][xLevel] = null;
+      gameItemsLevel.remove(bomb);
+      if (minimap != null) minimap.doDrawing();
+    }
   }
 
   public void explodeBomb(Bomb bomb) {
+    bomb.setExploded(true);
     float scaleValue = (scale * 2);
     int xLevel = (int) (bomb.getPosition().x - 0.5f / (scaleValue * 2));
     int yLevel = (int) (bomb.getPosition().z - 0.5f / (scaleValue * 2));
-    if (layout[yLevel][xLevel] == BOMB_ID) {
+    if (itemLayout[yLevel][xLevel] == BOMB_ID) {
       int power = bomb.getPower();
       for(int x = xLevel + 1;x <= xLevel + power;x++) {
-        int id = layout[yLevel][x];
-        if(id == CONSTANT_ID) break;
-        if(id == DESTROYABLE_ID) {
-          layout[yLevel][x] = EMPTY_ID;
-          gameItemsLevel.remove(destroyableBlocks[yLevel][x]);
-          destroyableBlocks[yLevel][x] = null;
-        }
+        if(!destroy(x, yLevel)) break;
       }
       for(int x = xLevel - 1;x >= xLevel - power;x--) {
-        int id = layout[yLevel][x];
-        if(id == CONSTANT_ID) break;
-        if(id == DESTROYABLE_ID) {
-          layout[yLevel][x] = EMPTY_ID;
-          gameItemsLevel.remove(destroyableBlocks[yLevel][x]);
-          destroyableBlocks[yLevel][x] = null;
-        }
+        if(!destroy(x, yLevel)) break;
       }
       for(int y = yLevel + 1;y <= yLevel + power;y++) {
-        int id = layout[y][xLevel];
-        if(id == CONSTANT_ID) break;
-        if(id == DESTROYABLE_ID) {
-          layout[y][xLevel] = EMPTY_ID;
-          gameItemsLevel.remove(destroyableBlocks[y][xLevel]);
-          destroyableBlocks[y][xLevel] = null;
-        }
+        if(!destroy(xLevel, y)) break;
       }
       for(int y = yLevel - 1;y >= yLevel - power;y--) {
-        int id = layout[y][xLevel];
-        if(id == CONSTANT_ID) break;
-        if(id == DESTROYABLE_ID) {
-          layout[y][xLevel] = EMPTY_ID;
-          gameItemsLevel.remove(destroyableBlocks[y][xLevel]);
-          destroyableBlocks[y][xLevel] = null;
-        }
+        if(!destroy(xLevel, y)) break;
       }
-      removeBomb(bomb);
     }
+  }
+
+  public boolean destroy(int x, int y) {
+    int id = layout[y][x];
+    int itemId = itemLayout[y][x];
+    if(id == CONSTANT_ID) {
+      return false;
+    }
+    if(itemId == BOMB_ID) {
+      Bomb bomb2 = (Bomb) destroyableItems[y][x];
+      if(!bomb2.isExploded()) {
+        this.explodeBomb(bomb2);
+      }
+      return false;
+    }
+    if(id == DESTROYABLE_ID) {
+      layout[y][x] = EMPTY_ID;
+      gameItemsLevel.remove(destroyableItems[y][x]);
+      destroyableItems[y][x] = null;
+    }
+    return true;
   }
 
   public void buildMap() {
     if (constantBlockMesh == null || floorBlockMesh == null || destroyableBlockMesh == null)
       throw new RuntimeException("Block Meshes not set!");
     buildFloor();
-    this.destroyableBlocks = new GameItem[layout.length][layout[0].length];
+    this.destroyableItems = new GameItem[layout.length][layout[0].length];
     for (int y = 0; y < layout.length; y++) {
       for (int x = 0; x < layout[y].length; x++) {
         int id = layout[y][x];
@@ -166,7 +169,7 @@ public class Level {
             gameItem = new GameItem(constantBlockMesh);
           } else {
             gameItem = new GameItem(destroyableBlockMesh);
-            destroyableBlocks[y][x] = gameItem;
+            destroyableItems[y][x] = gameItem;
           }
           gameItemsLevel.add(gameItem);
           gameItem.setPosition(xCoord * scaleValue + 0.5f, yCoord * scaleValue + 0.5f, zCoord * scaleValue + 0.5f);
@@ -202,6 +205,10 @@ public class Level {
 
   public int[][] getLayout() {
     return layout;
+  }
+
+  public int[][] getItemLayout() {
+    return itemLayout;
   }
 
   public List<GameItem> getGameItemsLevel() {
