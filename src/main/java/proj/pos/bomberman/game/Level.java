@@ -85,7 +85,7 @@ public class Level {
       int yLevel = (int) (zCoord / scaleValue);
       itemLayout[yLevel][xLevel] = BOMB_ID;
       if (minimap != null) minimap.doDrawing();
-      Bomb bombItem = new Bomb(bombMesh, this, 1);
+      Bomb bombItem = new Bomb(bombMesh, this, 3);
       destroyableItems[yLevel][xLevel] = bombItem;
       gameItemsLevel.add(bombItem);
       bombItem.setPosition((xLevel * scaleValue) * scaleValue + 0.5f,
@@ -146,6 +146,7 @@ public class Level {
       layout[y][x] = EMPTY_ID;
       gameItemsLevel.remove(destroyableItems[y][x]);
       destroyableItems[y][x] = null;
+      return false;
     }
     return true;
   }
