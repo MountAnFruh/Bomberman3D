@@ -7,6 +7,7 @@ public class Bomb extends GameItem {
 
   private boolean exploded = false;
   private float timeLived = 0.0f;
+  private float timeToLive = 200.0f;
   private Level level;
 
   private int power = 1;
@@ -21,7 +22,7 @@ public class Bomb extends GameItem {
   @Override
   public void update(double delta) {
     timeLived += delta;
-    if (timeLived > 90.0f && !exploded) {
+    if (timeLived > timeToLive) {
       level.explodeBomb(this);
     }
     if(exploded) {

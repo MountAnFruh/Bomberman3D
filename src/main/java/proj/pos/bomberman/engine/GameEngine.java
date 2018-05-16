@@ -2,6 +2,8 @@ package proj.pos.bomberman.engine;
 
 import proj.pos.bomberman.engine.graphics.Window;
 
+import static org.lwjgl.glfw.GLFW.glfwSetCursorPos;
+
 public class GameEngine implements Runnable {
 
   public static final int TARGET_FPS = 60;

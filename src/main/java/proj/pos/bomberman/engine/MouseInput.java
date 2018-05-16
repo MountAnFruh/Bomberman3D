@@ -13,12 +13,10 @@ public class MouseInput {
   private final Vector2f displVec;
 
   private boolean inWindow = false;
-
   private boolean focusWindow = true;
-
   private boolean leftButtonPressed = false;
-
   private boolean rightButtonPressed = false;
+  private boolean firstMove = true;
 
   public MouseInput() {
     currentPos = new Vector2d(0, 0);
@@ -26,6 +24,7 @@ public class MouseInput {
   }
 
   public void init(Window window) {
+
     glfwSetCursorPosCallback(window.getWindowHandle(), (windowHandle, xpos, ypos) -> {
       currentPos.x = xpos;
       currentPos.y = ypos;
@@ -47,6 +46,8 @@ public class MouseInput {
   }
 
   public void input(Window window) {
+    System.out.println(window.getWidth()/2 + " - window");
+    System.out.println(currentPos.x + " - cursor");
     if (focusWindow) {
       glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
       displVec.x = 0;
@@ -54,6 +55,15 @@ public class MouseInput {
       if (inWindow) {
         double deltaX = currentPos.x - window.getWidth() / 2;
         double deltaY = currentPos.y - window.getHeight() / 2;
+        if(firstMove)
+        {
+          deltaX = 0;
+          deltaY = 0;
+        }
+        if(firstMove && currentPos.x != 0 && currentPos.y != 0)
+        {
+          firstMove = false;
+        }
         boolean rotateX = deltaX != 0;
         boolean rotateY = deltaY != 0;
         if (rotateX) {
