@@ -46,8 +46,6 @@ public class MouseInput {
   }
 
   public void input(Window window) {
-    System.out.println(window.getWidth()/2 + " - window");
-    System.out.println(currentPos.x + " - cursor");
     if (focusWindow) {
       glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
       displVec.x = 0;

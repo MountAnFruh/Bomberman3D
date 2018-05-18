@@ -7,10 +7,15 @@ import proj.pos.bomberman.engine.MouseInput;
 import proj.pos.bomberman.engine.graphics.Camera;
 import proj.pos.bomberman.engine.graphics.Scene;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Player extends GameItem {
 
   private static final float MOUSE_SENSITIVITY = 0.2f;
   private static final float CAMERA_POS_STEP = 0.05f;
+
+  private final List<GameItem> noCollision = new ArrayList<>();
 
   private final Level level;
 
@@ -40,6 +45,11 @@ public class Player extends GameItem {
     } else {
       bombPlaceCooldown = 0;
     }
+    for(GameItem gameItem : new ArrayList<>(noCollision)) {
+      if(!gameItem.isCollidingWith(this.getBoundingBox())) {
+        noCollision.remove(gameItem);
+      }
+    }
   }
 
   private void changeRotation(MouseInput mouseInput) {
@@ -53,12 +63,17 @@ public class Player extends GameItem {
 
   public void placeBomb() {
     if (bombPlaceCooldown == 0) {
-      level.placeBomb(this);
-      bombPlaceCooldown = 30.0f;
+      Bomb bomb = level.placeBomb(this);
+      if(bomb != null) {
+        if(bomb.isCollidingWith(this.getBoundingBox())) {
+          noCollision.add(bomb);
+        }
+        bombPlaceCooldown = 30.0f;
+      }
     }
   }
 
-  public void doCollisions(Scene scene, Vector3f oldPos, Vector3f currentPos) {
+  public void doCollisions(Scene scene, Vector3f oldPos, Vector3f currentPos, List<GameItem> noCollision) {
     boolean collision = false;
     Vector3f newPos = new Vector3f(currentPos);
     currentPos.x = newPos.x;
@@ -67,6 +82,7 @@ public class Player extends GameItem {
     boolean moveX = false, moveY = false, moveZ = false;
     boolean moveXY = false, moveYZ = false, moveZX = false;
     for (GameItem gameItem : scene.getGameItems()) {
+      if(noCollision.contains(gameItem)) continue;
       if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
     }
     if (!collision) {
@@ -77,6 +93,7 @@ public class Player extends GameItem {
     currentPos.y = newPos.y;
     currentPos.z = oldPos.z;
     for (GameItem gameItem : scene.getGameItems()) {
+      if(noCollision.contains(gameItem)) continue;
       if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
     }
     if (!collision) {
@@ -87,6 +104,7 @@ public class Player extends GameItem {
     currentPos.y = oldPos.y;
     currentPos.z = newPos.z;
     for (GameItem gameItem : scene.getGameItems()) {
+      if(noCollision.contains(gameItem)) continue;
       if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
     }
     if (!collision) {
@@ -97,6 +115,7 @@ public class Player extends GameItem {
     currentPos.y = newPos.y;
     currentPos.z = oldPos.z;
     for (GameItem gameItem : scene.getGameItems()) {
+      if(noCollision.contains(gameItem)) continue;
       if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
     }
     if (!collision) {
@@ -107,6 +126,7 @@ public class Player extends GameItem {
     currentPos.y = newPos.y;
     currentPos.z = newPos.z;
     for (GameItem gameItem : scene.getGameItems()) {
+      if(noCollision.contains(gameItem)) continue;
       if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
     }
     if (!collision) {
@@ -117,6 +137,7 @@ public class Player extends GameItem {
     currentPos.y = oldPos.y;
     currentPos.z = newPos.z;
     for (GameItem gameItem : scene.getGameItems()) {
+      if(noCollision.contains(gameItem)) continue;
       if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
     }
     if (!collision) {
@@ -174,7 +195,7 @@ public class Player extends GameItem {
     position.y += offsetY;
     Vector3f currPos = this.getPosition();
     if (scene != null) {
-      doCollisions(scene, oldPos, currPos);
+      doCollisions(scene, oldPos, currPos, noCollision);
     }
     refreshCamera();
   }

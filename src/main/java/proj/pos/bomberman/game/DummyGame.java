@@ -138,9 +138,8 @@ public class DummyGame implements IGameLogic {
     } else if (window.isKeyPressed(GLFW_KEY_SPACE)) {
       player.getMovementVec().y = 1;
     }
-    if (window.isKeyPressed(GLFW_KEY_ENTER)) {
+    if (window.isKeyPressed(GLFW_KEY_LEFT_CONTROL)) {
       player.placeBomb();
-      System.out.println("place");
     }
 
 //    if (window.isKeyPressed(GLFW_KEY_UP)) {

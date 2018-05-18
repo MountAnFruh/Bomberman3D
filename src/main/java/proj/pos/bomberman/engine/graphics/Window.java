@@ -18,6 +18,8 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {
 
+  private final boolean fullscreen = true;
+
   private final String title;
   private int width;
   private int height;
@@ -54,11 +56,15 @@ public class Window {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-    //Set Window in FullScreen mode
-    GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-    width = gd.getDisplayMode().getWidth();
-    height = gd.getDisplayMode().getHeight();
-    windowHandle = glfwCreateWindow(width, height, title, glfwGetPrimaryMonitor(), NULL);
+    if(fullscreen) {
+      //Set Window in FullScreen mode
+      GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+      width = gd.getDisplayMode().getWidth();
+      height = gd.getDisplayMode().getHeight();
+      windowHandle = glfwCreateWindow(width, height, title, glfwGetPrimaryMonitor(), NULL);
+    } else {
+      windowHandle = glfwCreateWindow(width, height, title, NULL, NULL);
+    }
 
     if (windowHandle == NULL) {
       throw new RuntimeException("Failed to create GLFW window");

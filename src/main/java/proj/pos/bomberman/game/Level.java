@@ -73,7 +73,7 @@ public class Level {
     return false;
   }
 
-  public void placeBomb(Player player) {
+  public Bomb placeBomb(Player player) {
     if (bombMesh == null)
       throw new RuntimeException("Bomb Mesh not set!");
     if (insideXZ(player)) {
@@ -83,16 +83,20 @@ public class Level {
       float zCoord = player.getPosition().z - moved.z;
       int xLevel = (int) (xCoord / scaleValue);
       int yLevel = (int) (zCoord / scaleValue);
-      itemLayout[yLevel][xLevel] = BOMB_ID;
-      if (minimap != null) minimap.doDrawing();
-      Bomb bombItem = new Bomb(bombMesh, this, 3);
-      destroyableItems[yLevel][xLevel] = bombItem;
-      gameItemsLevel.add(bombItem);
-      bombItem.setPosition((xLevel * scaleValue) * scaleValue + 0.5f,
-              yCoord * scaleValue + bombScale, (yLevel * scaleValue) * scaleValue + 0.5f);
-      bombItem.setScale(bombScale);
-      bombItem.setRotation(0, 0, 0);
+      if(itemLayout[yLevel][xLevel] == EMPTY_ID) {
+        itemLayout[yLevel][xLevel] = BOMB_ID;
+        if (minimap != null) minimap.doDrawing();
+        Bomb bombItem = new Bomb(bombMesh, this, 3, 90);
+        destroyableItems[yLevel][xLevel] = bombItem;
+        gameItemsLevel.add(bombItem);
+        bombItem.setPosition((xLevel * scaleValue) * scaleValue + 0.5f,
+                yCoord * scaleValue + bombScale, (yLevel * scaleValue) * scaleValue + 0.5f);
+        bombItem.setScale(bombScale);
+        bombItem.setRotation(0, 0, 0);
+        return bombItem;
+      }
     }
+    return null;
   }
 
   public void removeBomb(Bomb bomb) {
