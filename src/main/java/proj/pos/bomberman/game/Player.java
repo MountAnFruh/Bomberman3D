@@ -33,10 +33,13 @@ public class Player extends GameItem {
 
   private float speed;
 
+  private boolean dead;
+
   public Player(Camera camera, Level level) {
     super();
     this.setScale(0.0001f);
     this.level = level;
+    level.getPlayers().add(this);
     this.camera = camera;
     this.movementVec = new Vector3f(0, 0, 0);
     this.speed = CAMERA_POS_STEP;
@@ -274,5 +277,10 @@ public class Player extends GameItem {
 
   public float getSpeed() {
     return speed;
+  }
+
+  public void onDeath() {
+    this.dead = true;
+    System.out.println("Player is now dead! " + dead);
   }
 }

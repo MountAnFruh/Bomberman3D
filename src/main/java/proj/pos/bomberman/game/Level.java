@@ -2,6 +2,7 @@ package proj.pos.bomberman.game;
 
 import org.joml.Vector3f;
 import proj.pos.bomberman.engine.GameItem;
+import proj.pos.bomberman.engine.graphics.BoundingBox;
 import proj.pos.bomberman.engine.graphics.Mesh;
 
 import java.util.*;
@@ -18,6 +19,7 @@ public class Level {
   private static final float bombScale = 0.3f;
 
   private final Map<Player, List<Bomb>> placedBombs = new HashMap<>();
+  private final List<Player> players = new LinkedList<>();
 
   private Minimap minimap;
 
@@ -122,24 +124,40 @@ public class Level {
     int yLevel = (int) (bomb.getPosition().z - 0.5f / (scaleValue * 2));
     if (itemLayout[yLevel][xLevel] == BOMB_ID) {
       int power = bomb.getPower();
+      explode(xLevel, yLevel);
       for(int x = xLevel + 1;x <= xLevel + power;x++) {
-        if(!destroy(x, yLevel)) break;
+        if(!explode(x, yLevel)) break;
       }
       for(int x = xLevel - 1;x >= xLevel - power;x--) {
-        if(!destroy(x, yLevel)) break;
+        if(!explode(x, yLevel)) break;
       }
       for(int y = yLevel + 1;y <= yLevel + power;y++) {
-        if(!destroy(xLevel, y)) break;
+        if(!explode(xLevel, y)) break;
       }
       for(int y = yLevel - 1;y >= yLevel - power;y--) {
-        if(!destroy(xLevel, y)) break;
+        if(!explode(xLevel, y)) break;
       }
     }
   }
 
-  public boolean destroy(int x, int y) {
+  public boolean explode(int x, int y) {
+    float scaleValue = (scale * 2);
     int id = layout[y][x];
     int itemId = itemLayout[y][x];
+    float xTileCoordinate = x * scaleValue;
+    float zTileCoordinate = y * scaleValue;
+    float maxXTileCoordinate = (x+1) * scaleValue;
+    float maxZTileCoordinate = (y+1) * scaleValue;
+    Vector3f min = new Vector3f(xTileCoordinate, moved.y, zTileCoordinate);
+    Vector3f max = new Vector3f(maxXTileCoordinate, moved.y + scaleValue, maxZTileCoordinate);
+    BoundingBox bbExplosion = new BoundingBox();
+    bbExplosion.setMin(min);
+    bbExplosion.setMax(max);
+    for(Player player : players) {
+      if(player.getBoundingBox().isCollidingWith(bbExplosion)) {
+        player.onDeath();
+      }
+    }
     if(id == CONSTANT_ID) {
       return false;
     }
@@ -230,5 +248,9 @@ public class Level {
 
   public Map<Player, List<Bomb>> getPlacedBombs() {
     return placedBombs;
+  }
+
+  public List<Player> getPlayers() {
+    return players;
   }
 }
