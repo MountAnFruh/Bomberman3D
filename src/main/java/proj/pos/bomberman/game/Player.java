@@ -243,4 +243,36 @@ public class Player extends GameItem {
   public Vector3f getMovementVec() {
     return movementVec;
   }
+
+  public void setTimeToLive(float timeToLive) {
+    this.timeToLive = timeToLive;
+  }
+
+  public float getTimeToLive() {
+    return timeToLive;
+  }
+
+  public void setBombPower(int bombPower) {
+    this.bombPower = bombPower;
+  }
+
+  public int getBombPower() {
+    return bombPower;
+  }
+
+  public void setMaxBombs(int maxBombs) {
+    this.maxBombs = maxBombs;
+  }
+
+  public int getMaxBombs() {
+    return maxBombs;
+  }
+
+  public void setSpeed(float speed) {
+    this.speed = speed;
+  }
+
+  public float getSpeed() {
+    return speed;
+  }
 }
