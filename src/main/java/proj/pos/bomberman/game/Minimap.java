@@ -94,6 +94,8 @@ public class Minimap implements IHud {
 
   public void doDrawing() {
     gameItems.clear();
+    gameItems.add(minimapText);
+    gameItems.add(coordinateText);
     // Create blocks
     int[][] layout = level.getLayout();
     blockItems = new GameItem[layout.length][layout[0].length];
