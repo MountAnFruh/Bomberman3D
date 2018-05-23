@@ -12,6 +12,7 @@ import java.util.List;
 
 public class Player extends GameItem {
 
+  private static final float MAXBOMBPLACECOOLDOWN = 5.0f;
   private static final float MOUSE_SENSITIVITY = 0.2f;
   private static final float CAMERA_POS_STEP = 0.05f;
 
@@ -24,6 +25,11 @@ public class Player extends GameItem {
   private final Vector3f movementVec;
 
   private float bombPlaceCooldown = 0.0f;
+
+  private int maxBombs = 1;
+
+  private int bombPower = 1;
+  private float timeToLive = 90f;
 
   private float speed;
 
@@ -62,13 +68,18 @@ public class Player extends GameItem {
   }
 
   public void placeBomb() {
+    if(level.getPlacedBombs().get(this) != null) {
+      if(level.getPlacedBombs().get(this).size() >= maxBombs) {
+        return;
+      }
+    }
     if (bombPlaceCooldown == 0) {
-      Bomb bomb = level.placeBomb(this);
+      Bomb bomb = level.placeBomb(this, bombPower, timeToLive);
       if(bomb != null) {
         if(bomb.isCollidingWith(this.getBoundingBox())) {
           noCollision.add(bomb);
         }
-        bombPlaceCooldown = 30.0f;
+        bombPlaceCooldown = MAXBOMBPLACECOOLDOWN;
       }
     }
   }

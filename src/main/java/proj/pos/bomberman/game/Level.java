@@ -4,9 +4,7 @@ import org.joml.Vector3f;
 import proj.pos.bomberman.engine.GameItem;
 import proj.pos.bomberman.engine.graphics.Mesh;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Level {
 
@@ -17,8 +15,9 @@ public class Level {
   public static int DESTROYABLE_ID = 4;
   public static int BOMB_ID = 5;
 
-  private static final Random rand = new Random();
   private static final float bombScale = 0.3f;
+
+  private final Map<Player, List<Bomb>> placedBombs = new HashMap<>();
 
   private Minimap minimap;
 
@@ -73,7 +72,7 @@ public class Level {
     return false;
   }
 
-  public Bomb placeBomb(Player player) {
+  public Bomb placeBomb(Player player, int power, float timeToLive) {
     if (bombMesh == null)
       throw new RuntimeException("Bomb Mesh not set!");
     if (insideXZ(player)) {
@@ -86,7 +85,9 @@ public class Level {
       if(itemLayout[yLevel][xLevel] == EMPTY_ID) {
         itemLayout[yLevel][xLevel] = BOMB_ID;
         if (minimap != null) minimap.doDrawing();
-        Bomb bombItem = new Bomb(bombMesh, this, 3, 90);
+        Bomb bombItem = new Bomb(bombMesh, player, this, power, timeToLive);
+        if(!placedBombs.containsKey(player)) placedBombs.put(player, new LinkedList<>());
+        placedBombs.get(player).add(bombItem);
         destroyableItems[yLevel][xLevel] = bombItem;
         gameItemsLevel.add(bombItem);
         bombItem.setPosition((xLevel * scaleValue) * scaleValue + 0.5f,
@@ -99,7 +100,7 @@ public class Level {
     return null;
   }
 
-  public void removeBomb(Bomb bomb) {
+  public void removeBomb(Player player, Bomb bomb) {
     if(bomb.isExploded()) {
       float scaleValue = (scale * 2);
       int xLevel = (int) (bomb.getPosition().x - 0.5f / (scaleValue * 2));
@@ -107,6 +108,9 @@ public class Level {
       itemLayout[yLevel][xLevel] = EMPTY_ID;
       destroyableItems[yLevel][xLevel] = null;
       gameItemsLevel.remove(bomb);
+      if(placedBombs.containsKey(player)) {
+        placedBombs.get(player).remove(bomb);
+      }
       if (minimap != null) minimap.doDrawing();
     }
   }
@@ -222,5 +226,9 @@ public class Level {
 
   public List<Vector3f> getSpawnPoints() {
     return spawnPoints;
+  }
+
+  public Map<Player, List<Bomb>> getPlacedBombs() {
+    return placedBombs;
   }
 }

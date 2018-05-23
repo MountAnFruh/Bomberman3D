@@ -5,6 +5,7 @@ import proj.pos.bomberman.engine.graphics.Mesh;
 
 public class Bomb extends GameItem {
 
+  private final Player player;
   private final Level level;
 
   private boolean exploded = false;
@@ -13,9 +14,10 @@ public class Bomb extends GameItem {
 
   private int power;
 
-  public Bomb(Mesh mesh, Level level, int power, float timeToLive) {
+  public Bomb(Mesh mesh, Player player, Level level, int power, float timeToLive) {
     super(mesh);
     this.mesh = mesh;
+    this.player = player;
     this.level = level;
     this.power = power;
     this.timeToLive = timeToLive;
@@ -28,7 +30,7 @@ public class Bomb extends GameItem {
       level.explodeBomb(this);
     }
     if(exploded) {
-      level.removeBomb(this);
+      level.removeBomb(player, this);
     }
   }
 
