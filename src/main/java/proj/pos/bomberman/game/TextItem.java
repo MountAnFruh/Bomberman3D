@@ -98,4 +98,6 @@ public class TextItem extends GameItem {
     this.getMesh().deleteBuffers();
     this.setMesh(buildMesh());
   }
+
+
 }

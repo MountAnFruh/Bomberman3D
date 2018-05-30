@@ -27,6 +27,7 @@ public class DummyGame implements IGameLogic {
 
   private Minimap minimap;
 
+
   public DummyGame() {
     this.renderer = new Renderer();
     this.camera = new Camera();

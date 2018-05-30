@@ -156,6 +156,7 @@ public class Level {
     for(Player player : players) {
       if(player.getBoundingBox().isCollidingWith(bbExplosion)) {
         player.onDeath();
+        minimap.setLives(minimap.getLives()-50);
       }
     }
     if(id == CONSTANT_ID) {

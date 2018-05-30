@@ -19,7 +19,9 @@ public class Hud implements IHud {
 
   private final TextItem statusTextItem;
 
-  private final GameItem compassItem;
+  //private final GameItem compassItem;
+
+  private final GameItem playerAvatar;
 
   public Hud(String statusText) throws IOException {
     FontTexture fontTexture = new FontTexture(FONT, CHARSET);
@@ -27,7 +29,7 @@ public class Hud implements IHud {
 
     this.statusTextItem.getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
 
-    // Create compass
+    /*// Create compass
     Mesh mesh = OBJLoader.loadMesh("/models/compass.obj");
     Material material = new Material();
     material.setAmbientColor(new Vector4f(1, 0, 0, 1));
@@ -35,10 +37,21 @@ public class Hud implements IHud {
     compassItem = new GameItem(mesh);
     compassItem.setScale(40.0f);
     // Rotate to transform it to screen coordinates
-    compassItem.setRotation(0f, 180f, 180f);
+    compassItem.setRotation(0f, 180f, 180f);*/
+
+
+    // Create player avatar
+    Mesh mesh = OBJLoader.loadMesh("/models/rectangle.obj");
+    Texture texture = new Texture("/textures/playeravatar.png");
+    Material material = new Material(texture, 0f);
+    material.setAmbientColor(new Vector4f(1, 0, 0, 1));
+    mesh.setMaterial(material);
+    playerAvatar = new GameItem(mesh);
+    playerAvatar.setScale(10);
+    //compassItem.setScale(40.0f);
 
     // Create list that holds the items that compose of the HUD
-    gameItems = new GameItem[]{statusTextItem, compassItem};
+    gameItems = new GameItem[]{statusTextItem/*, compassItem*/, playerAvatar};
   }
 
   public void setStatusText(String statusText) {
@@ -50,12 +63,19 @@ public class Hud implements IHud {
     return gameItems;
   }
 
-  public void updateSize(Window window) {
-    this.statusTextItem.setPosition(5f, 5f, 0);
-    this.compassItem.setPosition(window.getWidth() - 40f, 50f, 0f);
+  public void update(Window window){
+    this.statusTextItem.setPosition(500f, 500f, 0);
+    this.playerAvatar.setPosition(500f, 500f, 0);
+
   }
 
-  public void rotateCompass(float angle) {
-    this.compassItem.setRotation(0f, 180f, 180 - angle);
+  public void updateSize(Window window) {
+    this.statusTextItem.setPosition(5f, 5f, 0);
+    //this.compassItem.setPosition(window.getWidth() - 40f, 50f, 0f);
+    this.playerAvatar.setPosition(window.getWidth() - 45f, 45f, 0f);
   }
+
+ /* public void rotateCompass(float angle) {
+    this.compassItem.setRotation(0f, 180f, 180 - angle);
+  }*/
 }
