@@ -2,8 +2,6 @@ package proj.pos.bomberman.engine;
 
 import proj.pos.bomberman.engine.graphics.Window;
 
-import static org.lwjgl.glfw.GLFW.glfwSetCursorPos;
-
 public class GameEngine implements Runnable {
 
   public static final int TARGET_FPS = 60;
@@ -65,7 +63,7 @@ public class GameEngine implements Runnable {
 
       if (deltaU >= 1) {
         input();
-        update(deltaU);
+        update(deltaU / TARGET_UPS);
         ups++;
         deltaU--;
       }

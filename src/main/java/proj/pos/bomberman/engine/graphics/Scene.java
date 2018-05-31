@@ -1,6 +1,7 @@
 package proj.pos.bomberman.engine.graphics;
 
 import proj.pos.bomberman.engine.GameItem;
+import proj.pos.bomberman.engine.graphics.particles.IParticleEmitter;
 import proj.pos.bomberman.game.SkyBox;
 
 import java.util.ArrayList;
@@ -9,6 +10,8 @@ import java.util.List;
 public class Scene {
 
   private List<GameItem> gameItems;
+
+  private List<IParticleEmitter> particleEmitters;
 
   private SkyBox skyBox;
 
@@ -46,5 +49,13 @@ public class Scene {
 
   public void setSceneLight(SceneLight sceneLight) {
     this.sceneLight = sceneLight;
+  }
+
+  public List<IParticleEmitter> getParticleEmitters() {
+    return particleEmitters;
+  }
+
+  public void setParticleEmitters(List<IParticleEmitter> particleEmitters) {
+    this.particleEmitters = particleEmitters;
   }
 }

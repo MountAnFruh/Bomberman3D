@@ -5,13 +5,16 @@ import proj.pos.bomberman.engine.GameItem;
 import proj.pos.bomberman.engine.IGameLogic;
 import proj.pos.bomberman.engine.MouseInput;
 import proj.pos.bomberman.engine.graphics.*;
+import proj.pos.bomberman.engine.graphics.particles.FlowParticleEmitter;
+import proj.pos.bomberman.engine.graphics.particles.IParticleEmitter;
+import proj.pos.bomberman.engine.graphics.particles.Particle;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-public class DummyGame implements IGameLogic {
+public class BombermanGame implements IGameLogic {
 
   private final Renderer renderer;
 
@@ -27,8 +30,9 @@ public class DummyGame implements IGameLogic {
 
   private Minimap minimap;
 
+  private FlowParticleEmitter particleEmitter;
 
-  public DummyGame() {
+  public BombermanGame() {
     this.renderer = new Renderer();
     this.camera = new Camera();
     lightAngle = -90;
@@ -41,13 +45,16 @@ public class DummyGame implements IGameLogic {
 
       scene = new Scene();
 
-      // Create the Mesh
+      Texture texture;
+      Material material;
+
       float reflectance = 1f;
 
+      // Create the Meshes
       //Mesh fixBlock = OBJLoader.loadMesh("/models/Boden.obj");
       Mesh fixBlock = OBJLoader.loadMesh("/models/cube.obj");
-      Texture texture = new Texture("/textures/stone.png");
-      Material material = new Material(texture, reflectance);
+      texture = new Texture("/textures/stone.png");
+      material = new Material(texture, reflectance);
       fixBlock.setMaterial(material);
 
       Mesh destBlock = OBJLoader.loadMesh("/models/cube.obj");
@@ -82,6 +89,30 @@ public class DummyGame implements IGameLogic {
       player.setPosition(firstSpawnpoint.x, firstSpawnpoint.y, firstSpawnpoint.z);
 
       scene.setGameItems(level.getGameItemsLevel());
+
+      // Create Test-Particles
+      List<IParticleEmitter> particleEmitters = new ArrayList<>();
+      FlowParticleEmitter particleEmitter;
+      Vector3f particleSpeed = new Vector3f(0, 1, 0);
+      particleSpeed.mul(2.5f);
+      long ttl = 4_000;
+      int maxParticles = 200;
+      long creationPeriodMillis = 300;
+      float range = 0.2f;
+      float scale = 0.5f;
+      Mesh partMesh = OBJLoader.loadMesh("/models/particle.obj");
+      texture = new Texture("/textures/particle.png");
+      Material partMaterial = new Material(texture, reflectance);
+      partMesh.setMaterial(partMaterial);
+      Particle particle = new Particle(partMesh, particleSpeed, ttl);
+      particle.setPosition(firstSpawnpoint.x, firstSpawnpoint.y, firstSpawnpoint.z);
+      particle.setScale(scale);
+      particleEmitter = new FlowParticleEmitter(particle, maxParticles, creationPeriodMillis);
+      particleEmitter.setActive(true);
+      particleEmitter.setPositionRndRange(range);
+      particleEmitter.setSpeedRndRange(range);
+      particleEmitters.add(particleEmitter);
+      scene.setParticleEmitters(particleEmitters);
 
       SceneLight sceneLight = new SceneLight();
       scene.setSceneLight(sceneLight);
@@ -194,6 +225,13 @@ public class DummyGame implements IGameLogic {
     double angRad = Math.toRadians(lightAngle);
     directionalLight.getDirection().x = (float) Math.sin(angRad);
     directionalLight.getDirection().y = (float) Math.cos(angRad);
+
+    for (IParticleEmitter particleEmitter : scene.getParticleEmitters()) {
+      if (particleEmitter instanceof FlowParticleEmitter) {
+        FlowParticleEmitter flowParticleEmitter = (FlowParticleEmitter) particleEmitter;
+        flowParticleEmitter.update((long) (delta * 1000.0));
+      }
+    }
   }
 
   @Override

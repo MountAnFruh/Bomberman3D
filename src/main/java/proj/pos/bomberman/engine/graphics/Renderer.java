@@ -5,11 +5,13 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import proj.pos.bomberman.engine.GameItem;
 import proj.pos.bomberman.engine.IHud;
+import proj.pos.bomberman.engine.graphics.particles.IParticleEmitter;
 import proj.pos.bomberman.game.SkyBox;
 import proj.pos.bomberman.utils.Transformation;
 import proj.pos.bomberman.utils.Utils;
 
 import java.io.IOException;
+import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -34,6 +36,8 @@ public class Renderer {
 
   private ShaderProgram skyBoxShaderProgram;
 
+  private ShaderProgram particlesShaderProgram;
+
   private final float specularPower;
 
   public Renderer() {
@@ -43,6 +47,7 @@ public class Renderer {
   public void init(Window window) throws IOException {
     setupSkyBoxShader();
     setupSceneShader();
+    setupParticlesShader();
     setupHudShader();
   }
 
@@ -78,6 +83,17 @@ public class Renderer {
     sceneShaderProgram.createDirectionalLightUniform("directionalLight");
   }
 
+  private void setupParticlesShader() throws IOException {
+    particlesShaderProgram = new ShaderProgram();
+    particlesShaderProgram.createVertexShader(Utils.loadResource("/shaders/particles_vertex.vert"));
+    particlesShaderProgram.createFragmentShader(Utils.loadResource("/shaders/particles_fragment.frag"));
+    particlesShaderProgram.link();
+
+    particlesShaderProgram.createUniform("projectionMatrix");
+    particlesShaderProgram.createUniform("modelViewMatrix");
+    particlesShaderProgram.createUniform("texture_sampler");
+  }
+
   private void setupHudShader() throws IOException {
     hudShaderProgram = new ShaderProgram();
     hudShaderProgram.createVertexShader(Utils.loadResource("/shaders/hud_vertex.vert"));
@@ -102,15 +118,21 @@ public class Renderer {
       window.setResized(false);
     }
 
-    // Update projection and view atrices once per render cycle
+    // Update projection and view matrices once per render cycle
     transformation.updateProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
     transformation.updateViewMatrix(camera);
 
     renderScene(window, camera, scene);
 
-    renderSkyBox(window, camera, scene);
+    if (scene.getSkyBox() != null) {
+      renderSkyBox(window, camera, scene);
+    }
 
-    renderHud(window, hud);
+    renderParticles(window, camera, scene);
+
+    if (hud != null) {
+      renderHud(window, hud);
+    }
   }
 
   public void renderScene(Window window, Camera camera, Scene scene) {
@@ -169,6 +191,40 @@ public class Renderer {
     sceneShaderProgram.setUniform("directionalLight", currDirLight);
   }
 
+  private void renderParticles(Window window, Camera camera, Scene scene) {
+    particlesShaderProgram.bind();
+
+    particlesShaderProgram.setUniform("texture_sampler", 0);
+    Matrix4f projectionMatrix = transformation.getProjectionMatrix();
+    particlesShaderProgram.setUniform("projectionMatrix", projectionMatrix);
+
+    Matrix4f viewMatrix = transformation.getViewMatrix();
+    List<IParticleEmitter> emitters = scene.getParticleEmitters();
+    int numEmitters = emitters != null ? emitters.size() : 0;
+
+    glDepthMask(false);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+    for (int i = 0; i < numEmitters; i++) {
+      IParticleEmitter emitter = emitters.get(i);
+      for (GameItem gameItem : emitter.getParticles()) {
+        Mesh mesh = gameItem.getMesh();
+        Matrix4f modelMatrix = transformation.buildModelMatrix(gameItem);
+        viewMatrix.transpose3x3(modelMatrix);
+
+        Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(modelMatrix, viewMatrix);
+        modelViewMatrix.scale(gameItem.getScale());
+        particlesShaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
+        mesh.render();
+      }
+    }
+
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDepthMask(true);
+
+    particlesShaderProgram.unbind();
+  }
+
   private void renderHud(Window window, IHud hud) {
     hudShaderProgram.bind();
 
@@ -197,7 +253,7 @@ public class Renderer {
     Matrix4f projectionMatrix = transformation.getProjectionMatrix();
     skyBoxShaderProgram.setUniform("projectionMatrix", projectionMatrix);
     SkyBox skyBox = scene.getSkyBox();
-    Matrix4f viewMatrix = transformation.getViewMatrix();
+    Matrix4f viewMatrix = new Matrix4f(transformation.getViewMatrix());
     viewMatrix.m30(0);
     viewMatrix.m31(0);
     viewMatrix.m32(0);

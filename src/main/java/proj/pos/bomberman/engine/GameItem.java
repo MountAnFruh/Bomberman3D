@@ -77,6 +77,10 @@ public class GameItem implements Collidable {
     return mesh;
   }
 
+  public boolean hasMesh() {
+    return mesh != null;
+  }
+
   public void setMesh(Mesh mesh) {
     this.mesh = mesh;
   }

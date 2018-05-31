@@ -12,27 +12,32 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {
 
-  private final boolean fullscreen = true;
+  private final boolean fullscreen = false;
 
   private final String title;
   private int width;
   private int height;
   private boolean resized;
+  private WindowOptions windowOptions;
 
   // The window handle
   private long windowHandle;
 
   public Window(String title, int width, int height) {
+    this(title, width, height, new WindowOptions());
+  }
+
+  public Window(String title, int width, int height, WindowOptions windowOptions) {
     this.title = title;
     this.width = width;
     this.height = height;
     this.resized = false;
+    this.windowOptions = windowOptions;
   }
 
   public void init() {
@@ -128,15 +133,19 @@ public class Window {
     glEnable(GL_DEPTH_TEST);
 
     // Enable polygon mode
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    if (windowOptions.showTriangles) {
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
 
     // Support for transparencies
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // Cull Faces
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
+    if (windowOptions.cullFace) {
+      glEnable(GL_CULL_FACE);
+      glCullFace(GL_BACK);
+    }
 
     // Hide Mouse
     glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
@@ -181,5 +190,13 @@ public class Window {
 
   public String getTitle() {
     return title;
+  }
+
+  public static class WindowOptions {
+
+    public boolean cullFace;
+
+    public boolean showTriangles;
+
   }
 }
