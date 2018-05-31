@@ -45,6 +45,7 @@ public class Minimap implements IHud {
   private final Mesh destBlock;
   private final Mesh emptyBlock;
   private final Mesh bombBlock;
+  private final Mesh powerupSchneller;
 
   private GameItem[][] blockItems;
   private GameItem[][] specialItems;
@@ -140,6 +141,11 @@ public class Minimap implements IHud {
     material = new Material(texture, 0.0f);
     bombBlock.setMaterial(material);
 
+    powerupSchneller = OBJLoader.loadMesh("/models/rectangle.obj");
+    texture = new Texture("/textures/powerup_schneller.png");
+    material = new Material(texture, 0.0f);
+    powerupSchneller.setMaterial(material);
+
     emptyBlock = OBJLoader.loadMesh("/models/rectangle.obj");
     material = new Material();
     material.setAmbientColor(new Vector4f(1, 1, 1, 1));
@@ -166,7 +172,7 @@ public class Minimap implements IHud {
         } else if (layout[y][x] == Level.DESTROYABLE_ID) {
           gameItem = new GameItem(destBlock);
         } else {
-          gameItem = new GameItem(emptyBlock);
+          gameItem = new GameItem(emptyBlock, "empty");
         }
         gameItem.setScale(BLOCKSCALE);
         gameItem.setRotation(0f, 180f, 180f);
@@ -179,10 +185,22 @@ public class Minimap implements IHud {
     for (int y = 0; y < specialItems.length; y++) {
       for (int x = 0; x < specialItems[y].length; x++) {
         GameItem gameItem = null;
-        if (specialLayout[y][x] == Level.BOMB_ID) {
-          gameItem = new GameItem(bombBlock);
+
+        switch (specialLayout[y][x]) {
+          case Level.BOMB_ID:
+            gameItem = new GameItem(bombBlock);
+            break;
+          case Level.POWERUP_SCHNELLER_ID:
+            gameItem = new GameItem(powerupSchneller, "powerupSpeed");
+            break;
         }
-        if(gameItem != null) {
+
+        DESTROY:
+        if (gameItem != null) {
+          if (gameItem.getName() != null && gameItem.getName().equalsIgnoreCase("powerupSpeed")
+                  && level.getLayout()[y][x] == Level.DESTROYABLE_ID) {
+            break DESTROY;
+          }
           gameItem.setScale(BLOCKSCALE);
           gameItem.setRotation(0f, 180f, 180f);
           specialItems[x][y] = gameItem;

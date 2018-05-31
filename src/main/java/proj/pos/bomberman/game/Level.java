@@ -1,5 +1,6 @@
 package proj.pos.bomberman.game;
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import org.joml.Vector3f;
 import proj.pos.bomberman.engine.GameItem;
 import proj.pos.bomberman.engine.graphics.BoundingBox;
@@ -9,12 +10,13 @@ import java.util.*;
 
 public class Level {
 
-  public static int EMPTY_ID = 0;
-  public static int CONSTANT_ID = 1;
-  public static int SPAWN_ID = 2;
-  public static int RANDOM_ID = 3;
-  public static int DESTROYABLE_ID = 4;
-  public static int BOMB_ID = 5;
+  public final static int EMPTY_ID = 0;
+  public final static int CONSTANT_ID = 1;
+  public final static int SPAWN_ID = 2;
+  public final static int RANDOM_ID = 3;
+  public final static int DESTROYABLE_ID = 4;
+  public final static int BOMB_ID = 5;
+  public final static int POWERUP_SCHNELLER_ID = 6;
 
   private static final float bombScale = 0.3f;
 
@@ -26,17 +28,20 @@ public class Level {
   private int[][] layout;
   private int[][] itemLayout;
   private GameItem[][] destroyableItems;
+  private GameItem[][] powerupItems;
 
   private Vector3f moved;
   private float scale;
 
   private List<GameItem> gameItemsLevel = new ArrayList<>();
+  private List<GameItem> powerupLevel = new ArrayList<>();
   private List<Vector3f> spawnPoints = new ArrayList<>();
 
   private Mesh destroyableBlockMesh = null;
   private Mesh constantBlockMesh = null;
   private Mesh floorBlockMesh = null;
   private Mesh bombMesh = null;
+  private Mesh powerupSpeedMesh = null;
 
   public Level(int[][] layout, Vector3f moved, float scale) {
     this.moved = moved;
@@ -100,6 +105,19 @@ public class Level {
       }
     }
     return null;
+  }
+//////////////////weitermachn
+  public void removePowerup(GameItem pu, Iterator<GameItem> iter)
+  {
+    float scaleValue = (scale/5);
+    int xLevel = (int) (pu.getPosition().x - 0.5f / (scaleValue * 2));
+    int yLevel = (int) (pu.getPosition().z - 0.5f / (scaleValue * 2));
+    powerupItems[yLevel][xLevel] = null;
+    //powerupLevel.remove(pu);
+    //gameItemsLevel.remove(pu);
+    iter.remove();
+    if (minimap != null) minimap.doDrawing();
+
   }
 
   public void removeBomb(Player player, Bomb bomb) {
@@ -183,6 +201,7 @@ public class Level {
       throw new RuntimeException("Block Meshes not set!");
     buildFloor();
     this.destroyableItems = new GameItem[layout.length][layout[0].length];
+    this.powerupItems = new GameItem[layout.length][layout[0].length];
     for (int y = 0; y < layout.length; y++) {
       for (int x = 0; x < layout[y].length; x++) {
         int id = layout[y][x];
@@ -198,6 +217,7 @@ public class Level {
           } else {
             gameItem = new GameItem(destroyableBlockMesh);
             destroyableItems[y][x] = gameItem;
+            placePowerup(y, x, xCoord, yCoord, zCoord, scaleValue);
           }
           gameItemsLevel.add(gameItem);
           gameItem.setPosition(xCoord * scaleValue + 0.5f, yCoord * scaleValue + 0.5f, zCoord * scaleValue + 0.5f);
@@ -211,8 +231,29 @@ public class Level {
     }
   }
 
+  private void placePowerup(int y, int x, float xCoord, float yCoord, float zCoord, float scaleValue)
+  {
+    int prozent = 20;
+    int rand = new Random().nextInt(100);
+    if(rand < prozent)
+    {
+      GameItem gameItem = new GameItem(powerupSpeedMesh, "powerup");
+      powerupLevel.add(gameItem);
+      gameItemsLevel.add(gameItem);
+      powerupItems[y][x] = gameItem;
+
+      gameItem.setPosition(xCoord * scaleValue + 0.5f, yCoord * scaleValue + 0.5f, zCoord * scaleValue + 0.5f);
+      gameItem.setScale(scale / 5);
+      gameItem.setRotation(0, 0, 0);
+    }
+  }
+
   public void setMinimap(Minimap minimap) {
     this.minimap = minimap;
+  }
+
+  public void setPowerupSpeedMesh(Mesh powerupSpeedMesh) {
+    this.powerupSpeedMesh = powerupSpeedMesh;
   }
 
   public void setConstantBlockMesh(Mesh constantBlockMesh) {
@@ -253,5 +294,9 @@ public class Level {
 
   public List<Player> getPlayers() {
     return players;
+  }
+
+  public List<GameItem> getPowerupLevel() {
+    return powerupLevel;
   }
 }

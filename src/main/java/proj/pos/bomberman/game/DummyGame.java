@@ -55,6 +55,11 @@ public class DummyGame implements IGameLogic {
       material = new Material(texture, reflectance);
       destBlock.setMaterial(material);
 
+      Mesh powerupSpeed = OBJLoader.loadMesh("/models/cube.obj");
+      texture = new Texture("/textures/powerup_schneller.png");
+      material = new Material(texture, reflectance);
+      powerupSpeed.setMaterial(material);
+
       Mesh bombMesh = OBJLoader.loadMesh("/models/bomb.obj");
       texture = new Texture("/textures/bomb.png");
       material = new Material(texture, reflectance);
@@ -67,6 +72,7 @@ public class DummyGame implements IGameLogic {
       this.player = new Player(camera, level);
       level.setConstantBlockMesh(fixBlock);
       level.setDestroyableBlockMesh(destBlock);
+      level.setPowerupSpeedMesh(powerupSpeed);
       level.setFloorBlockMesh(fixBlock);
       level.setBombMesh(bombMesh);
       level.buildMap();

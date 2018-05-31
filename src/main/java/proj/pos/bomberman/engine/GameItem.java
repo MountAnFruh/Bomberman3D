@@ -14,6 +14,8 @@ public class GameItem implements Collidable {
 
   protected Vector3f rotation;
 
+  protected String name;
+
   public GameItem() {
     position = new Vector3f(0, 0, 0);
     scale = 1;
@@ -23,6 +25,20 @@ public class GameItem implements Collidable {
   public GameItem(Mesh mesh) {
     this();
     this.mesh = mesh;
+  }
+
+  public GameItem(Mesh mesh, String name) {
+    this();
+    this.mesh = mesh;
+    this.name = name;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
   public void update(double delta) {
