@@ -13,7 +13,7 @@ import java.util.List;
 
 public class Player extends GameItem {
 
-  private static final float MAXBOMBPLACECOOLDOWN = 5.0f;
+  private static final float MAXBOMBPLACECOOLDOWN = 0.5f;
   private static final float MOUSE_SENSITIVITY = 0.2f;
   private static final float CAMERA_POS_STEP = 0.05f;
 
@@ -30,7 +30,7 @@ public class Player extends GameItem {
   private int maxBombs = 1;
 
   private int bombPower = 1;
-  private float timeToLive = 90f;
+  private float timeToLive = 3f; // ungf. 3 Sekunden
 
   private float speed;
 
@@ -50,6 +50,7 @@ public class Player extends GameItem {
     changePosition(scene);
     // Update camera based on mouse
     changeRotation(mouseInput);
+    checkPowerupCollisions(scene);
     if (bombPlaceCooldown > 0) {
       bombPlaceCooldown -= delta;
     } else {
@@ -88,6 +89,21 @@ public class Player extends GameItem {
     }
   }
 
+  public void checkPowerupCollisions(Scene scene) {
+    Iterator<GameItem> iter;
+    iter = new ArrayList<>(scene.getGameItems()).iterator();
+    while (iter.hasNext()) {
+      GameItem gameItem = iter.next();
+      if (gameItem instanceof Powerup) {
+        if (gameItem.isCollidingWith(this.getBoundingBox())) {
+          if (gameItem.isCollidingWith(this.getBoundingBox())) {
+            pickUpPowerup((Powerup) gameItem);
+          }
+        }
+      }
+    }
+  }
+
   public void doCollisions(Scene scene, Vector3f oldPos, Vector3f currentPos, List<GameItem> noCollision) {
     boolean collision = false;
     Vector3f newPos = new Vector3f(currentPos);
@@ -96,21 +112,13 @@ public class Player extends GameItem {
     currentPos.z = oldPos.z;
     boolean moveX = false, moveY = false, moveZ = false;
     boolean moveXY = false, moveYZ = false, moveZX = false;
-    //////////////Iterator
-    Iterator<GameItem> iter = scene.getGameItems().iterator();
+    Iterator<GameItem> iter;
+    iter = scene.getGameItems().iterator();
     while (iter.hasNext()) {
       GameItem gameItem = iter.next();
+      if (gameItem instanceof Powerup) continue;
       if (noCollision.contains(gameItem)) continue;
-      if (gameItem.isCollidingWith(this.getBoundingBox())) {
-        if (gameItem.getName() != null && gameItem.getName().equalsIgnoreCase("powerup")) {
-          if (gameItem.isCollidingWith(this.getBoundingBox())) {
-            pickUpPowerup(gameItem, iter);
-            continue;
-          }
-        } else {
-          collision = true;
-        }
-      }
+      if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
     }
     if (!collision) {
       moveX = true;
@@ -119,7 +127,10 @@ public class Player extends GameItem {
     currentPos.x = oldPos.x;
     currentPos.y = newPos.y;
     currentPos.z = oldPos.z;
-    for (GameItem gameItem : scene.getGameItems()) {
+    iter = scene.getGameItems().iterator();
+    while (iter.hasNext()) {
+      GameItem gameItem = iter.next();
+      if (gameItem instanceof Powerup) continue;
       if (noCollision.contains(gameItem)) continue;
       if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
     }
@@ -130,7 +141,10 @@ public class Player extends GameItem {
     currentPos.x = oldPos.x;
     currentPos.y = oldPos.y;
     currentPos.z = newPos.z;
-    for (GameItem gameItem : scene.getGameItems()) {
+    iter = scene.getGameItems().iterator();
+    while (iter.hasNext()) {
+      GameItem gameItem = iter.next();
+      if (gameItem instanceof Powerup) continue;
       if (noCollision.contains(gameItem)) continue;
       if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
     }
@@ -141,7 +155,10 @@ public class Player extends GameItem {
     currentPos.x = newPos.x;
     currentPos.y = newPos.y;
     currentPos.z = oldPos.z;
-    for (GameItem gameItem : scene.getGameItems()) {
+    iter = scene.getGameItems().iterator();
+    while (iter.hasNext()) {
+      GameItem gameItem = iter.next();
+      if (gameItem instanceof Powerup) continue;
       if (noCollision.contains(gameItem)) continue;
       if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
     }
@@ -152,7 +169,10 @@ public class Player extends GameItem {
     currentPos.x = oldPos.x;
     currentPos.y = newPos.y;
     currentPos.z = newPos.z;
-    for (GameItem gameItem : scene.getGameItems()) {
+    iter = scene.getGameItems().iterator();
+    while (iter.hasNext()) {
+      GameItem gameItem = iter.next();
+      if (gameItem instanceof Powerup) continue;
       if (noCollision.contains(gameItem)) continue;
       if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
     }
@@ -163,7 +183,10 @@ public class Player extends GameItem {
     currentPos.x = newPos.x;
     currentPos.y = oldPos.y;
     currentPos.z = newPos.z;
-    for (GameItem gameItem : scene.getGameItems()) {
+    iter = scene.getGameItems().iterator();
+    while (iter.hasNext()) {
+      GameItem gameItem = iter.next();
+      if (gameItem instanceof Powerup) continue;
       if (noCollision.contains(gameItem)) continue;
       if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
     }
@@ -209,13 +232,13 @@ public class Player extends GameItem {
     refreshCamera();
   }
 
-  public void pickUpPowerup(GameItem gameItem, Iterator<GameItem> iter) {
+  public void pickUpPowerup(Powerup powerup) {
     System.out.println("1");
     this.setSpeed(this.getSpeed() + 0.02f);
     System.out.println("2");
     //level.getPowerupLevel().remove(gameItem);
     System.out.println("3");
-    level.removePowerup(gameItem, iter);
+    level.removePowerup(powerup);
   }
 
   public void movePosition(Scene scene, float offsetX, float offsetY, float offsetZ) {

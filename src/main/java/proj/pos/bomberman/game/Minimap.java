@@ -176,7 +176,7 @@ public class Minimap implements IHud {
         }
         gameItem.setScale(BLOCKSCALE);
         gameItem.setRotation(0f, 180f, 180f);
-        blockItems[x][y] = gameItem;
+        blockItems[y][x] = gameItem;
         gameItems.add(gameItem);
       }
     }
@@ -185,7 +185,6 @@ public class Minimap implements IHud {
     for (int y = 0; y < specialItems.length; y++) {
       for (int x = 0; x < specialItems[y].length; x++) {
         GameItem gameItem = null;
-
         switch (specialLayout[y][x]) {
           case Level.BOMB_ID:
             gameItem = new GameItem(bombBlock);
@@ -194,16 +193,10 @@ public class Minimap implements IHud {
             gameItem = new GameItem(powerupSchneller, "powerupSpeed");
             break;
         }
-
-        DESTROY:
         if (gameItem != null) {
-          if (gameItem.getName() != null && gameItem.getName().equalsIgnoreCase("powerupSpeed")
-                  && level.getLayout()[y][x] == Level.DESTROYABLE_ID) {
-            break DESTROY;
-          }
           gameItem.setScale(BLOCKSCALE);
           gameItem.setRotation(0f, 180f, 180f);
-          specialItems[x][y] = gameItem;
+          specialItems[y][x] = gameItem;
           gameItems.add(gameItem);
         }
       }
@@ -216,6 +209,7 @@ public class Minimap implements IHud {
   }
 
   public void update(Window window) {
+    int[][] layout = level.getLayout();
     this.minimapText.setPosition(10f, 10f, 0);
     this.coordinateText.setPosition(10f, 30f, 0);
     this.liveText.setPosition(20f,window.getHeight() - 80f, 0.999f);
@@ -223,17 +217,21 @@ public class Minimap implements IHud {
     this.liveText.setText(lives+" / "+maxlives);
 
     this.coordinateText.setText("Coordinates: " + player.getPosition().toString());
-    for (int i = 0; i < blockItems.length; i++) {
-      for (int j = 0; j < blockItems[i].length; j++) {
-        if (blockItems[i][j] != null) {
-          blockItems[i][j].setPosition(MINIMAPMOVEDX + i * BLOCKSCALE, MINIMAPMOVEDY + j * BLOCKSCALE, 0.987f);
+    for (int y = 0; y < blockItems.length; y++) {
+      for (int x = 0; x < blockItems[y].length; x++) {
+        if (blockItems[y][x] != null) {
+          float zCoord = 0.988f;
+          if (layout[y][x] == Level.EMPTY_ID) {
+            zCoord = 0.980f;
+          }
+          blockItems[y][x].setPosition(MINIMAPMOVEDX + x * BLOCKSCALE, MINIMAPMOVEDY + y * BLOCKSCALE, zCoord);
         }
       }
     }
-    for (int i = 0; i < specialItems.length; i++) {
-      for (int j = 0; j < specialItems[i].length; j++) {
-        if (specialItems[i][j] != null) {
-          specialItems[i][j].setPosition(MINIMAPMOVEDX + i * BLOCKSCALE, MINIMAPMOVEDY + j * BLOCKSCALE, 0.988f);
+    for (int y = 0; y < specialItems.length; y++) {
+      for (int x = 0; x < specialItems[y].length; x++) {
+        if (specialItems[y][x] != null) {
+          specialItems[y][x].setPosition(MINIMAPMOVEDX + x * BLOCKSCALE, MINIMAPMOVEDY + y * BLOCKSCALE, 0.987f);
         }
       }
     }
@@ -258,9 +256,6 @@ public class Minimap implements IHud {
       if(gameItems.contains(otherPlayer2)) gameItems.remove(otherPlayer2);
       if(gameItems.contains(otherPlayer3)) gameItems.remove(otherPlayer3);
     }
-
-
-
   }
 
   public void rotateCompass(float angle) {
