@@ -1,6 +1,7 @@
 package proj.pos.bomberman.game;
 
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import proj.pos.bomberman.engine.GameItem;
 import proj.pos.bomberman.engine.IGameLogic;
 import proj.pos.bomberman.engine.MouseInput;
@@ -24,13 +25,13 @@ public class BombermanGame implements IGameLogic {
 
   private Scene scene;
 
-  private Player player;
+  private MainPlayer player;
+
+  private EnemyPlayer enemyPlayer;
 
   private Level level;
 
   private Minimap minimap;
-
-  private FlowParticleEmitter particleEmitter;
 
   public BombermanGame() {
     this.renderer = new Renderer();
@@ -72,11 +73,17 @@ public class BombermanGame implements IGameLogic {
       material = new Material(texture, reflectance);
       bombMesh.setMaterial(material);
 
+      Mesh playerMesh = OBJLoader.loadMesh("/models/characterlowpoly.obj");
+      material = new Material();
+      material.setAmbientColor(new Vector4f(1, 0, 0, 1));
+      playerMesh.setMaterial(material);
+
       int[][] levelLayout = LevelLoader.loadLayout(0.2f, "/textures/maps/map_one.png");
       float scaleLevel = 0.5f;
       Vector3f movedLevel = new Vector3f(0, -2, 0);
       level = new Level(levelLayout, movedLevel, scaleLevel);
-      this.player = new Player(camera, level);
+      this.player = new MainPlayer(camera, level, scene);
+      this.enemyPlayer = new EnemyPlayer(playerMesh, level, scene);
       level.setConstantBlockMesh(fixBlock);
       level.setDestroyableBlockMesh(destBlock);
       level.setPowerupSpeedMesh(powerupSpeed);
@@ -87,6 +94,8 @@ public class BombermanGame implements IGameLogic {
       List<Vector3f> spawnPoints = level.getSpawnPoints();
       Vector3f firstSpawnpoint = spawnPoints.get(0);
       player.setPosition(firstSpawnpoint.x, firstSpawnpoint.y, firstSpawnpoint.z);
+      Vector3f secondSpawnpoint = spawnPoints.get(1);
+      enemyPlayer.setPosition(secondSpawnpoint.x, secondSpawnpoint.y, secondSpawnpoint.z);
 
       scene.setGameItems(level.getGameItemsLevel());
 
@@ -196,7 +205,8 @@ public class BombermanGame implements IGameLogic {
 //    List<GameItem> gameItems = level.getGameItemsLevel();
 //    scene.setGameItems(gameItems);
     // Update player position
-    player.update(delta, mouseInput, scene);
+    player.update(delta, mouseInput);
+    enemyPlayer.update(delta);
     minimap.rotateCompass(player.getRotation().y);
 
     for (GameItem gameItem : new ArrayList<>(level.getGameItemsLevel())) {

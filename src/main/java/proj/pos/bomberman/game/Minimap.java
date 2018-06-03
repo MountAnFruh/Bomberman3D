@@ -172,7 +172,7 @@ public class Minimap implements IHud {
         } else if (layout[y][x] == Level.DESTROYABLE_ID) {
           gameItem = new GameItem(destBlock);
         } else {
-          gameItem = new GameItem(emptyBlock, "empty");
+          gameItem = new GameItem(emptyBlock);
         }
         gameItem.setScale(BLOCKSCALE);
         gameItem.setRotation(0f, 180f, 180f);
@@ -190,7 +190,7 @@ public class Minimap implements IHud {
             gameItem = new GameItem(bombBlock);
             break;
           case Level.POWERUP_SCHNELLER_ID:
-            gameItem = new GameItem(powerupSchneller, "powerupSpeed");
+            gameItem = new GameItem(powerupSchneller);
             break;
         }
         if (gameItem != null) {

@@ -1,27 +1,24 @@
 package proj.pos.bomberman.game;
 
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 import proj.pos.bomberman.engine.GameItem;
-import proj.pos.bomberman.engine.MouseInput;
-import proj.pos.bomberman.engine.graphics.Camera;
+import proj.pos.bomberman.engine.graphics.Mesh;
 import proj.pos.bomberman.engine.graphics.Scene;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Player extends GameItem {
+public abstract class Player extends GameItem {
 
   private static final float MAXBOMBPLACECOOLDOWN = 0.5f;
-  private static final float MOUSE_SENSITIVITY = 0.2f;
   private static final float CAMERA_POS_STEP = 0.05f;
 
   private final List<GameItem> noCollision = new ArrayList<>();
 
-  private final Level level;
+  private final Scene scene;
 
-  private final Camera camera;
+  private final Level level;
 
   private final Vector3f movementVec;
 
@@ -36,21 +33,22 @@ public class Player extends GameItem {
 
   private boolean dead;
 
-  public Player(Camera camera, Level level) {
-    super();
-    this.setScale(0.0001f);
+  public Player(Mesh mesh, Level level, Scene scene) {
+    super(mesh);
     this.level = level;
-    level.getPlayers().add(this);
-    this.camera = camera;
+    this.scene = scene;
+    level.addPlayer(this);
     this.movementVec = new Vector3f(0, 0, 0);
     this.speed = CAMERA_POS_STEP;
   }
 
-  public void update(double delta, MouseInput mouseInput, Scene scene) {
-    changePosition(scene);
-    // Update camera based on mouse
-    changeRotation(mouseInput);
-    checkPowerupCollisions(scene);
+  public Player(Level level, Scene scene) {
+    this(null, level, scene);
+  }
+
+  public void update(double delta) {
+    changePosition();
+    checkPowerupCollisions();
     if (bombPlaceCooldown > 0) {
       bombPlaceCooldown -= delta;
     } else {
@@ -63,13 +61,8 @@ public class Player extends GameItem {
     }
   }
 
-  private void changeRotation(MouseInput mouseInput) {
-    Vector2f rotVec = mouseInput.getDisplVec();
-    this.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
-  }
-
-  private void changePosition(Scene scene) {
-    this.movePosition(scene, movementVec.x * speed, movementVec.y * speed, movementVec.z * speed);
+  private void changePosition() {
+    this.movePosition(movementVec.x * speed, movementVec.y * speed, movementVec.z * speed);
   }
 
   public void placeBomb() {
@@ -89,7 +82,7 @@ public class Player extends GameItem {
     }
   }
 
-  public void checkPowerupCollisions(Scene scene) {
+  public void checkPowerupCollisions() {
     Iterator<GameItem> iter;
     iter = new ArrayList<>(scene.getGameItems()).iterator();
     while (iter.hasNext()) {
@@ -104,93 +97,44 @@ public class Player extends GameItem {
     }
   }
 
-  public void doCollisions(Scene scene, Vector3f oldPos, Vector3f currentPos, List<GameItem> noCollision) {
-    boolean collision = false;
+  public void doCollisions(Vector3f oldPos, Vector3f currentPos, List<GameItem> noCollision) {
     Vector3f newPos = new Vector3f(currentPos);
     currentPos.x = newPos.x;
     currentPos.y = oldPos.y;
     currentPos.z = oldPos.z;
     boolean moveX = false, moveY = false, moveZ = false;
     boolean moveXY = false, moveYZ = false, moveZX = false;
-    Iterator<GameItem> iter;
-    iter = scene.getGameItems().iterator();
-    while (iter.hasNext()) {
-      GameItem gameItem = iter.next();
-      if (gameItem instanceof Powerup) continue;
-      if (noCollision.contains(gameItem)) continue;
-      if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
-    }
-    if (!collision) {
+    if (!checkCollision()) {
       moveX = true;
     }
-    collision = false;
     currentPos.x = oldPos.x;
     currentPos.y = newPos.y;
     currentPos.z = oldPos.z;
-    iter = scene.getGameItems().iterator();
-    while (iter.hasNext()) {
-      GameItem gameItem = iter.next();
-      if (gameItem instanceof Powerup) continue;
-      if (noCollision.contains(gameItem)) continue;
-      if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
-    }
-    if (!collision) {
+    if (!checkCollision()) {
       moveY = true;
     }
-    collision = false;
     currentPos.x = oldPos.x;
     currentPos.y = oldPos.y;
     currentPos.z = newPos.z;
-    iter = scene.getGameItems().iterator();
-    while (iter.hasNext()) {
-      GameItem gameItem = iter.next();
-      if (gameItem instanceof Powerup) continue;
-      if (noCollision.contains(gameItem)) continue;
-      if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
-    }
-    if (!collision) {
+    if (!checkCollision()) {
       moveZ = true;
     }
-    collision = false;
     currentPos.x = newPos.x;
     currentPos.y = newPos.y;
     currentPos.z = oldPos.z;
-    iter = scene.getGameItems().iterator();
-    while (iter.hasNext()) {
-      GameItem gameItem = iter.next();
-      if (gameItem instanceof Powerup) continue;
-      if (noCollision.contains(gameItem)) continue;
-      if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
-    }
-    if (!collision) {
+    if (!checkCollision()) {
       moveXY = true;
     }
-    collision = false;
     currentPos.x = oldPos.x;
     currentPos.y = newPos.y;
     currentPos.z = newPos.z;
-    iter = scene.getGameItems().iterator();
-    while (iter.hasNext()) {
-      GameItem gameItem = iter.next();
-      if (gameItem instanceof Powerup) continue;
-      if (noCollision.contains(gameItem)) continue;
-      if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
-    }
-    if (!collision) {
+    if (!checkCollision()) {
       moveYZ = true;
     }
-    collision = false;
     currentPos.x = newPos.x;
     currentPos.y = oldPos.y;
     currentPos.z = newPos.z;
-    iter = scene.getGameItems().iterator();
-    while (iter.hasNext()) {
-      GameItem gameItem = iter.next();
-      if (gameItem instanceof Powerup) continue;
-      if (noCollision.contains(gameItem)) continue;
-      if (gameItem.isCollidingWith(this.getBoundingBox())) collision = true;
-    }
-    if (!collision) {
+    if (!checkCollision()) {
       moveZX = true;
     }
     if (!moveXY && moveX && moveY) {
@@ -211,6 +155,19 @@ public class Player extends GameItem {
     currentPos.z = oldPos.z + between.z * (moveZ ? 1 : 0);
   }
 
+  public boolean checkCollision() {
+    Iterator<GameItem> iter;
+    iter = scene.getGameItems().iterator();
+    while (iter.hasNext()) {
+      GameItem gameItem = iter.next();
+      if (gameItem == this) continue;
+      if (gameItem instanceof Powerup) continue;
+      if (noCollision.contains(gameItem)) continue;
+      if (gameItem.isCollidingWith(this.getBoundingBox())) return true;
+    }
+    return false;
+  }
+
   @Override
   public float getScale() {
     return super.getScale();
@@ -229,7 +186,6 @@ public class Player extends GameItem {
   @Override
   public void setPosition(float x, float y, float z) {
     super.setPosition(x, y, z);
-    refreshCamera();
   }
 
   public void pickUpPowerup(Powerup powerup) {
@@ -241,7 +197,7 @@ public class Player extends GameItem {
     level.removePowerup(powerup);
   }
 
-  public void movePosition(Scene scene, float offsetX, float offsetY, float offsetZ) {
+  public void movePosition(float offsetX, float offsetY, float offsetZ) {
     Vector3f oldPos = new Vector3f(this.getPosition());
     if (offsetZ != 0) {
       position.x += (float) Math.sin(Math.toRadians(rotation.y)) * -1.0f * offsetZ;
@@ -253,14 +209,9 @@ public class Player extends GameItem {
     }
     position.y += offsetY;
     Vector3f currPos = this.getPosition();
-    if (scene != null) {
-      doCollisions(scene, oldPos, currPos, noCollision);
+    if (scene != null && (offsetX != 0 || offsetY != 0 || offsetZ != 0)) {
+      doCollisions(oldPos, currPos, noCollision);
     }
-    refreshCamera();
-  }
-
-  public void movePosition(float offsetX, float offsetY, float offsetZ) {
-    movePosition(null, offsetX, offsetY, offsetZ);
   }
 
   @Override
@@ -271,7 +222,6 @@ public class Player extends GameItem {
   @Override
   public void setRotation(float x, float y, float z) {
     super.setRotation(x, y, z);
-    refreshCamera();
   }
 
   public void moveRotation(float offsetX, float offsetY, float offsetZ) {
@@ -280,12 +230,6 @@ public class Player extends GameItem {
     if (rotation.x < -90) rotation.x = -90;
     rotation.y = rotation.y + offsetY;
     rotation.z = rotation.z + offsetZ;
-    refreshCamera();
-  }
-
-  private void refreshCamera() {
-    camera.setPosition(position.x, position.y, position.z);
-    camera.setRotation(rotation.x, rotation.y, rotation.z);
   }
 
   public Vector3f getMovementVec() {

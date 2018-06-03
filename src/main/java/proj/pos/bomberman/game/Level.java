@@ -251,6 +251,13 @@ public class Level {
     }
   }
 
+  public void addPlayer(Player player) {
+    players.add(player);
+    if (!(player instanceof MainPlayer)) {
+      gameItemsLevel.add(player);
+    }
+  }
+
   public void setMinimap(Minimap minimap) {
     this.minimap = minimap;
   }

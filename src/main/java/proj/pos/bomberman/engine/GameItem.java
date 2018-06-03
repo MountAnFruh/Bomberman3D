@@ -25,11 +25,6 @@ public class GameItem implements Collidable {
     this.mesh = mesh;
   }
 
-  public GameItem(Mesh mesh, String name) {
-    this();
-    this.mesh = mesh;
-  }
-
   public void update(double delta) {
     // add update for other items
   }
