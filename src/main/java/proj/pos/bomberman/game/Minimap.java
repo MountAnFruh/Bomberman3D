@@ -45,6 +45,8 @@ public class Minimap implements IHud {
   private final Mesh emptyBlock;
   private final Mesh bombBlock;
   private final Mesh powerupSchneller;
+  private final Mesh powerupMehrBombs;
+  private final Mesh powerupMehrReich;
 
   private GameItem[][] blockItems;
   private GameItem[][] specialItems;
@@ -69,7 +71,7 @@ public class Minimap implements IHud {
     compassItem.setRotation(0f, 180f, 180f);
     gameItems.add(compassItem);
 
-    for(Player player : enemyPlayers) {
+    for (Player player : enemyPlayers) {
       mesh = OBJLoader.loadMesh("/models/rectangle_centered.obj");
       texture = new Texture("/textures/playeravatar.png");
       material = new Material(texture, 0f);
@@ -92,13 +94,13 @@ public class Minimap implements IHud {
     gameItems.add(playerAvatar);
 
     //Create TextItems
-    this.liveText = new TextItem(mainPlayer.getHealth()+" / "+mainPlayer.getMaxHealth(), fontTexture);
+    this.liveText = new TextItem(mainPlayer.getHealth() + " / " + mainPlayer.getMaxHealth(), fontTexture);
     this.minimapText = new TextItem("Minimap: ", fontTexture);
     this.coordinateText = new TextItem("Coordinates: ", fontTexture);
 
     this.minimapText.getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
     this.coordinateText.getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
-    this.liveText.getMesh().getMaterial().setAmbientColor(new Vector4f(1,1,1,1));
+    this.liveText.getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
     this.liveText.setScale(3f);
 
     gameItems.add(minimapText);
@@ -121,9 +123,19 @@ public class Minimap implements IHud {
     bombBlock.setMaterial(material);
 
     powerupSchneller = OBJLoader.loadMesh("/models/rectangle.obj");
-    texture = new Texture("/textures/powerup_schneller.png");
+    texture = new Texture("/textures/powerup_schneller_icon.png");
     material = new Material(texture, 0.0f);
     powerupSchneller.setMaterial(material);
+
+    powerupMehrBombs = OBJLoader.loadMesh("/models/rectangle.obj");
+    texture = new Texture("/textures/powerup_mehr_bomben_icon.png");
+    material = new Material(texture, 0.0f);
+    powerupMehrBombs.setMaterial(material);
+
+    powerupMehrReich = OBJLoader.loadMesh("/models/rectangle.obj");
+    texture = new Texture("/textures/powerup_mehr_reichweite_icon.png");
+    material = new Material(texture, 0.0f);
+    powerupMehrReich.setMaterial(material);
 
     emptyBlock = OBJLoader.loadMesh("/models/rectangle.obj");
     material = new Material();
@@ -169,11 +181,21 @@ public class Minimap implements IHud {
             gameItem = new GameItem(bombBlock);
             break;
           case Level.POWERUP_SCHNELLER_ID:
-            gameItem = new GameItem(powerupSchneller);
+            gameItem = new GameItem(powerupSchneller, Powerup.PowerupArt.SCHNELLER);
+            break;
+          case Level.POWERUP_MEHR_BOMBEN_ID:
+            gameItem = new GameItem(powerupMehrBombs, Powerup.PowerupArt.MEHR_BOMBEN);
+            break;
+          case Level.POWERUP_MEHR_REICHWEITE_ID:
+            gameItem = new GameItem(powerupMehrReich, Powerup.PowerupArt.MEHR_REICHWEITE);
             break;
         }
         if (gameItem != null) {
-          gameItem.setScale(BLOCKSCALE);
+          if(gameItem.getType().equals(Powerup.PowerupArt.SCHNELLER) || gameItem.getType().equals(Powerup.PowerupArt.MEHR_BOMBEN) || gameItem.getType().equals(Powerup.PowerupArt.MEHR_REICHWEITE)) {
+            gameItem.setScale(BLOCKSCALE / 2);
+          }else{
+            gameItem.setScale(BLOCKSCALE);
+          }
           gameItem.setRotation(0f, 180f, 180f);
           specialItems[y][x] = gameItem;
           gameItems.add(gameItem);
@@ -191,9 +213,9 @@ public class Minimap implements IHud {
     int[][] layout = level.getLayout();
     this.minimapText.setPosition(10f, 10f, 0);
     this.coordinateText.setPosition(10f, 30f, 0);
-    this.liveText.setPosition(20f,window.getHeight() - 80f, 0.999f);
+    this.liveText.setPosition(20f, window.getHeight() - 80f, 0.999f);
     this.playerAvatar.setPosition(window.getWidth() - AVATARSCALE - 20f, AVATARSCALE + 20f, 0.999f);
-    this.liveText.setText(mainPlayer.getHealth()+" / "+mainPlayer.getMaxHealth());
+    this.liveText.setText(mainPlayer.getHealth() + " / " + mainPlayer.getMaxHealth());
 
     this.coordinateText.setText("Coordinates: " + mainPlayer.getPosition().toString());
     for (int y = 0; y < blockItems.length; y++) {
@@ -210,7 +232,13 @@ public class Minimap implements IHud {
     for (int y = 0; y < specialItems.length; y++) {
       for (int x = 0; x < specialItems[y].length; x++) {
         if (specialItems[y][x] != null) {
-          specialItems[y][x].setPosition(MINIMAPMOVEDX + x * BLOCKSCALE, MINIMAPMOVEDY + y * BLOCKSCALE, 0.987f);
+
+          if(specialItems[y][x].getType().equals(Powerup.PowerupArt.SCHNELLER) || specialItems[y][x].getType().equals(Powerup.PowerupArt.MEHR_BOMBEN) || specialItems[y][x].getType().equals(Powerup.PowerupArt.MEHR_REICHWEITE)) {
+            specialItems[y][x].setPosition(MINIMAPMOVEDX + x * BLOCKSCALE + 5f, MINIMAPMOVEDY + y * BLOCKSCALE - 5f, 0.987f);
+          }else{
+            specialItems[y][x].setPosition(MINIMAPMOVEDX + x * BLOCKSCALE, MINIMAPMOVEDY + y * BLOCKSCALE, 0.987f);
+          }
+
         }
       }
     }
@@ -219,10 +247,10 @@ public class Minimap implements IHud {
       this.compassItem.setPosition(MINIMAPMOVEDX + (mainPlayer.getPosition().x - movedLevel.x * scaleLevel) * BLOCKSCALE,
               MINIMAPMOVEDY - BLOCKSCALE + (mainPlayer.getPosition().z - movedLevel.z * scaleLevel) * BLOCKSCALE, 0.989f);
 
-      for(int i = 0;i < enemyPlayers.size();i++) {
+      for (int i = 0; i < enemyPlayers.size(); i++) {
         GameItem compassItem = compassItemEnemies.get(i);
         Player enemy = enemyPlayers.get(i);
-        if(!gameItems.contains(compassItem)) gameItems.add(compassItem);
+        if (!gameItems.contains(compassItem)) gameItems.add(compassItem);
         compassItem.setPosition(MINIMAPMOVEDX + (enemy.getPosition().x - movedLevel.x * scaleLevel) * BLOCKSCALE,
                 MINIMAPMOVEDY - BLOCKSCALE + (enemy.getPosition().z - movedLevel.z * scaleLevel) * BLOCKSCALE, 0.989f);
       }

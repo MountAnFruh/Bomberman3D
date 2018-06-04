@@ -50,7 +50,7 @@ public abstract class Player extends GameItem {
   }
 
   public void update(double delta) {
-    if(this.health > 0) {
+    if (this.health > 0) {
       checkPowerupCollisions();
       if (bombPlaceCooldown > 0) {
         bombPlaceCooldown -= delta;
@@ -197,11 +197,13 @@ public abstract class Player extends GameItem {
   }
 
   public void pickUpPowerup(Powerup powerup) {
-    System.out.println("1");
-    this.setSpeed(this.getSpeed() + 0.02f);
-    System.out.println("2");
-    //level.getPowerupLevel().remove(gameItem);
-    System.out.println("3");
+    if (powerup.getArt().equals(Powerup.PowerupArt.SCHNELLER)) {
+      this.setSpeed(this.getSpeed() + 0.02f);
+    }else if (powerup.getArt().equals(Powerup.PowerupArt.MEHR_BOMBEN)) {
+      this.setMaxBombs(this.getMaxBombs()+1);
+    }else if (powerup.getArt().equals(Powerup.PowerupArt.MEHR_REICHWEITE)) {
+      this.setBombPower(this.getBombPower()+1);
+    }
     level.removePowerup(powerup);
   }
 
@@ -289,9 +291,9 @@ public abstract class Player extends GameItem {
 
   public void addHealth(int health) {
     this.health += health;
-    if(this.health < 0) {
+    if (this.health < 0) {
       this.health = 0;
-    } else if(this.health > maxHealth) {
+    } else if (this.health > maxHealth) {
       this.health = maxHealth;
     }
   }

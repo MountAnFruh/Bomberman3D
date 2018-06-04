@@ -49,6 +49,8 @@ public class Level {
   private Mesh floorBlockMesh = null;
   private Mesh bombMesh = null;
   private Mesh powerupSpeedMesh = null;
+  private Mesh powerupMehrBombMesh = null;
+  private Mesh powerupMehrReichMesh = null;
 
   public Level(int[][] layout, Scene scene, Vector3f moved, float scale) {
     this.moved = moved;
@@ -97,11 +99,11 @@ public class Level {
       float zCoord = player.getPosition().z - moved.z;
       int xLevel = (int) (xCoord / scaleValue);
       int yLevel = (int) (zCoord / scaleValue);
-      if(itemLayout[yLevel][xLevel] == EMPTY_ID) {
+      if (itemLayout[yLevel][xLevel] == EMPTY_ID) {
         itemLayout[yLevel][xLevel] = BOMB_ID;
         if (minimap != null) minimap.doDrawing();
         Bomb bombItem = new Bomb(bombMesh, player, this, power, timeToLive);
-        if(!placedBombs.containsKey(player)) placedBombs.put(player, new LinkedList<>());
+        if (!placedBombs.containsKey(player)) placedBombs.put(player, new LinkedList<>());
         placedBombs.get(player).add(bombItem);
         destroyableItems[yLevel][xLevel] = bombItem;
         gameItemsLevel.add(bombItem);
@@ -118,13 +120,27 @@ public class Level {
   private void placePowerup(int x, int y) {
     int prozent = 20;
     int rand = new Random().nextInt(100);
+    int art = new Random().nextInt(3) + 1;
     if (rand < prozent) {
       float scaleValue = (scale * 2);
-      GameItem gameItem = new Powerup(powerupSpeedMesh, this, Powerup.PowerupArt.SCHNELLER);
+      GameItem gameItem = null;
+      switch (art) {
+        case 1:
+          gameItem = new Powerup(powerupSpeedMesh, this, Powerup.PowerupArt.SCHNELLER);
+          itemLayout[y][x] = POWERUP_SCHNELLER_ID;
+          break;
+        case 2:
+          gameItem = new Powerup(powerupMehrBombMesh, this, Powerup.PowerupArt.MEHR_BOMBEN);
+          itemLayout[y][x] = POWERUP_MEHR_BOMBEN_ID;
+          break;
+        default:
+          gameItem = new Powerup(powerupMehrReichMesh, this, Powerup.PowerupArt.MEHR_REICHWEITE);
+          itemLayout[y][x] = POWERUP_MEHR_REICHWEITE_ID;
+          break;
+      }
       powerupLevel.add(gameItem);
       gameItemsLevel.add(gameItem);
       powerupItems[y][x] = gameItem;
-      itemLayout[y][x] = POWERUP_SCHNELLER_ID;
       float yCoord = moved.y;
       float xCoord = x * scaleValue - moved.x;
       float zCoord = y * scaleValue - moved.z;
@@ -146,14 +162,14 @@ public class Level {
   }
 
   public void removeBomb(Player player, Bomb bomb) {
-    if(bomb.isExploded()) {
+    if (bomb.isExploded()) {
       float scaleValue = (scale * 2);
       int xLevel = (int) (bomb.getPosition().x - 0.5f / (scaleValue * 2));
       int yLevel = (int) (bomb.getPosition().z - 0.5f / (scaleValue * 2));
       itemLayout[yLevel][xLevel] = EMPTY_ID;
       destroyableItems[yLevel][xLevel] = null;
       gameItemsLevel.remove(bomb);
-      if(placedBombs.containsKey(player)) {
+      if (placedBombs.containsKey(player)) {
         placedBombs.get(player).remove(bomb);
       }
       if (minimap != null) minimap.doDrawing();
@@ -169,17 +185,17 @@ public class Level {
     if (itemLayout[yLevel][xLevel] == BOMB_ID) {
       int power = bomb.getPower();
       explode(bomb, xLevel, yLevel);
-      for(int x = xLevel + 1;x <= xLevel + power;x++) {
-        if(!explode(bomb, x, yLevel)) break;
+      for (int x = xLevel + 1; x <= xLevel + power; x++) {
+        if (!explode(bomb, x, yLevel)) break;
       }
-      for(int x = xLevel - 1;x >= xLevel - power;x--) {
-        if(!explode(bomb, x, yLevel)) break;
+      for (int x = xLevel - 1; x >= xLevel - power; x--) {
+        if (!explode(bomb, x, yLevel)) break;
       }
-      for(int y = yLevel + 1;y <= yLevel + power;y++) {
-        if(!explode(bomb, xLevel, y)) break;
+      for (int y = yLevel + 1; y <= yLevel + power; y++) {
+        if (!explode(bomb, xLevel, y)) break;
       }
-      for(int y = yLevel - 1;y >= yLevel - power;y--) {
-        if(!explode(bomb, xLevel, y)) break;
+      for (int y = yLevel - 1; y >= yLevel - power; y--) {
+        if (!explode(bomb, xLevel, y)) break;
       }
     }
   }
@@ -190,8 +206,8 @@ public class Level {
     int itemId = itemLayout[y][x];
     float xTileCoordinate = x * scaleValue;
     float zTileCoordinate = y * scaleValue;
-    float maxXTileCoordinate = (x+1) * scaleValue;
-    float maxZTileCoordinate = (y+1) * scaleValue;
+    float maxXTileCoordinate = (x + 1) * scaleValue;
+    float maxZTileCoordinate = (y + 1) * scaleValue;
     Vector3f min = new Vector3f(xTileCoordinate, moved.y, zTileCoordinate);
     Vector3f max = new Vector3f(maxXTileCoordinate, moved.y + scaleValue, maxZTileCoordinate);
     Vector3f size = new Vector3f(max).sub(min);
@@ -202,7 +218,7 @@ public class Level {
     if(id == CONSTANT_ID) {
       return false;
     }
-    if(itemId == BOMB_ID) {
+    if (itemId == BOMB_ID) {
       Bomb bomb2 = (Bomb) destroyableItems[y][x];
       if(bomb2 != bomb) {
         if(!bomb2.isExploded()) {
@@ -211,7 +227,7 @@ public class Level {
         return false;
       }
     }
-    if(id == DESTROYABLE_ID) {
+    if (id == DESTROYABLE_ID) {
       layout[y][x] = EMPTY_ID;
       gameItemsLevel.remove(destroyableItems[y][x]);
       destroyableItems[y][x] = null;
@@ -277,6 +293,10 @@ public class Level {
   public void setPowerupSpeedMesh(Mesh powerupSpeedMesh) {
     this.powerupSpeedMesh = powerupSpeedMesh;
   }
+
+  public void setPowerupMehrBombMesh(Mesh powerupMehrBombMesh) { this.powerupMehrBombMesh = powerupMehrBombMesh; }
+
+  public void setPowerupMehrReichMesh(Mesh powerupMehrReichMesh) { this.powerupMehrReichMesh = powerupMehrReichMesh; }
 
   public void setConstantBlockMesh(Mesh constantBlockMesh) {
     this.constantBlockMesh = constantBlockMesh;

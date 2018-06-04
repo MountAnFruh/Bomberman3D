@@ -28,6 +28,6 @@ public class Powerup extends GameItem {
   }
 
   public enum PowerupArt {
-    SCHNELLER, MEHR_BOMBEN, MEHR_REICHWEITE;
+    SCHNELLER, MEHR_BOMBEN, MEHR_REICHWEITE, NICHTS;
   }
 }

@@ -66,13 +66,23 @@ public class BombermanGame implements IGameLogic {
       destBlock.setMaterial(material);
 
       Mesh powerupSpeed = OBJLoader.loadMesh("/models/cube.obj");
-      texture = new Texture("/textures/powerup_schneller.png");
-      material = new Material(texture, reflectance);
+      Texture texture1 = new Texture("/textures/powerup_schneller.png");
+      material = new Material(texture1, reflectance);
       powerupSpeed.setMaterial(material);
 
+      Mesh powerupMehrBombs = OBJLoader.loadMesh("/models/cube.obj");
+      Texture texture2 = new Texture("/textures/powerup_mehr_bomben.png");
+      material = new Material(texture2, reflectance);
+      powerupMehrBombs.setMaterial(material);
+
+      Mesh powerupMehrReich = OBJLoader.loadMesh("/models/cube.obj");
+      Texture texture3 = new Texture("/textures/powerup_mehr_reichweite.png");
+      material = new Material(texture3, reflectance);
+      powerupMehrReich.setMaterial(material);
+
       Mesh bombMesh = OBJLoader.loadMesh("/models/bomb.obj");
-      texture = new Texture("/textures/bomb.png");
-      material = new Material(texture, reflectance);
+      Texture texture4 = new Texture("/textures/bomb.png");
+      material = new Material(texture4, reflectance);
       bombMesh.setMaterial(material);
 
       Mesh playerMesh = OBJLoader.loadMesh("/models/characterlowpoly.obj");
@@ -92,6 +102,8 @@ public class BombermanGame implements IGameLogic {
       level.setConstantBlockMesh(fixBlock);
       level.setDestroyableBlockMesh(destBlock);
       level.setPowerupSpeedMesh(powerupSpeed);
+      level.setPowerupMehrBombMesh(powerupMehrBombs);
+      level.setPowerupMehrReichMesh(powerupMehrReich);
       level.setFloorBlockMesh(fixBlock);
       level.setBombMesh(bombMesh);
       level.buildMap();
