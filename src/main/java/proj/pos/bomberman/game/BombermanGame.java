@@ -17,6 +17,8 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class BombermanGame implements IGameLogic {
 
+  private static final int ENEMYCOUNT = 3;
+
   private final Renderer renderer;
 
   private final Camera camera;
@@ -81,9 +83,9 @@ public class BombermanGame implements IGameLogic {
       int[][] levelLayout = LevelLoader.loadLayout(0.2f, "/textures/maps/map_one.png");
       float scaleLevel = 0.5f;
       Vector3f movedLevel = new Vector3f(0, -2, 0);
-      level = new Level(levelLayout, movedLevel, scaleLevel);
+      level = new Level(levelLayout, scene, movedLevel, scaleLevel);
       this.player = new MainPlayer(camera, level, scene);
-      for(int i = 0;i < 3;i++) {
+      for(int i = 0;i < ENEMYCOUNT;i++) {
         EnemyPlayer enemyPlayer = new EnemyPlayer(playerMesh, level, scene);
         enemyPlayers.add(enemyPlayer);
       }
@@ -97,9 +99,9 @@ public class BombermanGame implements IGameLogic {
       List<Vector3f> spawnPoints = level.getSpawnPoints();
       Vector3f firstSpawnpoint = spawnPoints.get(0);
       player.setPosition(firstSpawnpoint.x, firstSpawnpoint.y, firstSpawnpoint.z);
-      for(int i = 0;i < enemyPlayers.size();i++) {
+      for(int i = 0;i < ENEMYCOUNT;i++) {
         EnemyPlayer enemyPlayer = enemyPlayers.get(i);
-        Vector3f spawnpoint = spawnPoints.get(i + 1);
+        Vector3f spawnpoint = spawnPoints.get((i + 1) % spawnPoints.size());
         enemyPlayer.setPosition(spawnpoint.x, spawnpoint.y, spawnpoint.z);
       }
 
@@ -107,26 +109,26 @@ public class BombermanGame implements IGameLogic {
 
       // Create Test-Particles
       List<IParticleEmitter> particleEmitters = new ArrayList<>();
-      FlowParticleEmitter particleEmitter;
-      Vector3f particleSpeed = new Vector3f(0, 1, 0);
-      particleSpeed.mul(2.5f);
-      long ttl = 4_000;
-      int maxParticles = 200;
-      long creationPeriodMillis = 300;
-      float range = 0.2f;
-      float scale = 0.5f;
-      Mesh partMesh = OBJLoader.loadMesh("/models/particle.obj");
-      texture = new Texture("/textures/particle.png");
-      Material partMaterial = new Material(texture, reflectance);
-      partMesh.setMaterial(partMaterial);
-      Particle particle = new Particle(partMesh, particleSpeed, ttl);
-      particle.setPosition(firstSpawnpoint.x, firstSpawnpoint.y, firstSpawnpoint.z);
-      particle.setScale(scale);
-      particleEmitter = new FlowParticleEmitter(particle, maxParticles, creationPeriodMillis);
-      particleEmitter.setActive(true);
-      particleEmitter.setPositionRndRange(range);
-      particleEmitter.setSpeedRndRange(range);
-      particleEmitters.add(particleEmitter);
+//      FlowParticleEmitter particleEmitter;
+//      Vector3f particleSpeed = new Vector3f(0, 1, 0);
+//      particleSpeed.mul(2.5f);
+//      long ttl = 4_000;
+//      int maxParticles = 200;
+//      long creationPeriodMillis = 300;
+//      float range = 0.2f;
+//      float scale = 0.5f;
+//      Mesh partMesh = OBJLoader.loadMesh("/models/particle.obj");
+//      texture = new Texture("/textures/particle.png");
+//      Material partMaterial = new Material(texture, reflectance);
+//      partMesh.setMaterial(partMaterial);
+//      Particle particle = new Particle(partMesh, particleSpeed, ttl);
+//      particle.setPosition(firstSpawnpoint.x, firstSpawnpoint.y, firstSpawnpoint.z);
+//      particle.setScale(scale);
+//      particleEmitter = new FlowParticleEmitter(scene, particle, maxParticles, creationPeriodMillis, 0);
+//      particleEmitter.setActive(true);
+//      particleEmitter.setPositionRndRange(range);
+//      particleEmitter.setSpeedRndRange(range);
+//      particleEmitters.add(particleEmitter);
       scene.setParticleEmitters(particleEmitters);
 
       SceneLight sceneLight = new SceneLight();
@@ -164,7 +166,7 @@ public class BombermanGame implements IGameLogic {
       scene.setSkyBox(skyBox);
 
       // Create Hud
-      minimap = new Minimap(level, movedLevel, scaleLevel, player);
+      minimap = new Minimap(level, movedLevel, scaleLevel, player, enemyPlayers);
 
       level.setMinimap(minimap);
 
@@ -221,6 +223,8 @@ public class BombermanGame implements IGameLogic {
       gameItem.update(delta);
     }
 
+    level.update(delta);
+
     // Update directional light direction, intensity and color
     DirectionalLight directionalLight = scene.getSceneLight().getDirectionalLight();
     lightAngle += 1.1f;
@@ -244,7 +248,7 @@ public class BombermanGame implements IGameLogic {
     directionalLight.getDirection().x = (float) Math.sin(angRad);
     directionalLight.getDirection().y = (float) Math.cos(angRad);
 
-    for (IParticleEmitter particleEmitter : scene.getParticleEmitters()) {
+    for (IParticleEmitter particleEmitter : new ArrayList<>(scene.getParticleEmitters())) {
       if (particleEmitter instanceof FlowParticleEmitter) {
         FlowParticleEmitter flowParticleEmitter = (FlowParticleEmitter) particleEmitter;
         flowParticleEmitter.update((long) (delta * 1000.0));

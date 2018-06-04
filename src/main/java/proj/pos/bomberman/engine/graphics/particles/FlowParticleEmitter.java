@@ -2,12 +2,15 @@ package proj.pos.bomberman.engine.graphics.particles;
 
 import org.joml.Vector3f;
 import proj.pos.bomberman.engine.GameItem;
+import proj.pos.bomberman.engine.graphics.Scene;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 public class FlowParticleEmitter implements IParticleEmitter {
+
+  private final Scene scene;
 
   private int maxParticles;
 
@@ -21,18 +24,25 @@ public class FlowParticleEmitter implements IParticleEmitter {
 
   private long lastCreationTime;
 
+  private long ttl;
+
+  private long timeLived;
+
   private float speedRndRange;
 
   private float positionRndRange;
 
   private float scaleRndRange;
 
-  public FlowParticleEmitter(Particle baseParticle, int maxParticles, long creationPeriodMillis) {
+  public FlowParticleEmitter(Scene scene, Particle baseParticle, int maxParticles, long creationPeriodMillis, long ttl) {
     particles = new ArrayList<>();
+    this.scene = scene;
     this.baseParticle = baseParticle;
     this.maxParticles = maxParticles;
+    this.ttl = ttl;
     this.active = false;
     this.lastCreationTime = 0;
+    this.timeLived = 0;
     this.creationPeriodMillis = creationPeriodMillis;
   }
 
@@ -96,9 +106,12 @@ public class FlowParticleEmitter implements IParticleEmitter {
 
   public void update(long elapsedTime) {
     long now = System.currentTimeMillis();
+    timeLived += elapsedTime;
+
     if (lastCreationTime == 0) {
       lastCreationTime = now;
     }
+
     Iterator<? extends GameItem> it = particles.iterator();
     while (it.hasNext()) {
       Particle particle = (Particle) it.next();
@@ -110,9 +123,15 @@ public class FlowParticleEmitter implements IParticleEmitter {
     }
 
     int length = this.getParticles().size();
-    if (now - lastCreationTime >= this.creationPeriodMillis && length < maxParticles) {
-      createParticle();
-      this.lastCreationTime = now;
+    if(timeLived <= ttl || ttl == 0) {
+      if (now - lastCreationTime >= this.creationPeriodMillis && length < maxParticles) {
+        createParticle();
+        this.lastCreationTime = now;
+      }
+    } else if (length == 0){
+      if(scene.getParticleEmitters().contains(this)) {
+        scene.getParticleEmitters().remove(this);
+      }
     }
   }
 

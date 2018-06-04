@@ -19,6 +19,7 @@ public class MainPlayer extends Player {
 
   public void update(double delta, MouseInput mouseInput) {
     changeRotation(mouseInput);
+    changePositionFromRotation();
     super.update(delta);
   }
 
@@ -31,6 +32,12 @@ public class MainPlayer extends Player {
   @Override
   public void movePosition(float offsetX, float offsetY, float offsetZ) {
     super.movePosition(offsetX, offsetY, offsetZ);
+    refreshCamera();
+  }
+
+  @Override
+  public void movePositionFromRotation(float offsetX, float offsetY, float offsetZ) {
+    super.movePositionFromRotation(offsetX, offsetY, offsetZ);
     refreshCamera();
   }
 
@@ -49,6 +56,10 @@ public class MainPlayer extends Player {
   private void changeRotation(MouseInput mouseInput) {
     Vector2f rotVec = mouseInput.getDisplVec();
     this.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
+  }
+
+  private void changePositionFromRotation() {
+    this.movePositionFromRotation(movementVec.x * speed, movementVec.y * speed, movementVec.z * speed);
   }
 
   private void refreshCamera() {

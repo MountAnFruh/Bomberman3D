@@ -17,7 +17,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {
 
-  private final boolean fullscreen = false;
+  private final boolean fullscreen = true;
 
   private final String title;
   private int width;

@@ -11,27 +11,30 @@ import java.util.List;
 
 public abstract class Player extends GameItem {
 
-  private static final float MAXBOMBPLACECOOLDOWN = 0.5f;
-  private static final float CAMERA_POS_STEP = 0.05f;
+  protected static final float MAXBOMBPLACECOOLDOWN = 0.5f;
+  protected static final float CAMERA_POS_STEP = 0.05f;
 
-  private final List<GameItem> noCollision = new ArrayList<>();
+  protected final List<GameItem> noCollision = new ArrayList<>();
 
-  private final Scene scene;
+  protected final Scene scene;
 
-  private final Level level;
+  protected final Level level;
 
-  private final Vector3f movementVec;
+  protected final Vector3f movementVec;
 
-  private float bombPlaceCooldown = 0.0f;
+  protected float bombPlaceCooldown = 0.0f;
 
-  private int maxBombs = 1;
+  protected int maxBombs = 1;
 
-  private int bombPower = 1;
-  private float timeToLive = 3f; // ungf. 3 Sekunden
+  protected int bombPower = 1;
+  protected float timeToLive = 3f; // ungf. 3 Sekunden
 
-  private float speed;
+  protected float speed;
 
-  private boolean dead;
+  protected boolean dead;
+
+  private int health = 100;
+  private int maxHealth = 100;
 
   public Player(Mesh mesh, Level level, Scene scene) {
     super(mesh);
@@ -47,22 +50,21 @@ public abstract class Player extends GameItem {
   }
 
   public void update(double delta) {
-    changePosition();
-    checkPowerupCollisions();
-    if (bombPlaceCooldown > 0) {
-      bombPlaceCooldown -= delta;
-    } else {
-      bombPlaceCooldown = 0;
-    }
-    for (GameItem gameItem : new ArrayList<>(noCollision)) {
-      if (!gameItem.isCollidingWith(this.getBoundingBox())) {
-        noCollision.remove(gameItem);
+    if(this.health > 0) {
+      checkPowerupCollisions();
+      if (bombPlaceCooldown > 0) {
+        bombPlaceCooldown -= delta;
+      } else {
+        bombPlaceCooldown = 0;
       }
+      for (GameItem gameItem : new ArrayList<>(noCollision)) {
+        if (!gameItem.isCollidingWith(this.getBoundingBox())) {
+          noCollision.remove(gameItem);
+        }
+      }
+    } else {
+      this.onDeath();
     }
-  }
-
-  private void changePosition() {
-    this.movePosition(movementVec.x * speed, movementVec.y * speed, movementVec.z * speed);
   }
 
   public void placeBomb() {
@@ -99,60 +101,66 @@ public abstract class Player extends GameItem {
 
   public void doCollisions(Vector3f oldPos, Vector3f currentPos, List<GameItem> noCollision) {
     Vector3f newPos = new Vector3f(currentPos);
-    currentPos.x = newPos.x;
-    currentPos.y = oldPos.y;
-    currentPos.z = oldPos.z;
-    boolean moveX = false, moveY = false, moveZ = false;
-    boolean moveXY = false, moveYZ = false, moveZX = false;
     if (!checkCollision()) {
-      moveX = true;
-    }
-    currentPos.x = oldPos.x;
-    currentPos.y = newPos.y;
-    currentPos.z = oldPos.z;
-    if (!checkCollision()) {
-      moveY = true;
+      return;
     }
     currentPos.x = oldPos.x;
     currentPos.y = oldPos.y;
-    currentPos.z = newPos.z;
-    if (!checkCollision()) {
-      moveZ = true;
-    }
-    currentPos.x = newPos.x;
-    currentPos.y = newPos.y;
     currentPos.z = oldPos.z;
-    if (!checkCollision()) {
-      moveXY = true;
-    }
-    currentPos.x = oldPos.x;
-    currentPos.y = newPos.y;
-    currentPos.z = newPos.z;
-    if (!checkCollision()) {
-      moveYZ = true;
-    }
-    currentPos.x = newPos.x;
-    currentPos.y = oldPos.y;
-    currentPos.z = newPos.z;
-    if (!checkCollision()) {
-      moveZX = true;
-    }
-    if (!moveXY && moveX && moveY) {
-      moveX = false;
-      moveY = false;
-    }
-    if (!moveYZ && moveY && moveZ) {
-      moveY = false;
-      moveZ = false;
-    }
-    if (!moveZX && moveZ && moveX) {
-      moveZ = false;
-      moveX = false;
-    }
-    Vector3f between = new Vector3f(newPos).sub(oldPos);
-    currentPos.x = oldPos.x + between.x * (moveX ? 1 : 0);
-    currentPos.y = oldPos.y + between.y * (moveY ? 1 : 0);
-    currentPos.z = oldPos.z + between.z * (moveZ ? 1 : 0);
+//    currentPos.x = newPos.x;
+//    currentPos.y = oldPos.y;
+//    currentPos.z = oldPos.z;
+//    boolean moveX = false, moveY = false, moveZ = false;
+//    boolean moveXY = false, moveYZ = false, moveZX = false;
+//    if (!checkCollision()) {
+//      moveX = true;
+//    }
+//    currentPos.x = oldPos.x;
+//    currentPos.y = newPos.y;
+//    currentPos.z = oldPos.z;
+//    if (!checkCollision()) {
+//      moveY = true;
+//    }
+//    currentPos.x = oldPos.x;
+//    currentPos.y = oldPos.y;
+//    currentPos.z = newPos.z;
+//    if (!checkCollision()) {
+//      moveZ = true;
+//    }
+//    currentPos.x = newPos.x;
+//    currentPos.y = newPos.y;
+//    currentPos.z = oldPos.z;
+//    if (!checkCollision()) {
+//      moveXY = true;
+//    }
+//    currentPos.x = oldPos.x;
+//    currentPos.y = newPos.y;
+//    currentPos.z = newPos.z;
+//    if (!checkCollision()) {
+//      moveYZ = true;
+//    }
+//    currentPos.x = newPos.x;
+//    currentPos.y = oldPos.y;
+//    currentPos.z = newPos.z;
+//    if (!checkCollision()) {
+//      moveZX = true;
+//    }
+//    if (!moveXY && moveX && moveY) {
+//      moveX = false;
+//      moveY = false;
+//    }
+//    if (!moveYZ && moveY && moveZ) {
+//      moveY = false;
+//      moveZ = false;
+//    }
+//    if (!moveZX && moveZ && moveX) {
+//      moveZ = false;
+//      moveX = false;
+//    }
+//    Vector3f between = new Vector3f(newPos).sub(oldPos);
+//    currentPos.x = oldPos.x + between.x * (moveX ? 1 : 0);
+//    currentPos.y = oldPos.y + between.y * (moveY ? 1 : 0);
+//    currentPos.z = oldPos.z + between.z * (moveZ ? 1 : 0);
   }
 
   public boolean checkCollision() {
@@ -197,7 +205,7 @@ public abstract class Player extends GameItem {
     level.removePowerup(powerup);
   }
 
-  public void movePosition(float offsetX, float offsetY, float offsetZ) {
+  public void movePositionFromRotation(float offsetX, float offsetY, float offsetZ) {
     Vector3f oldPos = new Vector3f(this.getPosition());
     if (offsetZ != 0) {
       position.x += (float) Math.sin(Math.toRadians(rotation.y)) * -1.0f * offsetZ;
@@ -207,6 +215,17 @@ public abstract class Player extends GameItem {
       position.x += (float) Math.sin(Math.toRadians(rotation.y - 90)) * -1.0f * offsetX;
       position.z += (float) Math.cos(Math.toRadians(rotation.y - 90)) * offsetX;
     }
+    position.y += offsetY;
+    Vector3f currPos = this.getPosition();
+    if (scene != null && (offsetX != 0 || offsetY != 0 || offsetZ != 0)) {
+      doCollisions(oldPos, currPos, noCollision);
+    }
+  }
+
+  public void movePosition(float offsetX, float offsetY, float offsetZ) {
+    Vector3f oldPos = new Vector3f(this.getPosition());
+    position.x += offsetX;
+    position.z += offsetZ;
     position.y += offsetY;
     Vector3f currPos = this.getPosition();
     if (scene != null && (offsetX != 0 || offsetY != 0 || offsetZ != 0)) {
@@ -266,6 +285,23 @@ public abstract class Player extends GameItem {
 
   public float getSpeed() {
     return speed;
+  }
+
+  public void addHealth(int health) {
+    this.health += health;
+    if(this.health < 0) {
+      this.health = 0;
+    } else if(this.health > maxHealth) {
+      this.health = maxHealth;
+    }
+  }
+
+  public int getHealth() {
+    return health;
+  }
+
+  public int getMaxHealth() {
+    return maxHealth;
   }
 
   public void onDeath() {

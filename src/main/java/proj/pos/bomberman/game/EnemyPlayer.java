@@ -20,18 +20,27 @@ public class EnemyPlayer extends Player {
 
   @Override
   public void update(double delta) {
-    this.getMovementVec().set(rand.nextInt(3)-1, rand.nextInt(2), rand.nextInt(3)-1);
-    this.moveRotation(rand.nextInt(21)-10, rand.nextInt(21)-10, rand.nextInt(21)-10);
+    MainPlayer mainPlayer = null;
+    for(Player player : level.getPlayers()) {
+      if(player instanceof MainPlayer) {
+        mainPlayer = (MainPlayer) player;
+      }
+    }
+    float xMovement = mainPlayer.getPosition().x - this.getPosition().x;
+    float yMovement = mainPlayer.getPosition().y - this.getPosition().y;
+    float zMovement = mainPlayer.getPosition().z - this.getPosition().z;
+    //this.movePosition(xMovement != 0 ? 1 : 0, yMovement != 0 ? 1 : 0, zMovement != 0 ? -1 : 0);
+    this.getMovementVec().set(-1,
+            (yMovement != 0 ? yMovement > 0 ? 1 : -1 : 0),0);
+    float yRotation = (float)Math.toDegrees(Math.atan2(zMovement,xMovement)) + 180;
+    this.setRotation(0, yRotation, 0);
+    this.movePositionFromRotation(movementVec.x * speed, movementVec.y * speed, movementVec.z * speed);
     super.update(delta);
   }
 
   @Override
   public void doCollisions(Vector3f oldPos, Vector3f currentPos, List<GameItem> noCollision) {
-//    super.doCollisions(oldPos, currentPos, noCollision);
+    super.doCollisions(oldPos, currentPos, noCollision);
   }
 
-  @Override
-  public void movePosition(float offsetX, float offsetY, float offsetZ) {
-    super.movePosition(offsetX, offsetY, offsetZ);
-  }
 }

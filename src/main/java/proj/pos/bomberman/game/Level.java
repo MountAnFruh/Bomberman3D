@@ -2,9 +2,12 @@ package proj.pos.bomberman.game;
 
 import org.joml.Vector3f;
 import proj.pos.bomberman.engine.GameItem;
-import proj.pos.bomberman.engine.graphics.BoundingBox;
-import proj.pos.bomberman.engine.graphics.Mesh;
+import proj.pos.bomberman.engine.graphics.*;
+import proj.pos.bomberman.engine.graphics.particles.FlowParticleEmitter;
+import proj.pos.bomberman.engine.graphics.particles.IParticleEmitter;
+import proj.pos.bomberman.engine.graphics.particles.Particle;
 
+import java.io.IOException;
 import java.util.*;
 
 public class Level {
@@ -23,6 +26,7 @@ public class Level {
 
   private static final float bombScale = 0.3f;
 
+  private final Scene scene;
   private final Map<Player, List<Bomb>> placedBombs = new HashMap<>();
   private final List<Player> players = new LinkedList<>();
 
@@ -39,15 +43,16 @@ public class Level {
   private List<GameItem> gameItemsLevel = new ArrayList<>();
   private List<GameItem> powerupLevel = new ArrayList<>();
   private List<Vector3f> spawnPoints = new ArrayList<>();
-
+  private List<Explosion> explosions = new ArrayList<>();
   private Mesh destroyableBlockMesh = null;
   private Mesh constantBlockMesh = null;
   private Mesh floorBlockMesh = null;
   private Mesh bombMesh = null;
   private Mesh powerupSpeedMesh = null;
 
-  public Level(int[][] layout, Vector3f moved, float scale) {
+  public Level(int[][] layout, Scene scene, Vector3f moved, float scale) {
     this.moved = moved;
+    this.scene = scene;
     this.scale = scale;
     this.layout = layout;
     this.itemLayout = new int[layout.length][layout[0].length];
@@ -160,25 +165,26 @@ public class Level {
     float scaleValue = (scale * 2);
     int xLevel = (int) (bomb.getPosition().x - 0.5f / (scaleValue * 2));
     int yLevel = (int) (bomb.getPosition().z - 0.5f / (scaleValue * 2));
+    explode(bomb, xLevel, yLevel);
     if (itemLayout[yLevel][xLevel] == BOMB_ID) {
       int power = bomb.getPower();
-      explode(xLevel, yLevel);
+      explode(bomb, xLevel, yLevel);
       for(int x = xLevel + 1;x <= xLevel + power;x++) {
-        if(!explode(x, yLevel)) break;
+        if(!explode(bomb, x, yLevel)) break;
       }
       for(int x = xLevel - 1;x >= xLevel - power;x--) {
-        if(!explode(x, yLevel)) break;
+        if(!explode(bomb, x, yLevel)) break;
       }
       for(int y = yLevel + 1;y <= yLevel + power;y++) {
-        if(!explode(xLevel, y)) break;
+        if(!explode(bomb, xLevel, y)) break;
       }
       for(int y = yLevel - 1;y >= yLevel - power;y--) {
-        if(!explode(xLevel, y)) break;
+        if(!explode(bomb, xLevel, y)) break;
       }
     }
   }
 
-  public boolean explode(int x, int y) {
+  public boolean explode(Bomb bomb, int x, int y) {
     float scaleValue = (scale * 2);
     int id = layout[y][x];
     int itemId = itemLayout[y][x];
@@ -188,24 +194,22 @@ public class Level {
     float maxZTileCoordinate = (y+1) * scaleValue;
     Vector3f min = new Vector3f(xTileCoordinate, moved.y, zTileCoordinate);
     Vector3f max = new Vector3f(maxXTileCoordinate, moved.y + scaleValue, maxZTileCoordinate);
+    Vector3f size = new Vector3f(max).sub(min);
     BoundingBox bbExplosion = new BoundingBox();
     bbExplosion.setMin(min);
     bbExplosion.setMax(max);
-    for(Player player : players) {
-      if(player.getBoundingBox().isCollidingWith(bbExplosion)) {
-        player.onDeath();
-        minimap.setLives(minimap.getLives()-50);
-      }
-    }
+    bbExplosion.setSize(size);
     if(id == CONSTANT_ID) {
       return false;
     }
     if(itemId == BOMB_ID) {
       Bomb bomb2 = (Bomb) destroyableItems[y][x];
-      if(!bomb2.isExploded()) {
-        this.explodeBomb(bomb2);
+      if(bomb2 != bomb) {
+        if(!bomb2.isExploded()) {
+          this.explodeBomb(bomb2);
+        }
+        return false;
       }
-      return false;
     }
     if(id == DESTROYABLE_ID) {
       layout[y][x] = EMPTY_ID;
@@ -213,6 +217,8 @@ public class Level {
       destroyableItems[y][x] = null;
       return false;
     }
+    Explosion explosion = new Explosion(this, scene, bbExplosion, scale, 1.0f, players);
+    explosions.add(explosion);
     return true;
   }
 
@@ -248,6 +254,12 @@ public class Level {
           spawnPoints.add(new Vector3f((xCoord) * scaleValue + 0.5f, yCoord * scaleValue + 0.5f, (zCoord) * scaleValue + 0.5f));
         }
       }
+    }
+  }
+
+  public void update(double delta) {
+    for(Explosion explosion : new ArrayList<>(explosions)) {
+      explosion.update(delta);
     }
   }
 
@@ -308,5 +320,13 @@ public class Level {
 
   public List<GameItem> getPowerupLevel() {
     return powerupLevel;
+  }
+
+  public Vector3f getMoved() {
+    return moved;
+  }
+
+  public List<Explosion> getExplosions() {
+    return explosions;
   }
 }
