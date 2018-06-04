@@ -3,7 +3,11 @@ package proj.pos.bomberman.game;
 import proj.pos.bomberman.engine.graphics.Mesh;
 import proj.pos.bomberman.engine.graphics.Scene;
 
+import java.util.Random;
+
 public class EnemyPlayer extends Player {
+
+  private Random rand = new Random();
 
   public EnemyPlayer(Mesh mesh, Level level, Scene scene) {
     super(mesh, level, scene);
@@ -13,8 +17,8 @@ public class EnemyPlayer extends Player {
 
   @Override
   public void update(double delta) {
-    this.getMovementVec().set(-1, 0, 0);
-    this.moveRotation(0, 1f, 0);
+    this.getMovementVec().set(rand.nextInt(3)-1, rand.nextInt(3)-1, rand.nextInt(3)-1);
+    this.moveRotation(rand.nextInt(721)-360, rand.nextInt(721)-360, rand.nextInt(721)-360);
     super.update(delta);
   }
 
