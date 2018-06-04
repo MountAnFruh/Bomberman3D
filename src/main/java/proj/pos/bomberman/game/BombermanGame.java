@@ -27,7 +27,7 @@ public class BombermanGame implements IGameLogic {
 
   private MainPlayer player;
 
-  private EnemyPlayer enemyPlayer;
+  private List<EnemyPlayer> enemyPlayers = new ArrayList<>();
 
   private Level level;
 
@@ -83,7 +83,10 @@ public class BombermanGame implements IGameLogic {
       Vector3f movedLevel = new Vector3f(0, -2, 0);
       level = new Level(levelLayout, movedLevel, scaleLevel);
       this.player = new MainPlayer(camera, level, scene);
-      this.enemyPlayer = new EnemyPlayer(playerMesh, level, scene);
+      for(int i = 0;i < 3;i++) {
+        EnemyPlayer enemyPlayer = new EnemyPlayer(playerMesh, level, scene);
+        enemyPlayers.add(enemyPlayer);
+      }
       level.setConstantBlockMesh(fixBlock);
       level.setDestroyableBlockMesh(destBlock);
       level.setPowerupSpeedMesh(powerupSpeed);
@@ -94,8 +97,11 @@ public class BombermanGame implements IGameLogic {
       List<Vector3f> spawnPoints = level.getSpawnPoints();
       Vector3f firstSpawnpoint = spawnPoints.get(0);
       player.setPosition(firstSpawnpoint.x, firstSpawnpoint.y, firstSpawnpoint.z);
-      Vector3f secondSpawnpoint = spawnPoints.get(1);
-      enemyPlayer.setPosition(secondSpawnpoint.x, secondSpawnpoint.y, secondSpawnpoint.z);
+      for(int i = 0;i < enemyPlayers.size();i++) {
+        EnemyPlayer enemyPlayer = enemyPlayers.get(i);
+        Vector3f spawnpoint = spawnPoints.get(i + 1);
+        enemyPlayer.setPosition(spawnpoint.x, spawnpoint.y, spawnpoint.z);
+      }
 
       scene.setGameItems(level.getGameItemsLevel());
 
@@ -206,7 +212,9 @@ public class BombermanGame implements IGameLogic {
 //    scene.setGameItems(gameItems);
     // Update player position
     player.update(delta, mouseInput);
-    enemyPlayer.update(delta);
+    for(EnemyPlayer enemyPlayer : enemyPlayers) {
+      enemyPlayer.update(delta);
+    }
     minimap.rotateCompass(player.getRotation().y);
 
     for (GameItem gameItem : new ArrayList<>(level.getGameItemsLevel())) {
