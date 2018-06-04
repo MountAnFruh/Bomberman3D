@@ -68,11 +68,11 @@ public class GameEngine implements Runnable {
         deltaU--;
       }
 
-      if (deltaF >= 1) {
-        render();
-        fps++;
-        deltaF--;
-      }
+//      if (deltaF >= 1) {
+      render();
+      fps++;
+      deltaF--;
+//      }
 
       if (System.currentTimeMillis() - timer > 1_000) {
         System.out.println(String.format("UPS: %s, FPS: %s", ups, fps));

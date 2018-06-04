@@ -27,7 +27,7 @@ public class EnemyPlayer extends Player {
 
   @Override
   public void doCollisions(Vector3f oldPos, Vector3f currentPos, List<GameItem> noCollision) {
-    //super.doCollisions(oldPos, currentPos, noCollision);
+//    super.doCollisions(oldPos, currentPos, noCollision);
   }
 
   @Override
