@@ -4,7 +4,6 @@ import proj.pos.bomberman.engine.graphics.Window;
 
 public class GameEngine implements Runnable {
 
-  public static final int TARGET_FPS = 60;
   public static final int TARGET_UPS = 30;
 
   private final Window window;
@@ -48,9 +47,8 @@ public class GameEngine implements Runnable {
     long initTime = System.nanoTime();
 
     final double TIME_BETWEEN_UPDATES = 1_000_000_000.0 / TARGET_UPS;
-    final double TIME_BETWEEN_RENDERS = 1_000_000_000.0 / TARGET_FPS;
 
-    double deltaU = 0, deltaF = 0;
+    double deltaU = 0, deltaT = 0;
     int fps = 0, ups = 0;
 
     long timer = System.currentTimeMillis();
@@ -58,19 +56,19 @@ public class GameEngine implements Runnable {
     while (running && !window.windowShouldClose()) {
       long now = System.nanoTime();
       deltaU += (now - initTime) / TIME_BETWEEN_UPDATES;
-      deltaF += (now - initTime) / TIME_BETWEEN_RENDERS;
+      deltaT += (now - initTime) / TIME_BETWEEN_UPDATES;
       initTime = now;
 
       if (deltaU >= 1) {
         input();
-        update(deltaU / TARGET_UPS);
+        update(deltaT / TARGET_UPS);
         ups++;
-        deltaU = 0;
+        deltaU--;
+        deltaT = 0;
       }
 
       render();
       fps++;
-      deltaF--;
 
       if (System.currentTimeMillis() - timer > 1_000) {
         System.out.println(String.format("UPS: %s, FPS: %s", ups, fps));
