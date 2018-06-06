@@ -68,18 +68,20 @@ public abstract class Player extends GameItem {
   }
 
   public void placeBomb() {
-    if (level.getPlacedBombs().get(this) != null) {
-      if (level.getPlacedBombs().get(this).size() >= maxBombs) {
-        return;
-      }
-    }
-    if (bombPlaceCooldown == 0) {
-      Bomb bomb = level.placeBomb(this, bombPower, timeToLive);
-      if (bomb != null) {
-        if (bomb.isCollidingWith(this.getBoundingBox())) {
-          noCollision.add(bomb);
+    if(this.health > 0) {
+      if (level.getPlacedBombs().get(this) != null) {
+        if (level.getPlacedBombs().get(this).size() >= maxBombs) {
+          return;
         }
-        bombPlaceCooldown = MAXBOMBPLACECOOLDOWN;
+      }
+      if (bombPlaceCooldown == 0) {
+        Bomb bomb = level.placeBomb(this, bombPower, timeToLive);
+        if (bomb != null) {
+          if (bomb.isCollidingWith(this.getBoundingBox())) {
+            noCollision.add(bomb);
+          }
+          bombPlaceCooldown = MAXBOMBPLACECOOLDOWN;
+        }
       }
     }
   }

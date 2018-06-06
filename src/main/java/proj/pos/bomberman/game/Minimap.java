@@ -47,9 +47,11 @@ public class Minimap implements IHud {
   private final Mesh powerupSchneller;
   private final Mesh powerupMehrBombs;
   private final Mesh powerupMehrReich;
+  private final Mesh explosionBlock;
 
   private GameItem[][] blockItems;
   private GameItem[][] specialItems;
+  private GameItem[][] explosionItems;
 
   public Minimap(Level level, Vector3f movedLevel, float scaleLevel, MainPlayer mainPlayer, List<EnemyPlayer> enemyPlayers) throws IOException {
     FontTexture fontTexture = new FontTexture(FONT, CHARSET);
@@ -142,6 +144,11 @@ public class Minimap implements IHud {
     material.setAmbientColor(new Vector4f(1, 1, 1, 1));
     emptyBlock.setMaterial(material);
 
+    explosionBlock = OBJLoader.loadMesh("/models/rectangle.obj");
+    material = new Material();
+    material.setAmbientColor(new Vector4f(1,0,0,1));
+    explosionBlock.setMaterial(material);
+
     doDrawing();
   }
 
@@ -201,6 +208,19 @@ public class Minimap implements IHud {
         }
       }
     }
+    int[][] explosionLayout = level.getExplosionLayout();
+    explosionItems = new GameItem[explosionLayout.length][explosionLayout[0].length];
+    for(int y = 0;y < explosionLayout.length;y++) {
+      for(int x = 0;x < explosionLayout[y].length;x++) {
+        if(explosionLayout[y][x] == Level.EXPLOSION_ID) {
+          GameItem gameItem = new GameItem(explosionBlock);
+          gameItem.setScale(BLOCKSCALE);
+          gameItem.setRotation(0f, 180f, 180f);
+          explosionItems[y][x] = gameItem;
+          gameItems.add(gameItem);
+        }
+      }
+    }
   }
 
   @Override
@@ -221,7 +241,7 @@ public class Minimap implements IHud {
       for (int x = 0; x < blockItems[y].length; x++) {
         if (blockItems[y][x] != null) {
           float zCoord = 0.988f;
-          if (layout[y][x] == Level.EMPTY_ID) {
+          if (layout[y][x] == Level.EMPTY_ID || layout[y][x] == Level.SPAWN_ID) {
             zCoord = 0.980f;
           }
           blockItems[y][x].setPosition(MINIMAPMOVEDX + x * BLOCKSCALE, MINIMAPMOVEDY + y * BLOCKSCALE, zCoord);
@@ -234,10 +254,17 @@ public class Minimap implements IHud {
           int[][] specialLayout = level.getItemLayout();
           if (specialLayout[y][x] == Level.POWERUP_SCHNELLER_ID || specialLayout[y][x] == Level.POWERUP_MEHR_BOMBEN_ID || specialLayout[y][x] == Level.POWERUP_MEHR_REICHWEITE_ID) {
             specialItems[y][x].setPosition(MINIMAPMOVEDX + x * BLOCKSCALE + 5f, MINIMAPMOVEDY + y * BLOCKSCALE - 5f, 0.987f);
-          } else {
-            specialItems[y][x].setPosition(MINIMAPMOVEDX + x * BLOCKSCALE, MINIMAPMOVEDY + y * BLOCKSCALE, 0.987f);
+          }else{
+            specialItems[y][x].setPosition(MINIMAPMOVEDX + x * BLOCKSCALE, MINIMAPMOVEDY + y * BLOCKSCALE, 0.989f);
           }
 
+        }
+      }
+    }
+    for(int y = 0;y < explosionItems.length;y++) {
+      for(int x = 0;x < explosionItems[y].length;x++) {
+        if(explosionItems[y][x] != null) {
+          explosionItems[y][x].setPosition(MINIMAPMOVEDX + x * BLOCKSCALE, MINIMAPMOVEDY + y * BLOCKSCALE, 0.988f);
         }
       }
     }

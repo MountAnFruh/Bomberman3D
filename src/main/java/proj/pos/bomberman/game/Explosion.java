@@ -12,6 +12,7 @@ public class Explosion {
 
   private final Level level;
   private final Scene scene;
+  private final Minimap minimap;
   private final List<Player> players;
   private final BoundingBox bbExplosion;
   private final float scale;
@@ -20,8 +21,10 @@ public class Explosion {
   private float timeToLive;
   private float timeLived;
 
-  public Explosion(Level level, Scene scene, BoundingBox bbExplosion, float scale, float timeToLive, List<Player> players) {
+  public Explosion(Level level, Scene scene, BoundingBox bbExplosion,
+                   float scale, float timeToLive, List<Player> players, Minimap minimap) {
     float scaleValue = (scale * 2);
+    this.minimap = minimap;
     this.level = level;
     this.scale = scale;
     this.scene = scene;
@@ -64,7 +67,12 @@ public class Explosion {
         }
       }
     } else {
-      level.getExplosions().remove(this);
+      float scaleValue = (scale * 2);
+      int xLevel = (int) (emitter.getBaseParticle().getPosition().x - 0.5f / (scaleValue * 2));
+      int yLevel = (int) (emitter.getBaseParticle().getPosition().z - 0.5f / (scaleValue * 2));
+      level.getExplosionItems()[yLevel][xLevel] = null;
+      level.getExplosionLayout()[yLevel][xLevel] = Level.EMPTY_ID;
+      minimap.doDrawing();
     }
   }
 }

@@ -12,12 +12,15 @@ public class Level {
   public final static int SPAWN_ID = 2;
   public final static int RANDOM_ID = 3;
   public final static int DESTROYABLE_ID = 4;
-  public final static int BOMB_ID = 5;
 
   // Powerups
-  public final static int POWERUP_SCHNELLER_ID = 6;
-  public final static int POWERUP_MEHR_BOMBEN_ID = 7;
-  public final static int POWERUP_MEHR_REICHWEITE_ID = 8;
+  public final static int POWERUP_SCHNELLER_ID = 5;
+  public final static int POWERUP_MEHR_BOMBEN_ID = 6;
+  public final static int POWERUP_MEHR_REICHWEITE_ID = 7;
+
+  // MISC
+  public final static int BOMB_ID = 8;
+  public final static int EXPLOSION_ID = 9;
 
   private static final float bombScale = 0.3f;
 
@@ -29,16 +32,16 @@ public class Level {
 
   private int[][] layout;
   private int[][] itemLayout;
+  private int[][] explosionLayout;
   private GameItem[][] destroyableItems;
   private GameItem[][] powerupItems;
+  private Explosion[][] explosionItems;
 
   private Vector3f moved;
   private float scale;
 
   private List<GameItem> gameItemsLevel = new ArrayList<>();
-  private List<GameItem> powerupLevel = new ArrayList<>();
   private List<Vector3f> spawnPoints = new ArrayList<>();
-  private List<Explosion> explosions = new ArrayList<>();
   private Mesh destroyableBlockMesh = null;
   private Mesh constantBlockMesh = null;
   private Mesh floorBlockMesh = null;
@@ -53,6 +56,7 @@ public class Level {
     this.scale = scale;
     this.layout = layout;
     this.itemLayout = new int[layout.length][layout[0].length];
+    this.explosionLayout = new int[layout.length][layout[0].length];
   }
 
   private void buildFloor() {
@@ -133,7 +137,6 @@ public class Level {
           itemLayout[y][x] = POWERUP_MEHR_REICHWEITE_ID;
           break;
       }
-      powerupLevel.add(gameItem);
       gameItemsLevel.add(gameItem);
       powerupItems[y][x] = gameItem;
       float yCoord = moved.y;
@@ -222,14 +225,16 @@ public class Level {
         return false;
       }
     }
+
+    Explosion explosion = new Explosion(this, scene, bbExplosion, scale, 1.0f, players, minimap);
+    explosionItems[y][x] = explosion;
+    explosionLayout[y][x] = EXPLOSION_ID;
     if (id == DESTROYABLE_ID) {
       layout[y][x] = EMPTY_ID;
       gameItemsLevel.remove(destroyableItems[y][x]);
       destroyableItems[y][x] = null;
       return false;
     }
-    Explosion explosion = new Explosion(this, scene, bbExplosion, scale, 1.0f, players);
-    explosions.add(explosion);
     return true;
   }
 
@@ -239,6 +244,7 @@ public class Level {
     buildFloor();
     this.destroyableItems = new GameItem[layout.length][layout[0].length];
     this.powerupItems = new GameItem[layout.length][layout[0].length];
+    this.explosionItems = new Explosion[layout.length][layout[0].length];
     for (int y = 0; y < layout.length; y++) {
       for (int x = 0; x < layout[y].length; x++) {
         int id = layout[y][x];
@@ -269,8 +275,12 @@ public class Level {
   }
 
   public void update(double delta) {
-    for(Explosion explosion : new ArrayList<>(explosions)) {
-      explosion.update(delta);
+    for(int y = 0;y < explosionItems.length;y++) {
+      for(int x = 0;x < explosionItems[y].length;x++) {
+        if(explosionItems[y][x] != null) {
+          explosionItems[y][x].update(delta);
+        }
+      }
     }
   }
 
@@ -333,15 +343,15 @@ public class Level {
     return players;
   }
 
-  public List<GameItem> getPowerupLevel() {
-    return powerupLevel;
-  }
-
   public Vector3f getMoved() {
     return moved;
   }
 
-  public List<Explosion> getExplosions() {
-    return explosions;
+  public Explosion[][] getExplosionItems() {
+    return explosionItems;
+  }
+
+  public int[][] getExplosionLayout() {
+    return explosionLayout;
   }
 }
