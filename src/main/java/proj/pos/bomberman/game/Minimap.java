@@ -179,23 +179,22 @@ public class Minimap implements IHud {
         switch (specialLayout[y][x]) {
           case Level.BOMB_ID:
             gameItem = new GameItem(bombBlock);
+            gameItem.setScale(BLOCKSCALE);
             break;
           case Level.POWERUP_SCHNELLER_ID:
-            gameItem = new GameItem(powerupSchneller, Powerup.PowerupArt.SCHNELLER);
+            gameItem = new GameItem(powerupSchneller);
+            gameItem.setScale(BLOCKSCALE / 2);
             break;
           case Level.POWERUP_MEHR_BOMBEN_ID:
-            gameItem = new GameItem(powerupMehrBombs, Powerup.PowerupArt.MEHR_BOMBEN);
+            gameItem = new GameItem(powerupMehrBombs);
+            gameItem.setScale(BLOCKSCALE / 2);
             break;
           case Level.POWERUP_MEHR_REICHWEITE_ID:
-            gameItem = new GameItem(powerupMehrReich, Powerup.PowerupArt.MEHR_REICHWEITE);
+            gameItem = new GameItem(powerupMehrReich);
+            gameItem.setScale(BLOCKSCALE / 2);
             break;
         }
         if (gameItem != null) {
-          if(gameItem.getType().equals(Powerup.PowerupArt.SCHNELLER) || gameItem.getType().equals(Powerup.PowerupArt.MEHR_BOMBEN) || gameItem.getType().equals(Powerup.PowerupArt.MEHR_REICHWEITE)) {
-            gameItem.setScale(BLOCKSCALE / 2);
-          }else{
-            gameItem.setScale(BLOCKSCALE);
-          }
           gameItem.setRotation(0f, 180f, 180f);
           specialItems[y][x] = gameItem;
           gameItems.add(gameItem);
@@ -232,10 +231,10 @@ public class Minimap implements IHud {
     for (int y = 0; y < specialItems.length; y++) {
       for (int x = 0; x < specialItems[y].length; x++) {
         if (specialItems[y][x] != null) {
-
-          if(specialItems[y][x].getType().equals(Powerup.PowerupArt.SCHNELLER) || specialItems[y][x].getType().equals(Powerup.PowerupArt.MEHR_BOMBEN) || specialItems[y][x].getType().equals(Powerup.PowerupArt.MEHR_REICHWEITE)) {
+          int[][] specialLayout = level.getItemLayout();
+          if (specialLayout[y][x] == Level.POWERUP_SCHNELLER_ID || specialLayout[y][x] == Level.POWERUP_MEHR_BOMBEN_ID || specialLayout[y][x] == Level.POWERUP_MEHR_REICHWEITE_ID) {
             specialItems[y][x].setPosition(MINIMAPMOVEDX + x * BLOCKSCALE + 5f, MINIMAPMOVEDY + y * BLOCKSCALE - 5f, 0.987f);
-          }else{
+          } else {
             specialItems[y][x].setPosition(MINIMAPMOVEDX + x * BLOCKSCALE, MINIMAPMOVEDY + y * BLOCKSCALE, 0.987f);
           }
 

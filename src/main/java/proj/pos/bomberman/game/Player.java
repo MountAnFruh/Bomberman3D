@@ -196,13 +196,24 @@ public abstract class Player extends GameItem {
     super.setPosition(x, y, z);
   }
 
-  public void pickUpPowerup(Powerup powerup) {
-    if (powerup.getArt().equals(Powerup.PowerupArt.SCHNELLER)) {
-      this.setSpeed(this.getSpeed() + 0.02f);
-    }else if (powerup.getArt().equals(Powerup.PowerupArt.MEHR_BOMBEN)) {
-      this.setMaxBombs(this.getMaxBombs()+1);
-    }else if (powerup.getArt().equals(Powerup.PowerupArt.MEHR_REICHWEITE)) {
-      this.setBombPower(this.getBombPower()+1);
+  public void pickUpPowerup(GameItem powerup) {
+    int xLevel = (int) (powerup.getPosition().x);
+    int yLevel = (int) (powerup.getPosition().z);
+    System.out.println(xLevel + " - " + yLevel);
+    System.out.println(powerup.getPosition().x + " - " + powerup.getPosition().z);
+    int type = level.getItemLayout()[yLevel][xLevel];
+    if (type == Level.POWERUP_SCHNELLER_ID) {
+      if (this.getSpeed() <= 5) {
+        this.setSpeed(this.getSpeed() + 0.02f);
+      }
+    } else if (type == Level.POWERUP_MEHR_BOMBEN_ID) {
+      if (this.getMaxBombs() <= 5) {
+        this.setMaxBombs(this.getMaxBombs() + 1);
+      }
+    } else if (type == Level.POWERUP_MEHR_REICHWEITE_ID) {
+      if (this.getBombPower() <= 5) {
+        this.setBombPower(this.getBombPower() + 1);
+      }
     }
     level.removePowerup(powerup);
   }

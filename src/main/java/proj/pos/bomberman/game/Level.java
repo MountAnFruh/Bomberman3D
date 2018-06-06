@@ -3,11 +3,6 @@ package proj.pos.bomberman.game;
 import org.joml.Vector3f;
 import proj.pos.bomberman.engine.GameItem;
 import proj.pos.bomberman.engine.graphics.*;
-import proj.pos.bomberman.engine.graphics.particles.FlowParticleEmitter;
-import proj.pos.bomberman.engine.graphics.particles.IParticleEmitter;
-import proj.pos.bomberman.engine.graphics.particles.Particle;
-
-import java.io.IOException;
 import java.util.*;
 
 public class Level {
@@ -151,7 +146,7 @@ public class Level {
     }
   }
 
-  public void removePowerup(Powerup powerup) {
+  public void removePowerup(GameItem powerup) {
     float scaleValue = (scale * 2);
     int xLevel = (int) (powerup.getPosition().x - 0.5f / (scaleValue * 2));
     int yLevel = (int) (powerup.getPosition().z - 0.5f / (scaleValue * 2));

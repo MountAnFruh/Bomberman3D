@@ -31,7 +31,10 @@ public class Bomb extends GameItem {
 
   @Override
   public void update(double delta) {
+    System.out.println(delta);
+    System.out.println(timeLived);
     timeLived += delta;
+    System.out.println(timeLived);
     if (timeLived > timeToLive && !exploded) {
       level.explodeBomb(this);
     }

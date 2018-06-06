@@ -14,7 +14,6 @@ public class GameItem implements Collidable {
   protected float scale;
 
   protected Vector3f rotation;
-  private Powerup.PowerupArt type = Powerup.PowerupArt.NICHTS;
 
   public GameItem() {
     position = new Vector3f(0, 0, 0);
@@ -25,11 +24,6 @@ public class GameItem implements Collidable {
   public GameItem(Mesh mesh) {
     this();
     this.mesh = mesh;
-  }
-
-  public GameItem(Mesh mesh, Powerup.PowerupArt type) {
-    this(mesh);
-    this.type = type;
   }
 
   public void update(double delta) {
@@ -81,13 +75,5 @@ public class GameItem implements Collidable {
     BoundingBox boundingBox = new BoundingBox();
     boundingBox.createFromGameItem(this);
     return boundingBox;
-  }
-
-  public Powerup.PowerupArt getType() {
-    return type;
-  }
-
-  public void setType(Powerup.PowerupArt type) {
-    this.type = type;
   }
 }
