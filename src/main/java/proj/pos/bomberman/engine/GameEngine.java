@@ -47,8 +47,8 @@ public class GameEngine implements Runnable {
   protected void gameLoop() {
     long initTime = System.nanoTime();
 
-    final double TIME_BETWEEN_UPDATES = 1_000_000_000 / TARGET_UPS;
-    final double TIME_BETWEEN_RENDERS = 1_000_000_000 / TARGET_FPS;
+    final double TIME_BETWEEN_UPDATES = 1_000_000_000.0 / TARGET_UPS;
+    final double TIME_BETWEEN_RENDERS = 1_000_000_000.0 / TARGET_FPS;
 
     double deltaU = 0, deltaF = 0;
     int fps = 0, ups = 0;
@@ -65,14 +65,12 @@ public class GameEngine implements Runnable {
         input();
         update(deltaU / TARGET_UPS);
         ups++;
-        deltaU--;
+        deltaU = 0;
       }
 
-//      if (deltaF >= 1) {
       render();
       fps++;
       deltaF--;
-//      }
 
       if (System.currentTimeMillis() - timer > 1_000) {
         System.out.println(String.format("UPS: %s, FPS: %s", ups, fps));
