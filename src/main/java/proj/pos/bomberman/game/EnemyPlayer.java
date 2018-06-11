@@ -22,24 +22,38 @@ public class EnemyPlayer extends Player {
   @Override
   public void update(double delta) {
     if(this.health > 0) {
+      int[][] layout = level.getLayout();
+
       MainPlayer mainPlayer = null;
       for (Player player : level.getPlayers()) {
         if (player instanceof MainPlayer) {
           mainPlayer = (MainPlayer) player;
         }
       }
-      float xMovement = mainPlayer.getPosition().x - this.getPosition().x;
-      float yMovement = mainPlayer.getPosition().y - this.getPosition().y;
-      float zMovement = mainPlayer.getPosition().z - this.getPosition().z;
-      //this.movePosition(xMovement != 0 ? 1 : 0, yMovement != 0 ? 1 : 0, zMovement != 0 ? -1 : 0);
-      this.getMovementVec().set(-1,
-              (yMovement != 0 ? yMovement > 0 ? 1 : -1 : 0), 0);
-      float yRotation = (float) Math.toDegrees(Math.atan2(zMovement, xMovement)) + 180;
+
+      this.getMovementVec().set(-1, 0, 0);
+
+      float yRotation = getYRotationFromPosition(mainPlayer.getPosition());
       this.setRotation(0, yRotation, 0);
-      this.movePositionFromRotation(movementVec.x * speed, movementVec.y * speed, movementVec.z * speed);
-      this.placeBomb();
+
+      float offsetX = movementVec.x * speed;
+      float offsetY = movementVec.y * speed;
+      float offsetZ = movementVec.z * speed;
+
+      this.movePositionFromRotation(offsetX, offsetY, offsetZ);
+      //this.placeBomb();
     }
     super.update(delta);
+  }
+
+  private float getYRotationFromPosition(Vector3f position) {
+    float xMovement = position.x - this.getPosition().x;
+    float yMovement = position.y - this.getPosition().y;
+    float zMovement = position.z - this.getPosition().z;
+
+    //this.movePosition(xMovement != 0 ? 1 : 0, yMovement != 0 ? 1 : 0, zMovement != 0 ? -1 : 0);
+    float yRotation = (float) Math.toDegrees(Math.atan2(zMovement, xMovement)) + 180;
+    return yRotation;
   }
 
   @Override

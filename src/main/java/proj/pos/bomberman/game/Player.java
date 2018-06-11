@@ -105,7 +105,7 @@ public abstract class Player extends GameItem {
 
   public void doCollisions(Vector3f oldPos, Vector3f currentPos, List<GameItem> noCollision) {
     Vector3f newPos = new Vector3f(currentPos);
-    if (!checkCollision()) {
+    if (checkCollision().size() == 0) {
       return;
     }
     currentPos.x = oldPos.x;
@@ -167,7 +167,19 @@ public abstract class Player extends GameItem {
 //    currentPos.z = oldPos.z + between.z * (moveZ ? 1 : 0);
   }
 
-  public boolean checkCollision() {
+  public List<GameItem> isCollidingWhen(float offsetX, float offsetY, float offsetZ) {
+    Vector3f oldPos = new Vector3f(this.getPosition());
+    this.getPosition().add(offsetX, offsetY, offsetZ);
+
+    // Collision-Testing
+    List<GameItem> collidesWith = checkCollision();
+
+    this.getPosition().set(oldPos);
+    return collidesWith;
+  }
+
+  public List<GameItem> checkCollision() {
+    List<GameItem> collidesWith = new ArrayList<>();
     Iterator<GameItem> iter;
     iter = scene.getGameItems().iterator();
     while (iter.hasNext()) {
@@ -175,9 +187,11 @@ public abstract class Player extends GameItem {
       if (gameItem == this) continue;
       if (gameItem instanceof Powerup) continue;
       if (noCollision.contains(gameItem)) continue;
-      if (gameItem.isCollidingWith(this.getBoundingBox())) return true;
+      if (gameItem.isCollidingWith(this.getBoundingBox())) {
+        collidesWith.add(gameItem);
+      }
     }
-    return false;
+    return collidesWith;
   }
 
   @Override
@@ -200,7 +214,7 @@ public abstract class Player extends GameItem {
     super.setPosition(x, y, z);
   }
 
-  public void pickUpPowerup(GameItem powerup) {
+  public void pickUpPowerup(Powerup powerup) {
     int xLevel = (int) (powerup.getPosition().x);
     int yLevel = (int) (powerup.getPosition().z);
     System.out.println(xLevel + " - " + yLevel);
