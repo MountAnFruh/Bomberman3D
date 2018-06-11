@@ -179,9 +179,9 @@ public class BombermanGame implements IGameLogic {
 
       // Create Hud
       minimap = new Minimap(level, movedLevel, scaleLevel, player, enemyPlayers);
+      player.setMinimap(minimap);
 
       level.setMinimap(minimap);
-
     } catch (Exception ex) {
       ex.printStackTrace();
     }

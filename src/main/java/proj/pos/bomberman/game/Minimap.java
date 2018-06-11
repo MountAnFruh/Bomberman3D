@@ -29,6 +29,7 @@ public class Minimap implements IHud {
   private final List<GameItem> gameItems = new ArrayList<>();
 
   private final TextItem minimapText;
+  private final TextItem deathTextItem;
   private final TextItem coordinateText;
   private final GameItem compassItem;
   private final List<GameItem> compassItemEnemies = new ArrayList<>();
@@ -39,6 +40,7 @@ public class Minimap implements IHud {
   private final List<EnemyPlayer> enemyPlayers;
   private final Vector3f movedLevel;
   private final float scaleLevel;
+  private boolean isDead = false;
 
   private final Mesh fixBlock;
   private final Mesh destBlock;
@@ -99,6 +101,9 @@ public class Minimap implements IHud {
     this.liveText = new TextItem(mainPlayer.getHealth() + " / " + mainPlayer.getMaxHealth(), fontTexture);
     this.minimapText = new TextItem("Minimap: ", fontTexture);
     this.coordinateText = new TextItem("Coordinates: ", fontTexture);
+    this.deathTextItem = new TextItem("You are Dead", fontTexture);
+
+    deathTextItem.setScale(10f);
 
     this.minimapText.getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
     this.coordinateText.getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
@@ -155,6 +160,7 @@ public class Minimap implements IHud {
   public void doDrawing() {
     gameItems.clear();
     gameItems.add(minimapText);
+    gameItems.add(deathTextItem);
     gameItems.add(liveText);
     gameItems.add(coordinateText);
     gameItems.add(playerAvatar);
@@ -231,6 +237,12 @@ public class Minimap implements IHud {
   public void update(Window window) {
     int[][] layout = level.getLayout();
     this.minimapText.setPosition(10f, 10f, 0);
+    if(isDead)
+    {
+      this.deathTextItem.setPosition(300f, 400f, 0);
+    }else{
+      this.deathTextItem.setPosition(10200f, 10200f, 0);
+    }
     this.coordinateText.setPosition(10f, 30f, 0);
     this.liveText.setPosition(20f, window.getHeight() - 80f, 0.999f);
     this.playerAvatar.setPosition(window.getWidth() - AVATARSCALE - 20f, AVATARSCALE + 20f, 0.999f);
@@ -286,6 +298,11 @@ public class Minimap implements IHud {
 //        if(gameItems.contains(compassItem)) gameItems.remove(compassItem);
 //      }
     }
+  }
+
+  public void setDead(boolean isDead)
+  {
+    this.isDead = isDead;
   }
 
   public void rotateCompass(float angle) {

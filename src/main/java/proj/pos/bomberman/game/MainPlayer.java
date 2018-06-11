@@ -10,6 +10,7 @@ public class MainPlayer extends Player {
   private static final float MOUSE_SENSITIVITY = 0.2f;
 
   private final Camera camera;
+  private Minimap minimap;
 
   public MainPlayer(Camera camera, Level level, Scene scene) {
     super(level, scene);
@@ -65,5 +66,15 @@ public class MainPlayer extends Player {
   private void refreshCamera() {
     camera.setPosition(position.x, position.y, position.z);
     camera.setRotation(rotation.x, rotation.y, rotation.z);
+  }
+
+  public void setMinimap(Minimap minimap) {
+    this.minimap = minimap;
+  }
+
+  public void setDead() {
+    if (minimap != null) {
+      minimap.setDead(true);
+    }
   }
 }

@@ -321,6 +321,10 @@ public abstract class Player extends GameItem {
 
   public void onDeath() {
     this.dead = true;
+    if(this instanceof MainPlayer)
+    {
+      ((MainPlayer)this).setDead();
+    }
     System.out.println("Player is now dead! " + dead);
   }
 }
