@@ -85,10 +85,7 @@ public class BombermanGame implements IGameLogic {
       material = new Material(texture4, reflectance);
       bombMesh.setMaterial(material);
 
-      Mesh playerMesh = OBJLoader.loadMesh("/models/characterlowpoly.obj");
-      material = new Material();
-      material.setAmbientColor(new Vector4f(1, 0, 0, 1));
-      playerMesh.setMaterial(material);
+      Mesh playerMesh;
 
       int[][] levelLayout = LevelLoader.loadLayout(0.2f, "/textures/maps/map_one.png");
       float scaleLevel = 0.5f;
@@ -96,6 +93,10 @@ public class BombermanGame implements IGameLogic {
       level = new Level(levelLayout, scene, movedLevel, scaleLevel);
       this.player = new MainPlayer(camera, level, scene);
       for(int i = 0;i < ENEMYCOUNT;i++) {
+        playerMesh = OBJLoader.loadMesh("/models/characterlowpoly.obj");
+        material = new Material();
+        material.setAmbientColor(new Vector4f(1, 0, 0, 1));
+        playerMesh.setMaterial(material);
         EnemyPlayer enemyPlayer = new EnemyPlayer(playerMesh, level, scene);
         enemyPlayers.add(enemyPlayer);
       }
