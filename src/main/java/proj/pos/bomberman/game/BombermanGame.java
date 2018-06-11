@@ -2,6 +2,7 @@ package proj.pos.bomberman.game;
 
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+import org.lwjgl.openal.AL11;
 import proj.pos.bomberman.engine.GameItem;
 import proj.pos.bomberman.engine.IGameLogic;
 import proj.pos.bomberman.engine.MouseInput;
@@ -9,6 +10,10 @@ import proj.pos.bomberman.engine.graphics.*;
 import proj.pos.bomberman.engine.graphics.particles.FlowParticleEmitter;
 import proj.pos.bomberman.engine.graphics.particles.IParticleEmitter;
 import proj.pos.bomberman.engine.graphics.particles.Particle;
+import proj.pos.bomberman.engine.sound.SoundBuffer;
+import proj.pos.bomberman.engine.sound.SoundListener;
+import proj.pos.bomberman.engine.sound.SoundManager;
+import proj.pos.bomberman.engine.sound.SoundSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +40,14 @@ public class BombermanGame implements IGameLogic {
 
   private Minimap minimap;
 
+  private final SoundManager soundManager;
+
+  private enum Sounds { MUSIC, EXPLOSION};
+
   public BombermanGame() {
     this.renderer = new Renderer();
     this.camera = new Camera();
+    this.soundManager = new SoundManager();
     lightAngle = -90;
   }
 
@@ -45,6 +55,8 @@ public class BombermanGame implements IGameLogic {
   public void init(Window window) {
     try {
       renderer.init(window);
+
+      soundManager.init();
 
       scene = new Scene();
 
@@ -85,10 +97,7 @@ public class BombermanGame implements IGameLogic {
       material = new Material(texture4, reflectance);
       bombMesh.setMaterial(material);
 
-      Mesh playerMesh = OBJLoader.loadMesh("/models/characterlowpoly.obj");
-      material = new Material();
-      material.setAmbientColor(new Vector4f(1, 0, 0, 1));
-      playerMesh.setMaterial(material);
+      Mesh playerMesh;
 
       int[][] levelLayout = LevelLoader.loadLayout(0.2f, "/textures/maps/map_one.png");
       float scaleLevel = 0.5f;
@@ -96,6 +105,10 @@ public class BombermanGame implements IGameLogic {
       level = new Level(levelLayout, scene, movedLevel, scaleLevel);
       this.player = new MainPlayer(camera, level, scene);
       for(int i = 0;i < ENEMYCOUNT;i++) {
+        playerMesh = OBJLoader.loadMesh("/models/characterlowpoly.obj");
+        material = new Material();
+        material.setAmbientColor(new Vector4f(1, 0, 0, 1));
+        playerMesh.setMaterial(material);
         EnemyPlayer enemyPlayer = new EnemyPlayer(playerMesh, level, scene);
         enemyPlayers.add(enemyPlayer);
       }
@@ -182,9 +195,26 @@ public class BombermanGame implements IGameLogic {
       player.setMinimap(minimap);
 
       level.setMinimap(minimap);
+
+      this.soundManager.init();
+      this.soundManager.setAttenuationModel(AL11.AL_EXPONENT_DISTANCE);
+      setupSound();
+
     } catch (Exception ex) {
       ex.printStackTrace();
     }
+  }
+
+  private void setupSound() throws Exception{
+    //Set Background-Music
+    SoundBuffer bufferBackground = new SoundBuffer("/sounds/8bitDespacito.ogg");
+    soundManager.addSoundBuffer(bufferBackground);
+    SoundSource sourceBackground = new SoundSource(true,true);
+    sourceBackground.setBuffer(bufferBackground.getBufferId());
+    soundManager.addSoundSource(Sounds.MUSIC.toString(),sourceBackground);
+
+    soundManager.setListener(new SoundListener(new Vector3f(0,0,0)));
+    sourceBackground.play();
   }
 
   @Override
@@ -266,6 +296,9 @@ public class BombermanGame implements IGameLogic {
         flowParticleEmitter.update((long) (delta * 1000.0));
       }
     }
+
+    //Update sound listener position
+    soundManager.updateListenerPosition(camera);
   }
 
   @Override
@@ -277,6 +310,8 @@ public class BombermanGame implements IGameLogic {
   @Override
   public void cleanup() {
     renderer.cleanup();
+    soundManager.cleanup();
+
     scene.cleanupAllGameItems();
     minimap.cleanup();
   }

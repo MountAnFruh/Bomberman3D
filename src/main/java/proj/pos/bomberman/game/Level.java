@@ -3,6 +3,7 @@ package proj.pos.bomberman.game;
 import org.joml.Vector3f;
 import proj.pos.bomberman.engine.GameItem;
 import proj.pos.bomberman.engine.graphics.*;
+
 import java.util.*;
 
 public class Level {
@@ -39,6 +40,7 @@ public class Level {
 
   private Vector3f moved;
   private float scale;
+
 
   private List<GameItem> gameItemsLevel = new ArrayList<>();
   private List<Vector3f> spawnPoints = new ArrayList<>();

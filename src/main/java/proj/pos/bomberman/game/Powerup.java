@@ -17,6 +17,7 @@ public class Powerup extends GameItem {
 
   @Override
   public void update(double delta) {
+    this.setRotation(this.getRotation().x, this.getRotation().y + 5, this.getRotation().z);
   }
 
   public void setArt(PowerupArt art) {

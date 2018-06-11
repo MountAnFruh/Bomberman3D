@@ -33,8 +33,8 @@ public abstract class Player extends GameItem {
 
   protected boolean dead;
 
-  private int health = 100;
-  private int maxHealth = 100;
+  protected int health = 100;
+  protected int maxHealth = 100;
 
   public Player(Mesh mesh, Level level, Scene scene) {
     super(mesh);
@@ -63,7 +63,9 @@ public abstract class Player extends GameItem {
         }
       }
     } else {
-      this.onDeath();
+      if(this.dead == false) {
+        this.onDeath();
+      }
     }
   }
 
@@ -326,5 +328,6 @@ public abstract class Player extends GameItem {
       ((MainPlayer)this).setDead();
     }
     System.out.println("Player is now dead! " + dead);
+    this.setPosition(this.getPosition().x, this.getPosition().y + 4.0f, this.getPosition().z);
   }
 }
