@@ -1,6 +1,15 @@
 package proj.pos.bomberman.utils;
 
+import org.lwjgl.BufferUtils;
+
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.SeekableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -64,5 +73,57 @@ public class Utils {
       floatArr[i] = list.get(i);
     }
     return floatArr;
+  }
+
+   /**
+   * Wandelt die eingegebene ressource in einen ByteBuffer um, wird zum
+    * konvertieren von Sounddatein benötigt  (mp3 -> pcm   z.B.)
+   *
+   * @param resource Die Resource die es umzuwandeln gilt
+    *@param bufferSize die gewünschte Buffersize
+   * @return Bytebuffer der resource
+   */
+  public static ByteBuffer ioResourceToByteBuffer(String resource, int bufferSize) throws IOException {
+    ByteBuffer buffer;
+
+    Path path = Paths.get(resource);
+    if (Files.isReadable(path)) {
+      try (SeekableByteChannel fc = Files.newByteChannel(path)) {
+        buffer = BufferUtils.createByteBuffer((int) fc.size() + 1);
+        while (fc.read(buffer) != -1) ;
+      }
+    } else {
+      try (
+              InputStream source = Utils.class.getResourceAsStream(resource);
+              ReadableByteChannel rbc = Channels.newChannel(source)) {
+        buffer = BufferUtils.createByteBuffer(bufferSize);
+
+        while (true) {
+          int bytes = rbc.read(buffer);
+          if (bytes == -1) {
+            break;
+          }
+          if (buffer.remaining() == 0) {
+            buffer = resizeBuffer(buffer, buffer.capacity() * 2);
+          }
+        }
+      }
+    }
+
+    buffer.flip();
+    return buffer;
+  }
+
+  /**
+   * Ändert die größe des ByteBuffers
+   * @param buffer Buffer welcher geändert werden soll
+   * @param newCapacity die neue Größe
+   * @return Den Buffer mit der neuen Größe
+   */
+  private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
+    ByteBuffer newBuffer = BufferUtils.createByteBuffer(newCapacity);
+    buffer.flip();
+    newBuffer.put(buffer);
+    return newBuffer;
   }
 }

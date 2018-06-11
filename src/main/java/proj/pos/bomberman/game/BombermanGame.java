@@ -2,6 +2,7 @@ package proj.pos.bomberman.game;
 
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+import org.lwjgl.openal.AL11;
 import proj.pos.bomberman.engine.GameItem;
 import proj.pos.bomberman.engine.IGameLogic;
 import proj.pos.bomberman.engine.MouseInput;
@@ -9,6 +10,10 @@ import proj.pos.bomberman.engine.graphics.*;
 import proj.pos.bomberman.engine.graphics.particles.FlowParticleEmitter;
 import proj.pos.bomberman.engine.graphics.particles.IParticleEmitter;
 import proj.pos.bomberman.engine.graphics.particles.Particle;
+import proj.pos.bomberman.engine.sound.SoundBuffer;
+import proj.pos.bomberman.engine.sound.SoundListener;
+import proj.pos.bomberman.engine.sound.SoundManager;
+import proj.pos.bomberman.engine.sound.SoundSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +40,14 @@ public class BombermanGame implements IGameLogic {
 
   private Minimap minimap;
 
+  private final SoundManager soundManager;
+
+  private enum Sounds { MUSIC, EXPLOSION};
+
   public BombermanGame() {
     this.renderer = new Renderer();
     this.camera = new Camera();
+    this.soundManager = new SoundManager();
     lightAngle = -90;
   }
 
@@ -45,6 +55,8 @@ public class BombermanGame implements IGameLogic {
   public void init(Window window) {
     try {
       renderer.init(window);
+
+      soundManager.init();
 
       scene = new Scene();
 
@@ -183,9 +195,25 @@ public class BombermanGame implements IGameLogic {
 
       level.setMinimap(minimap);
 
+      this.soundManager.init();
+      this.soundManager.setAttenuationModel(AL11.AL_EXPONENT_DISTANCE);
+      setupSound();
+
     } catch (Exception ex) {
       ex.printStackTrace();
     }
+  }
+
+  private void setupSound() throws Exception{
+    //Set Background-Music
+    SoundBuffer bufferBackground = new SoundBuffer("/sounds/8bitDespacito.ogg");
+    soundManager.addSoundBuffer(bufferBackground);
+    SoundSource sourceBackground = new SoundSource(true,true);
+    sourceBackground.setBuffer(bufferBackground.getBufferId());
+    soundManager.addSoundSource(Sounds.MUSIC.toString(),sourceBackground);
+
+    soundManager.setListener(new SoundListener(new Vector3f(0,0,0)));
+    sourceBackground.play();
   }
 
   @Override
@@ -267,6 +295,9 @@ public class BombermanGame implements IGameLogic {
         flowParticleEmitter.update((long) (delta * 1000.0));
       }
     }
+
+    //Update sound listener position
+    soundManager.updateListenerPosition(camera);
   }
 
   @Override
@@ -278,6 +309,8 @@ public class BombermanGame implements IGameLogic {
   @Override
   public void cleanup() {
     renderer.cleanup();
+    soundManager.cleanup();
+
     scene.cleanupAllGameItems();
     minimap.cleanup();
   }
