@@ -23,17 +23,21 @@ public class Minimap implements IHud {
 
   private static final float MINIMAPMOVEDX = 10f;
   private static final float MINIMAPMOVEDY = 90f;
+  public static final float WINDOWWIDHT = 1920f;
+  public static final float WINDOWHEIGHT = 1080f;
 
   private final Level level;
 
   private final List<GameItem> gameItems = new ArrayList<>();
 
+  private final TextItem[] powerupTextItems;
   private final TextItem minimapText;
   private final TextItem deathTextItem;
   private final TextItem coordinateText;
   private final GameItem compassItem;
   private final List<GameItem> compassItemEnemies = new ArrayList<>();
   private final GameItem playerAvatar;
+  private final GameItem[] powerupItemImg;
   private final TextItem liveText;
 
   private final MainPlayer mainPlayer;
@@ -54,6 +58,7 @@ public class Minimap implements IHud {
   private GameItem[][] blockItems;
   private GameItem[][] specialItems;
   private GameItem[][] explosionItems;
+  private int[] powerupAnz;
 
   public Minimap(Level level, Vector3f movedLevel, float scaleLevel, MainPlayer mainPlayer, List<EnemyPlayer> enemyPlayers) throws IOException {
     FontTexture fontTexture = new FontTexture(FONT, CHARSET);
@@ -103,9 +108,53 @@ public class Minimap implements IHud {
     this.coordinateText = new TextItem("Coordinates: ", fontTexture);
     this.deathTextItem = new TextItem("You are Dead", fontTexture);
 
+    powerupTextItems = new TextItem[3];
+    this.powerupTextItems[0] = new TextItem("x0 ", fontTexture);
+    this.powerupTextItems[1] = new TextItem("x0 ", fontTexture);
+    this.powerupTextItems[2] = new TextItem("x0 ", fontTexture);
+
+    powerupItemImg = new GameItem[3];
+    mesh = OBJLoader.loadMesh("/models/rectangle.obj");
+    texture = new Texture("/textures/powerup_schneller_icon.png");
+    material = new Material(texture, 0f);
+    mesh.setMaterial(material);
+    powerupItemImg[0] = new GameItem(mesh);
+    powerupItemImg[0].setRotation(0f, 180f, 180f);
+    powerupItemImg[0].setScale(BLOCKSCALE*4);
+    gameItems.add(powerupItemImg[0]);
+
+    mesh = OBJLoader.loadMesh("/models/rectangle.obj");
+    texture = new Texture("/textures/powerup_mehr_bomben_icon.png");
+    material = new Material(texture, 0f);
+    mesh.setMaterial(material);
+    powerupItemImg[1] = new GameItem(mesh);
+    powerupItemImg[1].setRotation(0f, 180f, 180f);
+    powerupItemImg[1].setScale(BLOCKSCALE*4);
+    gameItems.add(powerupItemImg[0]);
+
+    mesh = OBJLoader.loadMesh("/models/rectangle.obj");
+    texture = new Texture("/textures/powerup_mehr_reichweite_icon.png");
+    material = new Material(texture, 0f);
+    mesh.setMaterial(material);
+    powerupItemImg[2] = new GameItem(mesh);
+    powerupItemImg[2].setRotation(0f, 180f, 180f);
+    powerupItemImg[2].setScale(BLOCKSCALE*4);
+    gameItems.add(powerupItemImg[0]);
+
+    powerupAnz = new int[3];
+    powerupAnz[0] = 0;
+    powerupAnz[1] = 0;
+    powerupAnz[2] = 0;
+
     deathTextItem.setScale(10f);
 
     this.minimapText.getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
+    this.powerupTextItems[0].getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
+    this.powerupTextItems[1].getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
+    this.powerupTextItems[2].getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
+    this.powerupItemImg[0].getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
+    this.powerupItemImg[1].getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
+    this.powerupItemImg[2].getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
     this.coordinateText.getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
     this.liveText.getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
     this.liveText.setScale(3f);
@@ -113,6 +162,12 @@ public class Minimap implements IHud {
     gameItems.add(minimapText);
     gameItems.add(coordinateText);
     gameItems.add(liveText);
+    gameItems.add(powerupTextItems[0]);
+    gameItems.add(powerupTextItems[1]);
+    gameItems.add(powerupTextItems[2]);
+    gameItems.add(powerupItemImg[0]);
+    gameItems.add(powerupItemImg[1]);
+    gameItems.add(powerupItemImg[2]);
 
     fixBlock = OBJLoader.loadMesh("/models/rectangle.obj");
     texture = new Texture("/textures/stone_small.png");
@@ -160,10 +215,16 @@ public class Minimap implements IHud {
   public void doDrawing() {
     gameItems.clear();
     gameItems.add(minimapText);
-    gameItems.add(deathTextItem);
     gameItems.add(liveText);
     gameItems.add(coordinateText);
     gameItems.add(playerAvatar);
+    gameItems.add(deathTextItem);
+    gameItems.add(powerupTextItems[0]);
+    gameItems.add(powerupTextItems[1]);
+    gameItems.add(powerupTextItems[2]);
+    gameItems.add(powerupItemImg[0]);
+    gameItems.add(powerupItemImg[1]);
+    gameItems.add(powerupItemImg[2]);
 
     // Create blocks
     int[][] layout = level.getLayout();
@@ -236,7 +297,15 @@ public class Minimap implements IHud {
 
   public void update(Window window) {
     int[][] layout = level.getLayout();
+    float posX = 1750;
+    float posY = 800;
     this.minimapText.setPosition(10f, 10f, 0);
+    this.powerupTextItems[0].setPosition(posX, posY, 0);
+    this.powerupTextItems[1].setPosition(posX, posY+100, 0);
+    this.powerupTextItems[2].setPosition(posX, posY+200, 0);
+    this.powerupItemImg[0].setPosition(posX+40, posY+50, 0);
+    this.powerupItemImg[1].setPosition(posX+40, posY+50+100, 0);
+    this.powerupItemImg[2].setPosition(posX+40, posY+50+200, 0);
     if(isDead)
     {
       this.deathTextItem.setPosition(300f, 400f, 0);
@@ -307,6 +376,11 @@ public class Minimap implements IHud {
 
   public void rotateCompass(float angle) {
     this.compassItem.setRotation(0f, 180f, 180f + angle);
+  }
+
+  public void powerupPickedUp(int id)
+  {
+    powerupTextItems[id-5].setText(powerupTextItems[id-5].getText().replaceAll(powerupAnz[id-5]+"", ++powerupAnz[id-5]+""));
   }
 
 //  public void rotateEnemies(float angle){

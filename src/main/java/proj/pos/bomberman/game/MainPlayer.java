@@ -72,6 +72,10 @@ public class MainPlayer extends Player {
     this.minimap = minimap;
   }
 
+  public Minimap getMinimap() {
+    return minimap;
+  }
+
   public void setDead() {
     if (minimap != null) {
       minimap.setDead(true);

@@ -217,6 +217,10 @@ public abstract class Player extends GameItem {
       }
     }
     level.removePowerup(powerup);
+    if(this instanceof MainPlayer)
+    {
+      ((MainPlayer)this).getMinimap().powerupPickedUp(type);
+    }
   }
 
   public void movePositionFromRotation(float offsetX, float offsetY, float offsetZ) {

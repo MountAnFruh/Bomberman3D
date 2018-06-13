@@ -19,6 +19,10 @@ public class Hud implements IHud {
 
   private final TextItem statusTextItem;
 
+  private final TextItem deathTextItem;
+
+  private boolean isDead = true;
+
   //private final GameItem compassItem;
 
   private final GameItem playerAvatar;
@@ -26,6 +30,7 @@ public class Hud implements IHud {
   public Hud(String statusText) throws IOException {
     FontTexture fontTexture = new FontTexture(FONT, CHARSET);
     this.statusTextItem = new TextItem(statusText, fontTexture);
+    this.deathTextItem = new TextItem("You are Dead", fontTexture);
 
     this.statusTextItem.getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
 
@@ -65,14 +70,35 @@ public class Hud implements IHud {
 
   public void update(Window window){
     this.statusTextItem.setPosition(500f, 500f, 0);
+    System.out.println(deathTextItem.getPosition());
+    if(isDead)
+    {
+      this.statusTextItem.setPosition(500f, 500f, 0);
+    }else{
+
+      this.deathTextItem.setPosition(10200f, 10200f, 0);
+    }
     this.playerAvatar.setPosition(500f, 500f, 0);
 
+  }
+
+  public void setDead(boolean isDead)
+  {
+    this.isDead = isDead;
   }
 
   public void updateSize(Window window) {
     this.statusTextItem.setPosition(5f, 5f, 0);
     //this.compassItem.setPosition(window.getWidth() - 40f, 50f, 0f);
     this.playerAvatar.setPosition(window.getWidth() - 45f, 45f, 0f);
+
+    if(isDead)
+    {
+      this.statusTextItem.setPosition(500f, 500f, 0);
+    }else{
+
+      this.deathTextItem.setPosition(10200f, 10200f, 0);
+    }
   }
 
  /* public void rotateCompass(float angle) {
