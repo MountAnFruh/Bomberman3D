@@ -13,7 +13,7 @@ public class MainPlayer extends Player {
 
   public MainPlayer(Camera camera, Level level, Scene scene) {
     super(level, scene);
-    this.setScale(0.0001f);
+    this.setScale(0.1f);
     this.camera = camera;
   }
 
