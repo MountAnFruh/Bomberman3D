@@ -3,8 +3,15 @@ package proj.pos.bomberman.game;
 import org.joml.Vector3f;
 import proj.pos.bomberman.engine.GameItem;
 import proj.pos.bomberman.engine.graphics.*;
+import proj.pos.bomberman.engine.sound.SoundBuffer;
+import proj.pos.bomberman.engine.sound.SoundListener;
+import proj.pos.bomberman.engine.sound.SoundManager;
+import proj.pos.bomberman.engine.sound.SoundSource;
 
 import java.util.*;
+
+import static org.lwjgl.openal.AL10.AL_GAIN;
+import static org.lwjgl.openal.AL10.alSourcef;
 
 public class Level {
 
@@ -51,6 +58,8 @@ public class Level {
   private Mesh powerupSpeedMesh = null;
   private Mesh powerupMehrBombMesh = null;
   private Mesh powerupMehrReichMesh = null;
+
+  private SoundManager soundManager;
 
   public Level(int[][] layout, Scene scene, Vector3f moved, float scale) {
     this.moved = moved;
@@ -198,6 +207,7 @@ public class Level {
         if (!explode(bomb, xLevel, y)) break;
       }
     }
+    soundManager.playSoundSource(BombermanGame.Sounds.EXPLOSION.name());
   }
 
   public boolean explode(Bomb bomb, int x, int y) {
@@ -356,4 +366,6 @@ public class Level {
   public int[][] getExplosionLayout() {
     return explosionLayout;
   }
+
+  public void setSoundManager(SoundManager soundManager){this.soundManager = soundManager;}
 }

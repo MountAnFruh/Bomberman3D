@@ -2,6 +2,7 @@ package proj.pos.bomberman.game;
 
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+import org.lwjgl.openal.AL10;
 import org.lwjgl.openal.AL11;
 import proj.pos.bomberman.engine.GameItem;
 import proj.pos.bomberman.engine.IGameLogic;
@@ -9,7 +10,6 @@ import proj.pos.bomberman.engine.MouseInput;
 import proj.pos.bomberman.engine.graphics.*;
 import proj.pos.bomberman.engine.graphics.particles.FlowParticleEmitter;
 import proj.pos.bomberman.engine.graphics.particles.IParticleEmitter;
-import proj.pos.bomberman.engine.graphics.particles.Particle;
 import proj.pos.bomberman.engine.sound.SoundBuffer;
 import proj.pos.bomberman.engine.sound.SoundListener;
 import proj.pos.bomberman.engine.sound.SoundManager;
@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.openal.AL10.*;
 
 public class BombermanGame implements IGameLogic {
 
@@ -42,7 +43,7 @@ public class BombermanGame implements IGameLogic {
 
   private final SoundManager soundManager;
 
-  private enum Sounds { MUSIC, EXPLOSION};
+  public static enum Sounds { MUSIC, EXPLOSION};
 
   public BombermanGame() {
     this.renderer = new Renderer();
@@ -198,6 +199,7 @@ public class BombermanGame implements IGameLogic {
       this.soundManager.init();
       this.soundManager.setAttenuationModel(AL11.AL_EXPONENT_DISTANCE);
       setupSound();
+      level.setSoundManager(soundManager);
 
     } catch (Exception ex) {
       ex.printStackTrace();
@@ -206,14 +208,29 @@ public class BombermanGame implements IGameLogic {
 
   private void setupSound() throws Exception{
     //Set Background-Music
+    float newVolume = 0.1f;
+
     SoundBuffer bufferBackground = new SoundBuffer("/sounds/8bitDespacito.ogg");
     soundManager.addSoundBuffer(bufferBackground);
     SoundSource sourceBackground = new SoundSource(true,true);
     sourceBackground.setBuffer(bufferBackground.getBufferId());
     soundManager.addSoundSource(Sounds.MUSIC.toString(),sourceBackground);
+    //Sets the Music volume
+    alSourcef(sourceBackground.getSourceId(), AL_GAIN, newVolume);
+    sourceBackground.play();
+
+    //Set Bomb-explosion
+    newVolume = 1f;
+
+    SoundBuffer bufferExplosion = new SoundBuffer("/sounds/explosion.ogg");
+    soundManager.addSoundBuffer(bufferExplosion);
+    SoundSource sourceExplosion = new SoundSource(false, true);
+    sourceExplosion.setBuffer(bufferExplosion.getBufferId());
+    soundManager.addSoundSource(BombermanGame.Sounds.EXPLOSION.toString(), sourceExplosion);
+    //Sets the effect volume
+    alSourcef(sourceExplosion.getSourceId(), AL_GAIN, newVolume);
 
     soundManager.setListener(new SoundListener(new Vector3f(0,0,0)));
-    sourceBackground.play();
   }
 
   @Override

@@ -68,7 +68,6 @@ public class SoundManager {
   public void playSoundSource(String name) {
     SoundSource soundSource = this.soundSourceMap.get(name);
 
-    System.out.println("SOOOOOOOOOUUUUUUUUUUNNNNNNNNNDDDDDDDDDDD "+soundSource == null);
     if (soundSource != null && !soundSource.isPlaying()) {
       soundSource.play();
     }
