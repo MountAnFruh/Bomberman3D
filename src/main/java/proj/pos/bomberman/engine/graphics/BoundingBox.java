@@ -30,13 +30,15 @@ public class BoundingBox {
 
   public void createFromGameItem(GameItem gameItem) {
     Mesh mesh = gameItem.getMesh();
-    Matrix4f worldMatrix = transformation.getWorldMatrix(gameItem);
+    Matrix4f worldMatrix;
     float[] positions;
     if (mesh != null) {
       positions = mesh.getPositions();
+      worldMatrix = transformation.getWorldMatrix(gameItem);
     } else {
       positions = new float[]{-1, -1, -1,
               1, 1, 1};
+      worldMatrix = transformation.getWorldMatrixWithoutRotation(gameItem);
     }
     this.min = new Vector3f(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
     this.max = new Vector3f(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);

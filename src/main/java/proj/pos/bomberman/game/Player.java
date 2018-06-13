@@ -4,10 +4,9 @@ import org.joml.Vector3f;
 import proj.pos.bomberman.engine.GameItem;
 import proj.pos.bomberman.engine.graphics.Mesh;
 import proj.pos.bomberman.engine.graphics.Scene;
+import proj.pos.bomberman.utils.DistanceComparator;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public abstract class Player extends GameItem {
 
@@ -104,70 +103,68 @@ public abstract class Player extends GameItem {
   }
 
   public void doCollisions(Vector3f oldPos, Vector3f currentPos, List<GameItem> noCollision) {
-    Vector3f newPos = new Vector3f(currentPos);
-    if (!checkCollision()) {
+    List<GameItem> collidingItems = checkCollision();
+    if (collidingItems.size() == 0) {
       return;
     }
-    currentPos.x = oldPos.x;
-    currentPos.y = oldPos.y;
-    currentPos.z = oldPos.z;
-//    currentPos.x = newPos.x;
-//    currentPos.y = oldPos.y;
-//    currentPos.z = oldPos.z;
-//    boolean moveX = false, moveY = false, moveZ = false;
-//    boolean moveXY = false, moveYZ = false, moveZX = false;
-//    if (!checkCollision()) {
-//      moveX = true;
-//    }
-//    currentPos.x = oldPos.x;
-//    currentPos.y = newPos.y;
-//    currentPos.z = oldPos.z;
-//    if (!checkCollision()) {
-//      moveY = true;
-//    }
-//    currentPos.x = oldPos.x;
-//    currentPos.y = oldPos.y;
-//    currentPos.z = newPos.z;
-//    if (!checkCollision()) {
-//      moveZ = true;
-//    }
-//    currentPos.x = newPos.x;
-//    currentPos.y = newPos.y;
-//    currentPos.z = oldPos.z;
-//    if (!checkCollision()) {
-//      moveXY = true;
-//    }
-//    currentPos.x = oldPos.x;
-//    currentPos.y = newPos.y;
-//    currentPos.z = newPos.z;
-//    if (!checkCollision()) {
-//      moveYZ = true;
-//    }
-//    currentPos.x = newPos.x;
-//    currentPos.y = oldPos.y;
-//    currentPos.z = newPos.z;
-//    if (!checkCollision()) {
-//      moveZX = true;
-//    }
-//    if (!moveXY && moveX && moveY) {
-//      moveX = false;
-//      moveY = false;
-//    }
-//    if (!moveYZ && moveY && moveZ) {
-//      moveY = false;
-//      moveZ = false;
-//    }
-//    if (!moveZX && moveZ && moveX) {
-//      moveZ = false;
-//      moveX = false;
-//    }
-//    Vector3f between = new Vector3f(newPos).sub(oldPos);
-//    currentPos.x = oldPos.x + between.x * (moveX ? 1 : 0);
-//    currentPos.y = oldPos.y + between.y * (moveY ? 1 : 0);
-//    currentPos.z = oldPos.z + between.z * (moveZ ? 1 : 0);
+    collidingItems.sort(new DistanceComparator(oldPos));
+    for(GameItem gameItem : collidingItems) {
+      if(this.isCollidingWith(gameItem.getBoundingBox())) {
+        float xMin = this.getBoundingBox().getMin().x;
+        float yMin = this.getBoundingBox().getMin().y;
+        float zMin = this.getBoundingBox().getMin().z;
+        float xMax = this.getBoundingBox().getMax().x;
+        float yMax = this.getBoundingBox().getMax().y;
+        float zMax = this.getBoundingBox().getMax().z;
+
+        float minDiff = Float.MAX_VALUE, value, minValue = 0;
+        boolean isXAxis = false, isYAxis = false, isZAxis = false;
+        value = gameItem.getBoundingBox().getMin().x - xMax;
+        if(Math.abs(value) < minDiff) {
+          minDiff = Math.abs(value);
+          minValue = value;
+          isXAxis = true; isYAxis = false; isZAxis = false;
+        }
+        value = gameItem.getBoundingBox().getMax().x - xMin;
+        if(Math.abs(value) < minDiff) {
+          minDiff = Math.abs(value);
+          minValue = value;
+          isXAxis = true; isYAxis = false; isZAxis = false;
+        }
+        value = gameItem.getBoundingBox().getMin().y - yMax;
+        if(Math.abs(value) < minDiff) {
+          minDiff = Math.abs(value);
+          minValue = value;
+          isXAxis = false; isYAxis = true; isZAxis = false;
+        }
+        value = gameItem.getBoundingBox().getMax().y - yMin;
+        if(Math.abs(value) < minDiff) {
+          minDiff = Math.abs(value);
+          minValue = value;
+          isXAxis = false; isYAxis = true;isZAxis = false;
+        }
+        value = gameItem.getBoundingBox().getMin().z - zMax;
+        if(Math.abs(value) < minDiff) {
+          minDiff = Math.abs(value);
+          minValue = value;
+          isXAxis = false; isYAxis = false; isZAxis = true;
+        }
+        value = gameItem.getBoundingBox().getMax().z - zMin;
+        if(Math.abs(value) < minDiff) {
+          minDiff = Math.abs(value);
+          minValue = value;
+          isXAxis = false; isYAxis = false; isZAxis = true;
+        }
+
+        currentPos.x += isXAxis ? minValue : 0;
+        currentPos.y += isYAxis ? minValue : 0;
+        currentPos.z += isZAxis ? minValue : 0;
+      }
+    }
   }
 
-  public boolean checkCollision() {
+  public List<GameItem> checkCollision() {
+    List<GameItem> collidesWith = new ArrayList<>();
     Iterator<GameItem> iter;
     iter = scene.getGameItems().iterator();
     while (iter.hasNext()) {
@@ -175,9 +172,11 @@ public abstract class Player extends GameItem {
       if (gameItem == this) continue;
       if (gameItem instanceof Powerup) continue;
       if (noCollision.contains(gameItem)) continue;
-      if (gameItem.isCollidingWith(this.getBoundingBox())) return true;
+      if (gameItem.isCollidingWith(this.getBoundingBox())) {
+        collidesWith.add(gameItem);
+      }
     }
-    return false;
+    return collidesWith;
   }
 
   @Override
@@ -200,11 +199,9 @@ public abstract class Player extends GameItem {
     super.setPosition(x, y, z);
   }
 
-  public void pickUpPowerup(GameItem powerup) {
+  public void pickUpPowerup(Powerup powerup) {
     int xLevel = (int) (powerup.getPosition().x);
     int yLevel = (int) (powerup.getPosition().z);
-    System.out.println(xLevel + " - " + yLevel);
-    System.out.println(powerup.getPosition().x + " - " + powerup.getPosition().z);
     int type = level.getItemLayout()[yLevel][xLevel];
     if (type == Level.POWERUP_SCHNELLER_ID) {
       if (this.getSpeed() <= 5) {
