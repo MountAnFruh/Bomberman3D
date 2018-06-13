@@ -40,6 +40,10 @@ public class SoundSource {
     alSourcef(sourceId, param, value);
   }
 
+  public int getSourceId() {
+    return sourceId;
+  }
+
   public void play(){
     alSourcePlay(sourceId);
   }
