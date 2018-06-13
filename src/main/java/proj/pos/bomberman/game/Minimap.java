@@ -205,8 +205,8 @@ public class Minimap implements IHud {
     emptyBlock.setMaterial(material);
 
     explosionBlock = OBJLoader.loadMesh("/models/rectangle.obj");
-    material = new Material();
-    material.setAmbientColor(new Vector4f(1,0,0,1));
+    texture = new Texture("/textures/explosion_oben.png");
+    material = new Material(texture, 0.0f);
     explosionBlock.setMaterial(material);
 
     doDrawing();
