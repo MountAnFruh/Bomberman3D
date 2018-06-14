@@ -112,6 +112,9 @@ public class Minimap implements IHud {
     this.powerupTextItems[0] = new TextItem("x0 ", fontTexture);
     this.powerupTextItems[1] = new TextItem("x0 ", fontTexture);
     this.powerupTextItems[2] = new TextItem("x0 ", fontTexture);
+    powerupTextItems[0].setScale(2);
+    powerupTextItems[1].setScale(2);
+    powerupTextItems[2].setScale(2);
 
     powerupItemImg = new GameItem[3];
     mesh = OBJLoader.loadMesh("/models/rectangle.obj");
@@ -149,9 +152,9 @@ public class Minimap implements IHud {
     deathTextItem.setScale(10f);
 
     this.minimapText.getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
-    this.powerupTextItems[0].getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
-    this.powerupTextItems[1].getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
-    this.powerupTextItems[2].getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
+    this.powerupTextItems[0].getMesh().getMaterial().setAmbientColor(new Vector4f(0, 0, 0, 1));
+    this.powerupTextItems[1].getMesh().getMaterial().setAmbientColor(new Vector4f(0, 0, 0, 1));
+    this.powerupTextItems[2].getMesh().getMaterial().setAmbientColor(new Vector4f(0, 0, 0, 1));
     this.powerupItemImg[0].getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
     this.powerupItemImg[1].getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
     this.powerupItemImg[2].getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
@@ -298,14 +301,14 @@ public class Minimap implements IHud {
   public void update(Window window) {
     int[][] layout = level.getLayout();
     float posX = 1750;
-    float posY = 800;
+    float posY = 780;
     this.minimapText.setPosition(10f, 10f, 0);
     this.powerupTextItems[0].setPosition(posX, posY, 0);
     this.powerupTextItems[1].setPosition(posX, posY+100, 0);
     this.powerupTextItems[2].setPosition(posX, posY+200, 0);
-    this.powerupItemImg[0].setPosition(posX+40, posY+50, 0);
-    this.powerupItemImg[1].setPosition(posX+40, posY+50+100, 0);
-    this.powerupItemImg[2].setPosition(posX+40, posY+50+200, 0);
+    this.powerupItemImg[0].setPosition(posX+90, posY+60, 0);
+    this.powerupItemImg[1].setPosition(posX+90, posY+60+100, 0);
+    this.powerupItemImg[2].setPosition(posX+90, posY+60+200, 0);
     if(isDead)
     {
       this.deathTextItem.setPosition(300f, 400f, 0);
