@@ -2,7 +2,6 @@ package proj.pos.bomberman.game;
 
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import org.lwjgl.openal.AL10;
 import org.lwjgl.openal.AL11;
 import proj.pos.bomberman.engine.GameItem;
 import proj.pos.bomberman.engine.IGameLogic;
@@ -19,7 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.openal.AL10.*;
+import static org.lwjgl.openal.AL10.AL_GAIN;
+import static org.lwjgl.openal.AL10.alSourcef;
 
 public class BombermanGame implements IGameLogic {
 
@@ -211,7 +211,7 @@ public class BombermanGame implements IGameLogic {
     //Set Background-Music
     float newVolume = 0.1f;
 
-    SoundBuffer bufferBackground = new SoundBuffer("/sounds/8bitDespacito.ogg");
+    SoundBuffer bufferBackground = new SoundBuffer("/sounds/8BitDespacito.ogg");
     soundManager.addSoundBuffer(bufferBackground);
     SoundSource sourceBackground = new SoundSource(true,true);
     sourceBackground.setBuffer(bufferBackground.getBufferId());
