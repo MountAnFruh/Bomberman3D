@@ -303,6 +303,7 @@ public abstract class Player extends GameItem {
   public void onDeath() {
     this.dead = true;
     level.getMinimap().doDrawing();
+    level.removePlayer(this);
     this.setPosition(this.getPosition().x, this.getPosition().y + 4.0f, this.getPosition().z);
   }
 }

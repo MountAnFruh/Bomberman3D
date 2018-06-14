@@ -105,7 +105,8 @@ public class Level {
       float zCoord = player.getPosition().z - moved.z;
       int xLevel = (int) (xCoord / scaleValue);
       int yLevel = (int) (zCoord / scaleValue);
-      if (itemLayout[yLevel][xLevel] == EMPTY_ID) {
+      if ((layout[yLevel][xLevel] == EMPTY_ID || layout[yLevel][xLevel] == SPAWN_ID)
+              && itemLayout[yLevel][xLevel] == EMPTY_ID) {
         itemLayout[yLevel][xLevel] = BOMB_ID;
         if (minimap != null) minimap.doDrawing();
         Bomb bombItem = new Bomb(bombMesh, player, this, power, timeToLive);
@@ -299,6 +300,10 @@ public class Level {
     }
   }
 
+  public void removePlayer(Player player) {
+    players.remove(player);
+  }
+
   public void setMinimap(Minimap minimap) {
     this.minimap = minimap;
   }
@@ -365,6 +370,10 @@ public class Level {
 
   public Minimap getMinimap() {
     return minimap;
+  }
+
+  public float getScale() {
+    return scale;
   }
 
   public void setSoundManager(SoundManager soundManager){this.soundManager = soundManager;}

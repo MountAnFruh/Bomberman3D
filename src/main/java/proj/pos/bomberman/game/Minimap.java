@@ -312,7 +312,8 @@ public class Minimap implements IHud {
     this.powerupItemImg[0].setPosition(posX+90, posY+60, 0);
     this.powerupItemImg[1].setPosition(posX+90, posY+60+100, 0);
     this.powerupItemImg[2].setPosition(posX+90, posY+60+200, 0);
-    this.deathTextItem.setPosition(300f, 400f, 0);
+    this.deathTextItem.setPosition(window.getWidth() / 2 - this.deathTextItem.getBoundingBox().getSize().x / 2
+            , window.getHeight() / 2 - this.deathTextItem.getBoundingBox().getSize().y / 2, 0);
     this.coordinateText.setPosition(10f, 30f, 0);
     this.liveText.setPosition(20f, window.getHeight() - 80f, 0.999f);
     this.playerAvatar.setPosition(window.getWidth() - AVATARSCALE - 20f, AVATARSCALE + 20f, 0.999f);
@@ -358,7 +359,8 @@ public class Minimap implements IHud {
       for (int i = 0; i < enemyPlayers.size(); i++) {
         GameItem compassItem = compassItemEnemies.get(i);
         Player enemy = enemyPlayers.get(i);
-        if (!gameItems.contains(compassItem)) gameItems.add(compassItem);
+        if (!gameItems.contains(compassItem) && !enemy.isDead()) gameItems.add(compassItem);
+        if (enemy.isDead()) gameItems.remove(compassItem);
         compassItem.setPosition(MINIMAPMOVEDX + (enemy.getPosition().x - movedLevel.x * scaleLevel) * BLOCKSCALE,
                 MINIMAPMOVEDY - BLOCKSCALE + (enemy.getPosition().z - movedLevel.z * scaleLevel) * BLOCKSCALE, 0.990f);
       }
