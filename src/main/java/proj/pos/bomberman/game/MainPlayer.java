@@ -4,6 +4,7 @@ import org.joml.Vector2f;
 import proj.pos.bomberman.engine.MouseInput;
 import proj.pos.bomberman.engine.graphics.Camera;
 import proj.pos.bomberman.engine.graphics.Scene;
+import proj.pos.bomberman.engine.sound.SoundManager;
 
 public class MainPlayer extends Player {
 
@@ -11,6 +12,8 @@ public class MainPlayer extends Player {
 
   private final Camera camera;
   private Minimap minimap;
+
+  private SoundManager soundManager;
 
   public MainPlayer(Camera camera, Level level, Scene scene) {
     super(level, scene);
@@ -76,4 +79,12 @@ public class MainPlayer extends Player {
     return minimap;
   }
 
+  @Override
+  public void onDeath() {
+    super.onDeath();
+    soundManager.playSoundSource(BombermanGame.Sounds.DEATH.name());
+  }
+
+
+  public void setSoundManager(SoundManager soundManager){this.soundManager = soundManager;}
 }

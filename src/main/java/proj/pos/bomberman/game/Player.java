@@ -165,7 +165,8 @@ public abstract class Player extends GameItem {
 
   @Override
   public Vector3f getPosition() {
-    return super.getPosition();
+    Vector3f pos = super.getPosition();
+    return pos;
   }
 
   @Override

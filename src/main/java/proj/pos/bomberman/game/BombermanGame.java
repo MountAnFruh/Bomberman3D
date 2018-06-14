@@ -44,7 +44,7 @@ public class BombermanGame implements IGameLogic {
 
   private final SoundManager soundManager;
 
-  public static enum Sounds { MUSIC, EXPLOSION};
+  public static enum Sounds { MUSIC, EXPLOSION, DEATH};
 
   public BombermanGame() {
     this.renderer = new Renderer();
@@ -202,6 +202,7 @@ public class BombermanGame implements IGameLogic {
       this.soundManager.setAttenuationModel(AL11.AL_EXPONENT_DISTANCE);
       setupSound();
       level.setSoundManager(soundManager);
+      player.setSoundManager(soundManager);
 
     } catch (Exception ex) {
       ex.printStackTrace();
@@ -233,6 +234,14 @@ public class BombermanGame implements IGameLogic {
     alSourcef(sourceExplosion.getSourceId(), AL_GAIN, newVolume);
 
     soundManager.setListener(new SoundListener(new Vector3f(0,0,0)));
+
+    SoundBuffer bufferDeath = new SoundBuffer("/sounds/dead.ogg");
+    soundManager.addSoundBuffer(bufferDeath);
+    SoundSource sourceDeath = new SoundSource(false,false);
+    sourceDeath.setBuffer(bufferDeath.getBufferId());
+    soundManager.addSoundSource(Sounds.DEATH.toString(),sourceDeath);
+    //Sets the Music volume
+    alSourcef(sourceDeath.getSourceId(), AL_GAIN, newVolume);
   }
 
   @Override

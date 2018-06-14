@@ -30,11 +30,13 @@ public class EnemyPlayer extends Player {
           mainPlayer = (MainPlayer) player;
         }
       }
-
       this.getMovementVec().set(-1, 0, 0);
-
-      float yRotation = getYRotationFromPosition(mainPlayer.getPosition());
-      this.setRotation(0, yRotation, 0);
+      float yRotation = 0;
+      if(mainPlayer != null)
+      {
+        yRotation = getYRotationFromPosition(mainPlayer.getPosition());
+        this.setRotation(0, yRotation, 0);
+      }
 
       float offsetX = movementVec.x * speed;
       float offsetY = movementVec.y * speed;
