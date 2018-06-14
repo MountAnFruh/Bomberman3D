@@ -3,7 +3,6 @@ package proj.pos.bomberman.engine;
 import org.joml.Vector3f;
 import proj.pos.bomberman.engine.graphics.BoundingBox;
 import proj.pos.bomberman.engine.graphics.Mesh;
-import proj.pos.bomberman.game.Powerup;
 
 public class GameItem implements Collidable {
 

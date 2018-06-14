@@ -6,7 +6,9 @@ import proj.pos.bomberman.engine.graphics.Mesh;
 import proj.pos.bomberman.engine.graphics.Scene;
 import proj.pos.bomberman.utils.DistanceComparator;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public abstract class Player extends GameItem {
 
@@ -110,55 +112,27 @@ public abstract class Player extends GameItem {
     collidingItems.sort(new DistanceComparator(oldPos));
     for(GameItem gameItem : collidingItems) {
       if(this.isCollidingWith(gameItem.getBoundingBox())) {
-        float xMin = this.getBoundingBox().getMin().x;
-        float yMin = this.getBoundingBox().getMin().y;
-        float zMin = this.getBoundingBox().getMin().z;
-        float xMax = this.getBoundingBox().getMax().x;
-        float yMax = this.getBoundingBox().getMax().y;
-        float zMax = this.getBoundingBox().getMax().z;
 
         float minDiff = Float.MAX_VALUE, value, minValue = 0;
-        boolean isXAxis = false, isYAxis = false, isZAxis = false;
-        value = gameItem.getBoundingBox().getMin().x - xMax;
-        if(Math.abs(value) < minDiff) {
-          minDiff = Math.abs(value);
-          minValue = value;
-          isXAxis = true; isYAxis = false; isZAxis = false;
-        }
-        value = gameItem.getBoundingBox().getMax().x - xMin;
-        if(Math.abs(value) < minDiff) {
-          minDiff = Math.abs(value);
-          minValue = value;
-          isXAxis = true; isYAxis = false; isZAxis = false;
-        }
-        value = gameItem.getBoundingBox().getMin().y - yMax;
-        if(Math.abs(value) < minDiff) {
-          minDiff = Math.abs(value);
-          minValue = value;
-          isXAxis = false; isYAxis = true; isZAxis = false;
-        }
-        value = gameItem.getBoundingBox().getMax().y - yMin;
-        if(Math.abs(value) < minDiff) {
-          minDiff = Math.abs(value);
-          minValue = value;
-          isXAxis = false; isYAxis = true;isZAxis = false;
-        }
-        value = gameItem.getBoundingBox().getMin().z - zMax;
-        if(Math.abs(value) < minDiff) {
-          minDiff = Math.abs(value);
-          minValue = value;
-          isXAxis = false; isYAxis = false; isZAxis = true;
-        }
-        value = gameItem.getBoundingBox().getMax().z - zMin;
-        if(Math.abs(value) < minDiff) {
-          minDiff = Math.abs(value);
-          minValue = value;
-          isXAxis = false; isYAxis = false; isZAxis = true;
+        int axis = -1;
+        for (int component = 0; component < 3; component++) {
+          for (int i = 0; i <= 1; i++) {
+            if (i == 0) {
+              value = gameItem.getBoundingBox().getMin().get(component) - this.getBoundingBox().getMax().get(component);
+            } else {
+              value = gameItem.getBoundingBox().getMax().get(component) - this.getBoundingBox().getMin().get(component);
+            }
+            if (Math.abs(value) < minDiff) {
+              minDiff = Math.abs(value);
+              minValue = value;
+              axis = component;
+            }
+          }
         }
 
-        currentPos.x += isXAxis ? minValue : 0;
-        currentPos.y += isYAxis ? minValue : 0;
-        currentPos.z += isZAxis ? minValue : 0;
+        currentPos.x += axis == 0 ? minValue : 0;
+        currentPos.y += axis == 1 ? minValue : 0;
+        currentPos.z += axis == 2 ? minValue : 0;
       }
     }
   }
@@ -322,13 +296,13 @@ public abstract class Player extends GameItem {
     return maxHealth;
   }
 
+  public boolean isDead() {
+    return dead;
+  }
+
   public void onDeath() {
     this.dead = true;
-    if(this instanceof MainPlayer)
-    {
-      ((MainPlayer)this).setDead();
-    }
-    System.out.println("Player is now dead! " + dead);
+    level.getMinimap().doDrawing();
     this.setPosition(this.getPosition().x, this.getPosition().y + 4.0f, this.getPosition().z);
   }
 }

@@ -76,9 +76,4 @@ public class MainPlayer extends Player {
     return minimap;
   }
 
-  public void setDead() {
-    if (minimap != null) {
-      minimap.setDead(true);
-    }
-  }
 }

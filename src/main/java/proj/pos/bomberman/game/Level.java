@@ -2,16 +2,12 @@ package proj.pos.bomberman.game;
 
 import org.joml.Vector3f;
 import proj.pos.bomberman.engine.GameItem;
-import proj.pos.bomberman.engine.graphics.*;
-import proj.pos.bomberman.engine.sound.SoundBuffer;
-import proj.pos.bomberman.engine.sound.SoundListener;
+import proj.pos.bomberman.engine.graphics.BoundingBox;
+import proj.pos.bomberman.engine.graphics.Mesh;
+import proj.pos.bomberman.engine.graphics.Scene;
 import proj.pos.bomberman.engine.sound.SoundManager;
-import proj.pos.bomberman.engine.sound.SoundSource;
 
 import java.util.*;
-
-import static org.lwjgl.openal.AL10.AL_GAIN;
-import static org.lwjgl.openal.AL10.alSourcef;
 
 public class Level {
 
@@ -365,6 +361,10 @@ public class Level {
 
   public int[][] getExplosionLayout() {
     return explosionLayout;
+  }
+
+  public Minimap getMinimap() {
+    return minimap;
   }
 
   public void setSoundManager(SoundManager soundManager){this.soundManager = soundManager;}

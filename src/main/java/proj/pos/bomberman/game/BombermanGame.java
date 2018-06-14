@@ -14,6 +14,7 @@ import proj.pos.bomberman.engine.sound.SoundListener;
 import proj.pos.bomberman.engine.sound.SoundManager;
 import proj.pos.bomberman.engine.sound.SoundSource;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -207,7 +208,7 @@ public class BombermanGame implements IGameLogic {
     }
   }
 
-  private void setupSound() throws Exception{
+  private void setupSound() throws IOException {
     //Set Background-Music
     float newVolume = 0.1f;
 

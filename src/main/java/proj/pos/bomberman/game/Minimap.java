@@ -23,8 +23,6 @@ public class Minimap implements IHud {
 
   private static final float MINIMAPMOVEDX = 10f;
   private static final float MINIMAPMOVEDY = 90f;
-  public static final float WINDOWWIDHT = 1920f;
-  public static final float WINDOWHEIGHT = 1080f;
 
   private final Level level;
 
@@ -44,7 +42,6 @@ public class Minimap implements IHud {
   private final List<EnemyPlayer> enemyPlayers;
   private final Vector3f movedLevel;
   private final float scaleLevel;
-  private boolean isDead = false;
 
   private final Mesh fixBlock;
   private final Mesh destBlock;
@@ -229,6 +226,12 @@ public class Minimap implements IHud {
     gameItems.add(powerupItemImg[1]);
     gameItems.add(powerupItemImg[2]);
 
+    if (mainPlayer.isDead()) {
+      gameItems.add(deathTextItem);
+    } else {
+      gameItems.remove(deathTextItem);
+    }
+
     // Create blocks
     int[][] layout = level.getLayout();
     blockItems = new GameItem[layout.length][layout[0].length];
@@ -309,12 +312,7 @@ public class Minimap implements IHud {
     this.powerupItemImg[0].setPosition(posX+90, posY+60, 0);
     this.powerupItemImg[1].setPosition(posX+90, posY+60+100, 0);
     this.powerupItemImg[2].setPosition(posX+90, posY+60+200, 0);
-    if(isDead)
-    {
-      this.deathTextItem.setPosition(300f, 400f, 0);
-    }else{
-      this.deathTextItem.setPosition(10200f, 10200f, 0);
-    }
+    this.deathTextItem.setPosition(300f, 400f, 0);
     this.coordinateText.setPosition(10f, 30f, 0);
     this.liveText.setPosition(20f, window.getHeight() - 80f, 0.999f);
     this.playerAvatar.setPosition(window.getWidth() - AVATARSCALE - 20f, AVATARSCALE + 20f, 0.999f);
@@ -355,26 +353,18 @@ public class Minimap implements IHud {
     if (level.insideXZ(mainPlayer)) {
       if (!gameItems.contains(compassItem)) gameItems.add(compassItem);
       this.compassItem.setPosition(MINIMAPMOVEDX + (mainPlayer.getPosition().x - movedLevel.x * scaleLevel) * BLOCKSCALE,
-              MINIMAPMOVEDY - BLOCKSCALE + (mainPlayer.getPosition().z - movedLevel.z * scaleLevel) * BLOCKSCALE, 0.989f);
+              MINIMAPMOVEDY - BLOCKSCALE + (mainPlayer.getPosition().z - movedLevel.z * scaleLevel) * BLOCKSCALE, 0.990f);
 
       for (int i = 0; i < enemyPlayers.size(); i++) {
         GameItem compassItem = compassItemEnemies.get(i);
         Player enemy = enemyPlayers.get(i);
         if (!gameItems.contains(compassItem)) gameItems.add(compassItem);
         compassItem.setPosition(MINIMAPMOVEDX + (enemy.getPosition().x - movedLevel.x * scaleLevel) * BLOCKSCALE,
-                MINIMAPMOVEDY - BLOCKSCALE + (enemy.getPosition().z - movedLevel.z * scaleLevel) * BLOCKSCALE, 0.989f);
+                MINIMAPMOVEDY - BLOCKSCALE + (enemy.getPosition().z - movedLevel.z * scaleLevel) * BLOCKSCALE, 0.990f);
       }
     } else {
       if (gameItems.contains(compassItem)) gameItems.remove(compassItem);
-//      for(GameItem compassItem : compassItemEnemies) {
-//        if(gameItems.contains(compassItem)) gameItems.remove(compassItem);
-//      }
     }
-  }
-
-  public void setDead(boolean isDead)
-  {
-    this.isDead = isDead;
   }
 
   public void rotateCompass(float angle) {
@@ -386,15 +376,4 @@ public class Minimap implements IHud {
     powerupTextItems[id-5].setText(powerupTextItems[id-5].getText().replaceAll(powerupAnz[id-5]+"", ++powerupAnz[id-5]+""));
   }
 
-//  public void rotateEnemies(float angle){
-//    this.otherPlayer1.setRotation(0f,180f,180f+angle);
-//  }
-//
-//  public void rotateOtherPlayer2(float angle){
-//    this.otherPlayer2.setRotation(0f,180f,180f+angle);
-//  }
-//
-//  public void rotateOtherPlayer3(float angle){
-//    this.otherPlayer3.setRotation(0f,180f,180f+angle);
-//  }
 }

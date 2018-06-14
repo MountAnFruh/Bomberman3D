@@ -2,7 +2,6 @@ package proj.pos.bomberman.engine;
 
 import proj.pos.bomberman.engine.graphics.BoundingBox;
 
-// TODO: Collisions verbessern! Kollisionen funktionieren manchmal nicht richtig
 public interface Collidable {
 
   BoundingBox getBoundingBox();
