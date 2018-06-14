@@ -24,6 +24,8 @@ public class Minimap implements IHud {
   private static final float MINIMAPMOVEDX = 10f;
   private static final float MINIMAPMOVEDY = 90f;
 
+  private float windowX = 1920f;
+  private float windowY = 1080f;
   private final Level level;
 
   private final List<GameItem> gameItems = new ArrayList<>();
@@ -302,9 +304,11 @@ public class Minimap implements IHud {
   }
 
   public void update(Window window) {
+    windowX = window.getWidth();
+    windowY = window.getHeight();
     int[][] layout = level.getLayout();
-    float posX = 1750;
-    float posY = 780;
+    float posX = windowX-210;
+    float posY = windowY-300;
     this.minimapText.setPosition(10f, 10f, 0);
     this.powerupTextItems[0].setPosition(posX, posY, 0);
     this.powerupTextItems[1].setPosition(posX, posY+100, 0);
