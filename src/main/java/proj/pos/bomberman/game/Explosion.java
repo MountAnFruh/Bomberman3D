@@ -75,4 +75,8 @@ public class Explosion {
       minimap.doDrawing();
     }
   }
+
+  public Vector3f getPosition() {
+    return new Vector3f(emitter.getBaseParticle().getPosition());
+  }
 }
