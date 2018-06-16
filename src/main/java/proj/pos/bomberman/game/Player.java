@@ -79,6 +79,7 @@ public abstract class Player extends GameItem {
       }
       if (bombPlaceCooldown == 0) {
         Bomb bomb = level.placeBomb(this, bombPower, timeToLive);
+        bomb.setRotation(0,90,0);
         if (bomb != null) {
           if (bomb.isCollidingWith(this.getBoundingBox())) {
             noCollision.add(bomb);
@@ -179,8 +180,8 @@ public abstract class Player extends GameItem {
     int yLevel = (int) (powerup.getPosition().z);
     int type = level.getItemLayout()[yLevel][xLevel];
     if (type == Level.POWERUP_SCHNELLER_ID) {
-      if (this.getSpeed() <= 5) {
-        this.setSpeed(this.getSpeed() + 0.02f);
+      if (this.getSpeed() <= 0.10f) {
+        this.setSpeed(this.getSpeed() + 0.01f);
       }
     } else if (type == Level.POWERUP_MEHR_BOMBEN_ID) {
       if (this.getMaxBombs() <= 5) {

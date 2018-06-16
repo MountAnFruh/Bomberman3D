@@ -380,6 +380,10 @@ public class Minimap implements IHud {
   public void powerupPickedUp(int id)
   {
     powerupTextItems[id-5].setText(powerupTextItems[id-5].getText().replaceAll(powerupAnz[id-5]+"", ++powerupAnz[id-5]+""));
+
+    this.powerupTextItems[0].getMesh().getMaterial().setAmbientColor(new Vector4f(0, 0, 0, 1));
+    this.powerupTextItems[1].getMesh().getMaterial().setAmbientColor(new Vector4f(0, 0, 0, 1));
+    this.powerupTextItems[2].getMesh().getMaterial().setAmbientColor(new Vector4f(0, 0, 0, 1));
   }
 
 }
