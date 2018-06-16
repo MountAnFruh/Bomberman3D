@@ -177,7 +177,8 @@ public class EnemyPlayer extends Player {
         int power = bomb.getPower();
         Vector2i location_bomb = convertToLayout(bomb.getPosition());
         for (int x = location_bomb.x; x <= location_bomb.x + power; x++) {
-          if (layout[location_bomb.y][x] == Level.DESTROYABLE_ID) break;
+          if (layout[location_bomb.y][x] == Level.DESTROYABLE_ID || layout[location_bomb.y][x] == Level.CONSTANT_ID)
+            break;
           Vector3f location_explos = convertToLevel(new Vector2i(x, location_bomb.y));
           BoundingBox boundingBox = new BoundingBox(
                   new Vector3f(location_explos.x - level.getScale(),
@@ -190,7 +191,8 @@ public class EnemyPlayer extends Player {
           if (loc_boundingBox.isCollidingWith(boundingBox)) return true;
         }
         for (int x = location_bomb.x; x >= location_bomb.x - power; x--) {
-          if (layout[location_bomb.y][x] == Level.DESTROYABLE_ID) break;
+          if (layout[location_bomb.y][x] == Level.DESTROYABLE_ID || layout[location_bomb.y][x] == Level.CONSTANT_ID)
+            break;
           Vector3f location_explos = convertToLevel(new Vector2i(x, location_bomb.y));
           BoundingBox boundingBox = new BoundingBox(
                   new Vector3f(location_explos.x - level.getScale(),
@@ -203,7 +205,8 @@ public class EnemyPlayer extends Player {
           if (loc_boundingBox.isCollidingWith(boundingBox)) return true;
         }
         for (int y = location_bomb.y; y <= location_bomb.y + power; y++) {
-          if (layout[y][location_bomb.x] == Level.DESTROYABLE_ID) break;
+          if (layout[y][location_bomb.x] == Level.DESTROYABLE_ID || layout[y][location_bomb.x] == Level.CONSTANT_ID)
+            break;
           Vector3f location_explos = convertToLevel(new Vector2i(location_bomb.x, y));
           BoundingBox boundingBox = new BoundingBox(
                   new Vector3f(location_explos.x - level.getScale(),
@@ -216,7 +219,8 @@ public class EnemyPlayer extends Player {
           if (loc_boundingBox.isCollidingWith(boundingBox)) return true;
         }
         for (int y = location_bomb.y; y >= location_bomb.y - power; y--) {
-          if (layout[y][location_bomb.x] == Level.DESTROYABLE_ID) break;
+          if (layout[y][location_bomb.x] == Level.DESTROYABLE_ID || layout[y][location_bomb.x] == Level.CONSTANT_ID)
+            break;
           Vector3f location_explos = convertToLevel(new Vector2i(location_bomb.x, y));
           BoundingBox boundingBox = new BoundingBox(
                   new Vector3f(location_explos.x - level.getScale(),
