@@ -79,4 +79,8 @@ public class Explosion {
   public Vector3f getPosition() {
     return new Vector3f(emitter.getBaseParticle().getPosition());
   }
+
+  public BoundingBox getBoundingBoxExplosion() {
+    return bbExplosion;
+  }
 }

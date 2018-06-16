@@ -22,10 +22,27 @@ public class BoundingBox {
     this.size = new Vector3f(0, 0, 0);
   }
 
+  public BoundingBox(BoundingBox boundingBox) {
+    this.min = new Vector3f(boundingBox.min);
+    this.max = new Vector3f(boundingBox.max);
+    this.size = new Vector3f(boundingBox.size);
+  }
+
   public BoundingBox(Vector3f min, Vector3f max, Vector3f size) {
     this.min = min;
     this.max = max;
     this.size = size;
+  }
+
+  public BoundingBox(Vector3f min, Vector3f max) {
+    this.min = min;
+    this.max = max;
+    this.size = new Vector3f(max).sub(min);
+  }
+
+  public void move(Vector3f movement) {
+    this.min = this.min.add(movement);
+    this.max = this.max.add(movement);
   }
 
   public void createFromGameItem(GameItem gameItem) {
@@ -45,12 +62,34 @@ public class BoundingBox {
     for (int i = 0; i < positions.length; i += 3) {
       Vector4f coordinate = new Vector4f(positions[i], positions[i + 1], positions[i + 2], 1.0f);
       coordinate.mul(worldMatrix);
-      if (coordinate.x < min.x) min.x = coordinate.x;
-      if (coordinate.y < min.y) min.y = coordinate.y;
-      if (coordinate.z < min.z) min.z = coordinate.z;
-      if (coordinate.x > max.x) max.x = coordinate.x;
-      if (coordinate.y > max.y) max.y = coordinate.y;
-      if (coordinate.z > max.z) max.z = coordinate.z;
+      for (int u = 0; u < 3; u++) {
+        if (coordinate.get(u) < min.get(u)) min.setComponent(u, coordinate.get(u));
+        if (coordinate.get(u) > max.get(u)) max.setComponent(u, coordinate.get(u));
+      }
+    }
+    this.size = new Vector3f(max).sub(min);
+  }
+
+  public void createFromGameItemFromAllRotations(GameItem gameItem) {
+    Mesh mesh = gameItem.getMesh();
+    if (mesh == null) {
+      createFromGameItem(gameItem);
+      return;
+    }
+    Matrix4f worldMatrix;
+    float[] positions = mesh.getPositions();
+    worldMatrix = transformation.getWorldMatrixWithoutRotation(gameItem);
+    this.min = new Vector3f(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
+    this.max = new Vector3f(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
+    for (int i = 0; i < positions.length; i += 3) {
+      Vector4f coordinate = new Vector4f(positions[i], positions[i + 1], positions[i + 2], 1.0f);
+      coordinate.mul(worldMatrix);
+      for (int u = 0; u < 3; u++) {
+        for (int w = 0; w < 3; w++) {
+          if (coordinate.get(w) < min.get(u)) min.setComponent(u, coordinate.get(w));
+          if (coordinate.get(w) > max.get(u)) max.setComponent(u, coordinate.get(w));
+        }
+      }
     }
     this.size = new Vector3f(max).sub(min);
   }

@@ -213,8 +213,8 @@ public class Level {
     int itemId = itemLayout[y][x];
     float xTileCoordinate = x * scaleValue;
     float zTileCoordinate = y * scaleValue;
-    float maxXTileCoordinate = (x + 1) * scaleValue;
-    float maxZTileCoordinate = (y + 1) * scaleValue;
+    float maxXTileCoordinate = xTileCoordinate + scaleValue;
+    float maxZTileCoordinate = zTileCoordinate + scaleValue;
     Vector3f min = new Vector3f(xTileCoordinate, moved.y, zTileCoordinate);
     Vector3f max = new Vector3f(maxXTileCoordinate, moved.y + scaleValue, maxZTileCoordinate);
     Vector3f size = new Vector3f(max).sub(min);

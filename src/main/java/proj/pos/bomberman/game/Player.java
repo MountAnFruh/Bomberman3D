@@ -2,6 +2,7 @@ package proj.pos.bomberman.game;
 
 import org.joml.Vector3f;
 import proj.pos.bomberman.engine.GameItem;
+import proj.pos.bomberman.engine.graphics.BoundingBox;
 import proj.pos.bomberman.engine.graphics.Mesh;
 import proj.pos.bomberman.engine.graphics.Scene;
 import proj.pos.bomberman.utils.DistanceComparator;
@@ -105,23 +106,23 @@ public abstract class Player extends GameItem {
     }
   }
 
-  public void doCollisions(Vector3f oldPos, Vector3f currentPos, List<GameItem> noCollision) {
+  public void doCollisions(Vector3f oldPos, List<GameItem> noCollision) {
     List<GameItem> collidingItems = checkCollision();
     if (collidingItems.size() == 0) {
       return;
     }
     collidingItems.sort(new DistanceComparator(oldPos));
     for(GameItem gameItem : collidingItems) {
-      if(this.isCollidingWith(gameItem.getBoundingBox())) {
-
+      BoundingBox boundBox = new BoundingBox(this.getBoundingBox());
+      if (boundBox.isCollidingWith(gameItem.getBoundingBox())) {
         float minDiff = Float.MAX_VALUE, value, minValue = 0;
         int axis = -1;
         for (int component = 0; component < 3; component++) {
           for (int i = 0; i <= 1; i++) {
             if (i == 0) {
-              value = gameItem.getBoundingBox().getMin().get(component) - this.getBoundingBox().getMax().get(component);
+              value = gameItem.getBoundingBox().getMin().get(component) - boundBox.getMax().get(component);
             } else {
-              value = gameItem.getBoundingBox().getMax().get(component) - this.getBoundingBox().getMin().get(component);
+              value = gameItem.getBoundingBox().getMax().get(component) - boundBox.getMin().get(component);
             }
             if (Math.abs(value) < minDiff) {
               minDiff = Math.abs(value);
@@ -130,15 +131,15 @@ public abstract class Player extends GameItem {
             }
           }
         }
-
-        currentPos.x += axis == 0 ? minValue : 0;
-        currentPos.y += axis == 1 ? minValue : 0;
-        currentPos.z += axis == 2 ? minValue : 0;
+        this.setPosition(position.x + (axis == 0 ? minValue : 0),
+                position.y + (axis == 1 ? minValue : 0),
+                position.z + (axis == 2 ? minValue : 0));
       }
     }
   }
 
   public List<GameItem> checkCollision() {
+    BoundingBox bb = new BoundingBox(this.getBoundingBox());
     List<GameItem> collidesWith = new ArrayList<>();
     Iterator<GameItem> iter;
     iter = scene.getGameItems().iterator();
@@ -147,7 +148,7 @@ public abstract class Player extends GameItem {
       if (gameItem == this) continue;
       if (gameItem instanceof Powerup) continue;
       if (noCollision.contains(gameItem)) continue;
-      if (gameItem.isCollidingWith(this.getBoundingBox())) {
+      if (gameItem.isCollidingWith(bb)) {
         collidesWith.add(gameItem);
       }
     }
@@ -201,29 +202,27 @@ public abstract class Player extends GameItem {
 
   public void movePositionFromRotation(float offsetX, float offsetY, float offsetZ) {
     Vector3f oldPos = new Vector3f(this.getPosition());
+    float positionX = position.x, positionY = position.y, positionZ = position.z;
     if (offsetZ != 0) {
-      position.x += (float) Math.sin(Math.toRadians(rotation.y)) * -1.0f * offsetZ;
-      position.z += (float) Math.cos(Math.toRadians(rotation.y)) * offsetZ;
+      positionX += (float) Math.sin(Math.toRadians(rotation.y)) * -1.0f * offsetZ;
+      positionZ += (float) Math.cos(Math.toRadians(rotation.y)) * offsetZ;
     }
     if (offsetX != 0) {
-      position.x += (float) Math.sin(Math.toRadians(rotation.y - 90)) * -1.0f * offsetX;
-      position.z += (float) Math.cos(Math.toRadians(rotation.y - 90)) * offsetX;
+      positionX += (float) Math.sin(Math.toRadians(rotation.y - 90)) * -1.0f * offsetX;
+      positionZ += (float) Math.cos(Math.toRadians(rotation.y - 90)) * offsetX;
     }
-    position.y += offsetY;
-    Vector3f currPos = this.getPosition();
+    positionY += offsetY;
+    this.setPosition(positionX, positionY, positionZ);
     if (scene != null && (offsetX != 0 || offsetY != 0 || offsetZ != 0)) {
-      doCollisions(oldPos, currPos, noCollision);
+      doCollisions(oldPos, noCollision);
     }
   }
 
   public void movePosition(float offsetX, float offsetY, float offsetZ) {
     Vector3f oldPos = new Vector3f(this.getPosition());
-    position.x += offsetX;
-    position.z += offsetZ;
-    position.y += offsetY;
-    Vector3f currPos = this.getPosition();
+    this.setPosition(position.x + offsetX, position.y + offsetY, position.z + offsetZ);
     if (scene != null && (offsetX != 0 || offsetY != 0 || offsetZ != 0)) {
-      doCollisions(oldPos, currPos, noCollision);
+      doCollisions(oldPos, noCollision);
     }
   }
 
@@ -238,11 +237,13 @@ public abstract class Player extends GameItem {
   }
 
   public void moveRotation(float offsetX, float offsetY, float offsetZ) {
-    rotation.x = rotation.x + offsetX;
-    if (rotation.x > 90) rotation.x = 90;
-    if (rotation.x < -90) rotation.x = -90;
-    rotation.y = rotation.y + offsetY;
-    rotation.z = rotation.z + offsetZ;
+    float rotationX = rotation.x, rotationY = rotation.y, rotationZ = rotation.z;
+    rotationX += offsetX;
+    if (rotationX > 90) rotationX = 90;
+    if (rotationX < -90) rotationX = -90;
+    rotationY += offsetY;
+    rotationZ += offsetZ;
+    this.setRotation(rotationX, rotationY, rotationZ);
   }
 
   public Vector3f getMovementVec() {
