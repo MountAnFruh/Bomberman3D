@@ -56,8 +56,10 @@ public class EnemyPlayer extends Player {
 //      this.movePositionFromRotation(offsetX, offsetY, offsetZ);
       if (willBeHitByExplosion(convertToLayout(this.getPosition()))) {
         Vector2i safeSpotLayout = searchNearestSafeCell(convertToLayout(this.getPosition()));
-        Vector3f safeSpot = convertToLevel(safeSpotLayout);
-        this.setPosition(safeSpot.x, safeSpot.y, safeSpot.z);
+        if (safeSpotLayout != null) {
+          Vector3f safeSpot = convertToLevel(safeSpotLayout);
+          this.setPosition(safeSpot.x, safeSpot.y, safeSpot.z);
+        }
       }
 
       //this.placeBomb();
@@ -91,35 +93,28 @@ public class EnemyPlayer extends Player {
   }
 
   private Vector2i searchNearestSafeCell(Vector2i location) {
-    LinkedList<Node> nodes = new LinkedList<>();
-    Node loc_node = new Node();
-    loc_node.visited = true;
-    loc_node.layoutValue = layout[location.y][location.x];
-    loc_node.position = new Vector2i(location);
+    boolean[][] visited = new boolean[layout.length][layout[0].length];
+    LinkedList<Vector2i> nodes = new LinkedList<>();
+    Vector2i loc_node = new Vector2i(location);
+    visited[location.y][location.x] = true;
     nodes.addLast(loc_node);
     while (!nodes.isEmpty()) {
-      Node node = nodes.pollFirst();
-      node.visited = true;
+      Vector2i node = nodes.pollFirst();
+      visited[node.y][node.x] = true;
       Vector2i[] locations = new Vector2i[]{
-              new Vector2i(node.position.x + 1, node.position.y),
-              new Vector2i(node.position.x - 1, node.position.y),
-              new Vector2i(node.position.x, node.position.y - 1),
-              new Vector2i(node.position.x, node.position.y + 1)
+              new Vector2i(node.x + 1, node.y),
+              new Vector2i(node.x - 1, node.y),
+              new Vector2i(node.x, node.y - 1),
+              new Vector2i(node.x, node.y + 1)
       };
       for (Vector2i loc : locations) {
-        if (nodes.stream().anyMatch(_node -> {
-          return _node.position.x == loc.x && _node.position.y == loc.y;
-        })) {
-          continue;
-        }
+        if (visited[loc.y][loc.x] == true) continue;
         int loc_id = layout[loc.y][loc.x];
         if (loc_id == Level.EMPTY_ID || loc_id == Level.SPAWN_ID) {
           if (!willBeHitByExplosion(loc)) {
             return loc;
           } else {
-            Node l_node = new Node();
-            l_node.position = loc;
-            l_node.layoutValue = loc_id;
+            Vector2i l_node = new Vector2i(loc);
             nodes.addLast(l_node);
           }
         }
@@ -193,12 +188,6 @@ public class EnemyPlayer extends Player {
     float scaleValue = (level.getScale() * 2);
     Vector3f loc = new Vector3f(xCoord * scaleValue + scaleValue / 2, yCoord * scaleValue + scaleValue / 2, zCoord * scaleValue + scaleValue / 2);
     return loc;
-  }
-
-  private class Node {
-    public Vector2i position = new Vector2i();
-    public int layoutValue = -1;
-    public boolean visited = false;
   }
 
 }
