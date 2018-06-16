@@ -52,6 +52,7 @@ public class EnemyPlayer extends Player {
 //      float offsetZ = movementVec.z * speed;
 //
 //      this.movePositionFromRotation(offsetX, offsetY, offsetZ);
+      this.placeBomb();
       if (willBeHitByExplosion(this.getPosition())) {
         Vector3f safeSpot = searchNearestSafeSpot(this.getPosition());
         if (safeSpot != null) {
@@ -65,8 +66,6 @@ public class EnemyPlayer extends Player {
           this.movePositionFromRotation(offsetX, offsetY, offsetZ);
         }
       }
-
-      //this.placeBomb();
     } else {
       this.getMovementVec().set(-1, 0, 0);
       float yRotation = rand.nextFloat() * 360;
@@ -132,7 +131,7 @@ public class EnemyPlayer extends Player {
                 loc_layout.y >= layout.length || loc_layout.x >= layout[0].length) continue;
         int loc_id = layout[loc_layout.y][loc_layout.x];
         int loc_item_id = item_layout[loc_layout.y][loc_layout.x];
-        if ((loc_id == Level.EMPTY_ID || loc_id == Level.SPAWN_ID) && loc_item_id != Level.BOMB_ID) {
+        if ((loc_id == Level.EMPTY_ID || loc_id == Level.SPAWN_ID) && !isInsideBomb(loc)) {
           if (!isHitByExplosion(loc)) {
             nodes.addLast(loc);
           }
@@ -140,6 +139,20 @@ public class EnemyPlayer extends Player {
       }
     }
     return null;
+  }
+
+  private boolean isInsideBomb(Vector3f location) {
+    for (Player player : level.getPlacedBombs().keySet()) {
+      for (Bomb bomb : level.getPlacedBombs().get(player)) {
+        Vector2i loc_location = convertToLayout(location);
+        Vector2i loc_bomb = convertToLayout(bomb.getPosition());
+        if (loc_location.x == loc_bomb.x && loc_location.y == loc_bomb.y) {
+          if (noCollision.contains(bomb)) continue;
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   private boolean isHitByExplosion(Vector3f location) {
