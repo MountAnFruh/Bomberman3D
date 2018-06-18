@@ -48,6 +48,7 @@ public class Minimap implements IHud {
   private final Mesh fixBlock;
   private final Mesh destBlock;
   private final Mesh emptyBlock;
+  private final Mesh floorBlock;
   private final Mesh bombBlock;
   private final Mesh powerupSchneller;
   private final Mesh powerupMehrBombs;
@@ -206,6 +207,12 @@ public class Minimap implements IHud {
     material.setAmbientColor(new Vector4f(1, 1, 1, 1));
     emptyBlock.setMaterial(material);
 
+    floorBlock = OBJLoader.loadMesh("/models/rectangle.obj");
+    //texture = new Texture("/textures/stone_dark_small.png");
+    texture = new Texture("/textures/wiese_small.png");
+    material = new Material(texture, 0.0f);
+    floorBlock.setMaterial(material);
+
     explosionBlock = OBJLoader.loadMesh("/models/rectangle.obj");
     texture = new Texture("/textures/explosion_oben.png");
     material = new Material(texture, 0.0f);
@@ -245,7 +252,8 @@ public class Minimap implements IHud {
         } else if (layout[y][x] == Level.DESTROYABLE_ID) {
           gameItem = new GameItem(destBlock);
         } else {
-          gameItem = new GameItem(emptyBlock);
+          //gameItem = new GameItem(emptyBlock);
+          gameItem = new GameItem(floorBlock);
         }
         gameItem.setScale(BLOCKSCALE);
         gameItem.setRotation(0f, 180f, 180f);
