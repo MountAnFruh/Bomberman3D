@@ -80,12 +80,14 @@ public abstract class Player extends GameItem {
       }
       if (bombPlaceCooldown == 0) {
         Bomb bomb = level.placeBomb(this, bombPower, timeToLive);
-        bomb.setRotation(0,90,0);
-        if (bomb != null) {
-          if (bomb.isCollidingWith(this.getBoundingBox())) {
-            noCollision.add(bomb);
+        if(bomb != null) {
+          bomb.setRotation(0, 90, 0);
+          if (bomb != null) {
+            if (bomb.isCollidingWith(this.getBoundingBox())) {
+              noCollision.add(bomb);
+            }
+            bombPlaceCooldown = MAXBOMBPLACECOOLDOWN;
           }
-          bombPlaceCooldown = MAXBOMBPLACECOOLDOWN;
         }
       }
     }
