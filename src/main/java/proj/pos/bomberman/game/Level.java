@@ -5,9 +5,15 @@ import proj.pos.bomberman.engine.GameItem;
 import proj.pos.bomberman.engine.graphics.BoundingBox;
 import proj.pos.bomberman.engine.graphics.Mesh;
 import proj.pos.bomberman.engine.graphics.Scene;
+import proj.pos.bomberman.engine.sound.SoundBuffer;
 import proj.pos.bomberman.engine.sound.SoundManager;
+import proj.pos.bomberman.engine.sound.SoundSource;
 
+import java.io.IOException;
 import java.util.*;
+
+import static org.lwjgl.openal.AL10.AL_GAIN;
+import static org.lwjgl.openal.AL10.alSourcef;
 
 /**
  * @author Andreas Fruhwirt, Robert Schmölzer
@@ -60,6 +66,7 @@ public class Level {
   private Mesh powerupMehrReichMesh = null;
 
   private SoundManager soundManager;
+  private Random rand;
 
   public Level(int[][] layout, Scene scene, Vector3f moved, float scale) {
     this.moved = moved;
@@ -68,6 +75,7 @@ public class Level {
     this.layout = layout;
     this.itemLayout = new int[layout.length][layout[0].length];
     this.explosionLayout = new int[layout.length][layout[0].length];
+    this.rand = new Random();
   }
 
   private void buildFloor() {
@@ -209,6 +217,25 @@ public class Level {
       }
     }
     soundManager.playSoundSource(BombermanGame.Sounds.EXPLOSION.name());
+    //explodeSound();
+  }
+
+  public void explodeSound() {
+    try {
+
+      float newVolume = 1f;
+      String name = BombermanGame.Sounds.EXPLOSION.toString()+rand.nextInt();
+      SoundBuffer bufferExplosion = new SoundBuffer("/sounds/explosion.ogg");
+      soundManager.addSoundBuffer(bufferExplosion);
+      SoundSource sourceExplosion = new SoundSource(false, true);
+      sourceExplosion.setBuffer(bufferExplosion.getBufferId());
+      soundManager.addSoundSource(name, sourceExplosion);
+      //Sets the effect volume
+      alSourcef(sourceExplosion.getSourceId(), AL_GAIN, newVolume);
+      soundManager.playSoundSource(name);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   public boolean explode(Bomb bomb, int x, int y) {
@@ -226,13 +253,13 @@ public class Level {
     bbExplosion.setMin(min);
     bbExplosion.setMax(max);
     bbExplosion.setSize(size);
-    if(id == CONSTANT_ID) {
+    if (id == CONSTANT_ID) {
       return false;
     }
     if (itemId == BOMB_ID) {
       Bomb bomb2 = (Bomb) destroyableItems[y][x];
-      if(bomb2 != bomb) {
-        if(!bomb2.isExploded()) {
+      if (bomb2 != bomb) {
+        if (!bomb2.isExploded()) {
           this.explodeBomb(bomb2);
         }
         return false;
@@ -288,9 +315,9 @@ public class Level {
   }
 
   public void update(double delta) {
-    for(int y = 0;y < explosionItems.length;y++) {
-      for(int x = 0;x < explosionItems[y].length;x++) {
-        if(explosionItems[y][x] != null) {
+    for (int y = 0; y < explosionItems.length; y++) {
+      for (int x = 0; x < explosionItems[y].length; x++) {
+        if (explosionItems[y][x] != null) {
           explosionItems[y][x].update(delta);
         }
       }
@@ -316,9 +343,13 @@ public class Level {
     this.powerupSpeedMesh = powerupSpeedMesh;
   }
 
-  public void setPowerupMehrBombMesh(Mesh powerupMehrBombMesh) { this.powerupMehrBombMesh = powerupMehrBombMesh; }
+  public void setPowerupMehrBombMesh(Mesh powerupMehrBombMesh) {
+    this.powerupMehrBombMesh = powerupMehrBombMesh;
+  }
 
-  public void setPowerupMehrReichMesh(Mesh powerupMehrReichMesh) { this.powerupMehrReichMesh = powerupMehrReichMesh; }
+  public void setPowerupMehrReichMesh(Mesh powerupMehrReichMesh) {
+    this.powerupMehrReichMesh = powerupMehrReichMesh;
+  }
 
   public void setConstantBlockMesh(Mesh constantBlockMesh) {
     this.constantBlockMesh = constantBlockMesh;
@@ -380,5 +411,7 @@ public class Level {
     return scale;
   }
 
-  public void setSoundManager(SoundManager soundManager){this.soundManager = soundManager;}
+  public void setSoundManager(SoundManager soundManager) {
+    this.soundManager = soundManager;
+  }
 }

@@ -69,14 +69,14 @@ public abstract class Player extends GameItem {
         }
       }
     } else {
-      if(this.dead == false) {
+      if (this.dead == false) {
         this.onDeath();
       }
     }
   }
 
   public void placeBomb() {
-    if(this.health > 0) {
+    if (this.health > 0) {
       if (level.getPlacedBombs().get(this) != null) {
         if (level.getPlacedBombs().get(this).size() >= maxBombs) {
           return;
@@ -118,7 +118,7 @@ public abstract class Player extends GameItem {
       return;
     }
     collidingItems.sort(new DistanceComparator(oldPos));
-    for(GameItem gameItem : collidingItems) {
+    for (GameItem gameItem : collidingItems) {
       BoundingBox boundBox = new BoundingBox(this.getBoundingBox());
       if (boundBox.isCollidingWith(gameItem.getBoundingBox())) {
         float minDiff = Float.MAX_VALUE, value, minValue = 0;
@@ -200,9 +200,8 @@ public abstract class Player extends GameItem {
       }
     }
     level.removePowerup(powerup);
-    if(this instanceof MainPlayer)
-    {
-      ((MainPlayer)this).getMinimap().powerupPickedUp(type);
+    if (this instanceof MainPlayer) {
+      ((MainPlayer) this).getMinimap().powerupPickedUp(type);
     }
   }
 
@@ -303,6 +302,10 @@ public abstract class Player extends GameItem {
 
   public int getMaxHealth() {
     return maxHealth;
+  }
+
+  public void setDead(boolean dead) {
+    this.dead = dead;
   }
 
   public boolean isDead() {

@@ -89,6 +89,12 @@ public class MainPlayer extends Player {
     soundManager.playSoundSource(BombermanGame.Sounds.DEATH.name());
   }
 
-
   public void setSoundManager(SoundManager soundManager){this.soundManager = soundManager;}
+
+  public void remAllPowerUps()
+  {
+    this.setBombPower(0);
+    this.setMaxBombs(0);
+    this.setSpeed(0.5f);
+  }
 }

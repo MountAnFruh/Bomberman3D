@@ -48,7 +48,7 @@ public class BombermanGame implements IGameLogic {
 
   private final SoundManager soundManager;
 
-  public static enum Sounds { MUSIC, EXPLOSION, DEATH};
+  public static enum Sounds {MUSIC, EXPLOSION, DEATH};
 
   public BombermanGame() {
     this.renderer = new Renderer();
@@ -122,8 +122,8 @@ public class BombermanGame implements IGameLogic {
       Vector3f movedLevel = new Vector3f(0, -2, 0);
       level = new Level(levelLayout, scene, movedLevel, scaleLevel);
       this.player = new MainPlayer(camera, level, scene);
-      this.player.setRotation(0,180,0);
-      for(int i = 0;i < ENEMYCOUNT;i++) {
+      this.player.setRotation(0, 180, 0);
+      for (int i = 0; i < ENEMYCOUNT; i++) {
         playerMesh = OBJLoader.loadMesh("/models/characterlowpoly.obj");
         material = new Material();
         material.setAmbientColor(new Vector4f(1, 0, 0, 1));
@@ -143,7 +143,7 @@ public class BombermanGame implements IGameLogic {
       List<Vector3f> spawnPoints = level.getSpawnPoints();
       Vector3f firstSpawnpoint = spawnPoints.get(0);
       player.setPosition(firstSpawnpoint.x, firstSpawnpoint.y, firstSpawnpoint.z);
-      for(int i = 0;i < ENEMYCOUNT;i++) {
+      for (int i = 0; i < ENEMYCOUNT; i++) {
         EnemyPlayer enemyPlayer = enemyPlayers.get(i);
         Vector3f spawnpoint = spawnPoints.get((i + 1) % spawnPoints.size());
         enemyPlayer.setPosition(spawnpoint.x, spawnpoint.y, spawnpoint.z);
@@ -232,9 +232,9 @@ public class BombermanGame implements IGameLogic {
 
     SoundBuffer bufferBackground = new SoundBuffer("/sounds/8BitDespacito.ogg");
     soundManager.addSoundBuffer(bufferBackground);
-    SoundSource sourceBackground = new SoundSource(true,true);
+    SoundSource sourceBackground = new SoundSource(true, true);
     sourceBackground.setBuffer(bufferBackground.getBufferId());
-    soundManager.addSoundSource(Sounds.MUSIC.toString(),sourceBackground);
+    soundManager.addSoundSource(Sounds.MUSIC.toString(), sourceBackground);
     //Sets the Music volume
     alSourcef(sourceBackground.getSourceId(), AL_GAIN, newVolume);
     sourceBackground.play();
@@ -250,13 +250,13 @@ public class BombermanGame implements IGameLogic {
     //Sets the effect volume
     alSourcef(sourceExplosion.getSourceId(), AL_GAIN, newVolume);
 
-    soundManager.setListener(new SoundListener(new Vector3f(0,0,0)));
+    soundManager.setListener(new SoundListener(new Vector3f(0, 0, 0)));
 
     SoundBuffer bufferDeath = new SoundBuffer("/sounds/dead.ogg");
     soundManager.addSoundBuffer(bufferDeath);
-    SoundSource sourceDeath = new SoundSource(false,false);
+    SoundSource sourceDeath = new SoundSource(false, false);
     sourceDeath.setBuffer(bufferDeath.getBufferId());
-    soundManager.addSoundSource(Sounds.DEATH.toString(),sourceDeath);
+    soundManager.addSoundSource(Sounds.DEATH.toString(), sourceDeath);
     //Sets the Music volume
     alSourcef(sourceDeath.getSourceId(), AL_GAIN, newVolume);
   }
@@ -282,6 +282,9 @@ public class BombermanGame implements IGameLogic {
     if (mouseInput.isLeftButtonPressed()) {
       player.placeBomb();
     }
+    /*if (window.isKeyPressed(GLFW_KEY_ENTER) && player.isDead()) {
+      reset();
+    }*/
 
 //    if (window.isKeyPressed(GLFW_KEY_UP)) {
 //      for (PointLight pointLight : pointLights) {
@@ -300,7 +303,7 @@ public class BombermanGame implements IGameLogic {
 //    scene.setGameItems(gameItems);
     // Update player position
     player.update(delta, mouseInput);
-    for(EnemyPlayer enemyPlayer : enemyPlayers) {
+    for (EnemyPlayer enemyPlayer : enemyPlayers) {
       enemyPlayer.update(delta);
     }
     minimap.rotateCompass(player.getRotation().y);
@@ -358,5 +361,22 @@ public class BombermanGame implements IGameLogic {
 
     scene.cleanupAllGameItems();
     minimap.cleanup();
+  }
+
+  //Fehlerhaftig
+  public void reset() {
+    level.getPlacedBombs().clear();
+    player.setPosition(1, 1, 1);
+    player.setRotation(0, 180, 0);
+    level.buildMap();
+    player.setDead(false);
+    player.remAllPowerUps();
+
+    for (int i = 0; i < enemyPlayers.size(); i++) {
+      enemyPlayers.get(i).setRotation(0, 180, 0);
+    }
+    enemyPlayers.get(0).setPosition(13, 1, 1);
+    enemyPlayers.get(1).setPosition(13, 1, 13);
+    enemyPlayers.get(2).setPosition(1, 1, 13);
   }
 }
