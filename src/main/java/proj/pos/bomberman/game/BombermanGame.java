@@ -74,6 +74,15 @@ public class BombermanGame implements IGameLogic {
       material = new Material(texture, reflectance);
       fixBlock.setMaterial(material);
 
+      reflectance = 0f;
+
+      Mesh floorBlock = OBJLoader.loadMesh("/models/cube.obj");
+      texture = new Texture("/textures/wiese_small.png");
+      material = new Material(texture, reflectance);
+      floorBlock.setMaterial(material);
+
+      reflectance = 1f;
+
       Mesh destBlock = OBJLoader.loadMesh("/models/cube.obj");
       texture = new Texture("/textures/brick.png");
       material = new Material(texture, reflectance);
@@ -123,7 +132,7 @@ public class BombermanGame implements IGameLogic {
       level.setPowerupSpeedMesh(powerupSpeed);
       level.setPowerupMehrBombMesh(powerupMehrBombs);
       level.setPowerupMehrReichMesh(powerupMehrReich);
-      level.setFloorBlockMesh(fixBlock);
+      level.setFloorBlockMesh(floorBlock);
       level.setBombMesh(bombMesh);
       level.buildMap();
 
