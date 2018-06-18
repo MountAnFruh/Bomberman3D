@@ -22,6 +22,10 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.openal.AL10.AL_GAIN;
 import static org.lwjgl.openal.AL10.alSourcef;
 
+/**
+ * @author Andreas Fruhwirt, Nico Prosser, Robert Schmölzer
+ * @since 31.05.2018
+ */
 public class BombermanGame implements IGameLogic {
 
   private static final int ENEMYCOUNT = 3;

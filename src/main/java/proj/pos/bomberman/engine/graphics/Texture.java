@@ -9,6 +9,10 @@ import java.nio.ByteBuffer;
 import static org.lwjgl.opengl.ARBFramebufferObject.glGenerateMipmap;
 import static org.lwjgl.opengl.GL11.*;
 
+/**
+ * @author lwjgldev (angepasst von Robert Schmölzer)
+ * @since 16.04.2018
+ */
 public class Texture {
 
   private final int id;

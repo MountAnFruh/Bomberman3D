@@ -9,6 +9,10 @@ import proj.pos.bomberman.engine.graphics.Window;
 import java.awt.*;
 import java.io.IOException;
 
+/**
+ * @author Nico Prosser
+ * @since 05.05.2018
+ */
 public class Hud implements IHud {
 
   private static final Font FONT = new Font("Consolas", Font.PLAIN, 20);

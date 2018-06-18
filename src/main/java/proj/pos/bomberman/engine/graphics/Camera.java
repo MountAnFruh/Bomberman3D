@@ -2,6 +2,10 @@ package proj.pos.bomberman.engine.graphics;
 
 import org.joml.Vector3f;
 
+/**
+ * @author lwjgldev (angepasst von Andreas Fruhwirt)
+ * @since 16.04.2018
+ */
 public class Camera {
 
   private final Vector3f position;

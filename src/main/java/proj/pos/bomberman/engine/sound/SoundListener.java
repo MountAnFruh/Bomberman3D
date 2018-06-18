@@ -4,6 +4,10 @@ import org.joml.Vector3f;
 
 import static org.lwjgl.openal.AL10.*;
 
+/**
+ * @author lwjgldev (angepasst von Nico Prosser)
+ * @since 11.06.2018
+ */
 public class SoundListener {
 
   public SoundListener(){

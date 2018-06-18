@@ -14,6 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * @author Andreas Fruhwirt
+ * @since 05.05.2018
+ */
 public class Utils {
 
   /**

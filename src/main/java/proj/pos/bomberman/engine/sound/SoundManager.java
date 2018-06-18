@@ -20,6 +20,10 @@ import proj.pos.bomberman.utils.Transformation;
 
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+/**
+ * @author lwjgldev (angepasst von Nico Prosser)
+ * @since 11.06.2018
+ */
 public class SoundManager {
 
   private long device;

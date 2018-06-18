@@ -2,6 +2,10 @@ package proj.pos.bomberman.engine;
 
 import proj.pos.bomberman.engine.graphics.Window;
 
+/**
+ * @author lwjgldev (angepasst von Andreas Fruhwirt)
+ * @since 09.04.2018
+ */
 public interface IGameLogic {
 
   /**

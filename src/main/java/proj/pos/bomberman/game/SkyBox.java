@@ -8,6 +8,10 @@ import proj.pos.bomberman.engine.graphics.Texture;
 
 import java.io.IOException;
 
+/**
+ * @author Robert Schmölzer
+ * @since 05.05.2018
+ */
 public class SkyBox extends GameItem {
 
   public SkyBox(String objModel, String textureFile) throws IOException {

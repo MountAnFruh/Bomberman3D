@@ -11,6 +11,10 @@ import java.util.Map;
 
 import static org.lwjgl.opengl.GL20.*;
 
+/**
+ * @author lwjgldev (angepasst von Andreas Fruhwirt)
+ * @since 09.04.2018
+ */
 public class ShaderProgram {
 
   private final int programId;

@@ -9,6 +9,10 @@ import proj.pos.bomberman.engine.sound.SoundManager;
 
 import java.util.*;
 
+/**
+ * @author Andreas Fruhwirt, Robert Schmölzer
+ * @since 05.05.2018
+ */
 public class Level {
 
   public final static int EMPTY_ID = 0;

@@ -15,6 +15,10 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+/**
+ * @author lwjgldev (angepasst von Andreas Fruhwirt)
+ * @since 09.04.2018
+ */
 public class Window {
 
   private final boolean fullscreen = true;

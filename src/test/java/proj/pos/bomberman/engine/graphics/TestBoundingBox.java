@@ -7,6 +7,10 @@ import java.io.IOException;
 
 import static junit.framework.TestCase.assertEquals;
 
+/**
+ * @author Andreas Fruhwirt
+ * @since 01.05.2018
+ */
 public class TestBoundingBox {
 
   private void testCollisionOfGameItems(GameItem gameItem1, GameItem gameItem2, boolean expected) {

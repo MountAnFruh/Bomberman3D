@@ -2,6 +2,10 @@ package proj.pos.bomberman.engine.graphics;
 
 import org.joml.Vector4f;
 
+/**
+ * @author lwjgldev (angepasst von Robert Schmölzer)
+ * @since 22.04.2018
+ */
 public class Material {
 
   private static final Vector4f DEFAULT_COLOR = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);

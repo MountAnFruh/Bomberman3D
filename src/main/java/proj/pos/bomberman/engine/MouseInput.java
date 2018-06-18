@@ -6,6 +6,10 @@ import proj.pos.bomberman.engine.graphics.Window;
 
 import static org.lwjgl.glfw.GLFW.*;
 
+/**
+ * @author lwjgldev (angepasst von Robert Schmölzer)
+ * @since 16.04.2018
+ */
 public class MouseInput {
 
   private final Vector2d currentPos;

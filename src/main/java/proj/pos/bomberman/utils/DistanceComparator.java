@@ -6,6 +6,10 @@ import proj.pos.bomberman.engine.graphics.BoundingBox;
 
 import java.util.Comparator;
 
+/**
+ * @author Andreas Fruhwirt
+ * @since 13.06.2018
+ */
 public class DistanceComparator implements Comparator<GameItem> {
 
   private final Vector3f position;

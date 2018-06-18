@@ -7,6 +7,10 @@ import proj.pos.bomberman.game.SkyBox;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author lwjgldev (angepasst von Andreas Fruhwirt)
+ * @since 05.05.2018
+ */
 public class Scene {
 
   private List<GameItem> gameItems;

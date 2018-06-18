@@ -5,6 +5,10 @@ import proj.pos.bomberman.engine.IGameLogic;
 import proj.pos.bomberman.engine.graphics.Window;
 import proj.pos.bomberman.game.BombermanGame;
 
+/**
+ * @author Andreas Fruhwirt, Nico Prosser, Robert Schmölzer
+ * @since 12.03.2018
+ */
 public class Main {
 
   public static void main(String[] args) {

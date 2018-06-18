@@ -9,6 +9,10 @@ import java.util.List;
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertArrayEquals;
 
+/**
+ * @author Nico Prosser
+ * @since 16.04.2018
+ */
 public class TestUtils {
 
   private String txtfileContent = "testfile~130.\r\nty";

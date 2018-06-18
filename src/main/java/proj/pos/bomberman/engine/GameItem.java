@@ -4,6 +4,10 @@ import org.joml.Vector3f;
 import proj.pos.bomberman.engine.graphics.BoundingBox;
 import proj.pos.bomberman.engine.graphics.Mesh;
 
+/**
+ * @author lwjgldev (angepasst von Andreas Fruhwirt)
+ * @since 16.04.2018
+ */
 public class GameItem implements Collidable {
 
   protected BoundingBox boundingBox;

@@ -12,6 +12,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Nico Prosser, Robert Schmölzer
+ * @since 07.05.2018
+ */
 public class Minimap implements IHud {
 
   private static final Font FONT = new Font("Consolas", Font.PLAIN, 20);

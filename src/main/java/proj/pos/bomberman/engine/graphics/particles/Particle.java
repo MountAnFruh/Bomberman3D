@@ -4,6 +4,10 @@ import org.joml.Vector3f;
 import proj.pos.bomberman.engine.GameItem;
 import proj.pos.bomberman.engine.graphics.Mesh;
 
+/**
+ * @author lwjgldev (angepasst von Robert Schmölzer)
+ * @since 31.05.2018
+ */
 public class Particle extends GameItem {
 
   private Vector3f speed;

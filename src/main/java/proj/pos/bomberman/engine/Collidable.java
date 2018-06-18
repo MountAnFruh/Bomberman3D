@@ -2,6 +2,10 @@ package proj.pos.bomberman.engine;
 
 import proj.pos.bomberman.engine.graphics.BoundingBox;
 
+/**
+ * @author Andreas Fruhwirt
+ * @since 01.05.2018
+ */
 public interface Collidable {
 
   BoundingBox getBoundingBox();

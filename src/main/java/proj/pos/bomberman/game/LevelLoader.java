@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * @author Andreas Fruhwirt, Robert Schmölzer
+ * @since 05.05.2018
+ */
 public class LevelLoader {
 
   /* map-id

@@ -10,6 +10,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Nico Prosser
+ * @since 05.05.2018
+ */
 public class TextItem extends GameItem {
 
   private static final float ZPOS = 0.0f;

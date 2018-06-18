@@ -10,6 +10,10 @@ import proj.pos.bomberman.engine.graphics.Scene;
 
 import java.util.*;
 
+/**
+ * @author Andreas Fruhwirt
+ * @since 03.06.2018
+ */
 public class EnemyPlayer extends Player {
 
   private static Random rand = new Random();

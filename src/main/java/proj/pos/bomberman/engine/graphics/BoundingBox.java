@@ -6,6 +6,10 @@ import org.joml.Vector4f;
 import proj.pos.bomberman.engine.GameItem;
 import proj.pos.bomberman.utils.Transformation;
 
+/**
+ * @author lwjgldev (angepasst von Andreas Fruhwirt)
+ * @since 01.05.2018
+ */
 public class BoundingBox {
 
   private static final Transformation transformation = Transformation.getInstance();

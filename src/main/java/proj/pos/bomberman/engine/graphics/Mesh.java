@@ -14,6 +14,10 @@ import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 
+/**
+ * @author lwjgldev (angepasst von Robert Schmölzer)
+ * @since 09.04.2018
+ */
 public class Mesh {
 
   private final int vaoId;

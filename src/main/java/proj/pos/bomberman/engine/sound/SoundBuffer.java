@@ -15,6 +15,10 @@ import static org.lwjgl.openal.AL10.*;
 import static org.lwjgl.stb.STBVorbis.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+/**
+ * @author lwjgldev (angepasst von Nico Prosser)
+ * @since 04.06.2018
+ */
 public class SoundBuffer {
 
   private final int bufferId;

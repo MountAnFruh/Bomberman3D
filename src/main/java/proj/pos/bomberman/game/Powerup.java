@@ -3,6 +3,10 @@ package proj.pos.bomberman.game;
 import proj.pos.bomberman.engine.GameItem;
 import proj.pos.bomberman.engine.graphics.Mesh;
 
+/**
+ * @author Robert Schmölzer
+ * @since 31.05.2018
+ */
 public class Powerup extends GameItem {
 
   private final Level level;

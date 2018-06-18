@@ -12,6 +12,10 @@ import java.nio.charset.CharsetEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author lwjgldev (angepasst von Nico Prosser)
+ * @since 25.04.2018
+ */
 public class FontTexture {
 
   private static final String IMAGE_FORMAT = "png";

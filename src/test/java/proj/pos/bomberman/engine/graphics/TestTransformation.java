@@ -9,6 +9,10 @@ import java.io.IOException;
 
 import static junit.framework.TestCase.assertEquals;
 
+/**
+ * @author Robert Schmölzer
+ * @since 01.05.2018
+ */
 public class TestTransformation {
 
   private static final Transformation transformation = Transformation.getInstance();

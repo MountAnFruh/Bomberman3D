@@ -2,6 +2,10 @@ package proj.pos.bomberman.engine.graphics;
 
 import org.joml.Vector3f;
 
+/**
+ * @author lwjgldev (angepasst von Robert Schmölzer)
+ * @since 25.04.2018
+ */
 public class SceneLight {
 
   private Vector3f ambientLight;

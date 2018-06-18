@@ -6,6 +6,10 @@ import proj.pos.bomberman.engine.graphics.Camera;
 import proj.pos.bomberman.engine.graphics.Scene;
 import proj.pos.bomberman.engine.sound.SoundManager;
 
+/**
+ * @author Andreas Fruhwirt
+ * @since 03.06.2018
+ */
 public class MainPlayer extends Player {
 
   private static final float MOUSE_SENSITIVITY = 0.2f;

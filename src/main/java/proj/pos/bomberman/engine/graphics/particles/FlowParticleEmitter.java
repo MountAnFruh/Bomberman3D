@@ -8,6 +8,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * @author lwjgldev (angepasst von Robert Schmölzer)
+ * @since 31.05.2018
+ */
 public class FlowParticleEmitter implements IParticleEmitter {
 
   private final Scene scene;

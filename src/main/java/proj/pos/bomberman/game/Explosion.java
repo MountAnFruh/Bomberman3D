@@ -8,6 +8,10 @@ import proj.pos.bomberman.engine.graphics.particles.Particle;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * @author Andreas Fruhwirt
+ * @since 04.06.2018
+ */
 public class Explosion {
 
   private final Level level;

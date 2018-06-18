@@ -9,6 +9,10 @@ import proj.pos.bomberman.engine.graphics.particles.Particle;
 import javax.xml.soap.Text;
 import java.io.IOException;
 
+/**
+ * @author Robert Schmölzer
+ * @since 15.05.2018
+ */
 public class Bomb extends GameItem {
 
   private final Player player;

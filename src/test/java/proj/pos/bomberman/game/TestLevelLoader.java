@@ -6,6 +6,10 @@ import java.io.IOException;
 
 import static junit.framework.TestCase.assertEquals;
 
+/**
+ * @author Andreas Fruhwirt
+ * @since 05.05.2018
+ */
 public class TestLevelLoader {
 
   private static final String MAP_TEST = "111111111111111111111\n" +

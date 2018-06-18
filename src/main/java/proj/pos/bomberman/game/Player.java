@@ -11,6 +11,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * @author Andreas Fruhwirt
+ * @since 05.05.2018
+ */
 public abstract class Player extends GameItem {
 
   protected static final float MAXBOMBPLACECOOLDOWN = 0.5f;

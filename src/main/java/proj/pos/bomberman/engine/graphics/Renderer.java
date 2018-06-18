@@ -15,6 +15,10 @@ import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 
+/**
+ * @author lwjgldev (angepasst von Andreas Fruhwirt)
+ * @since 09.04.2018
+ */
 public class Renderer {
 
   /*

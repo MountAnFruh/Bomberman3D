@@ -5,6 +5,10 @@ import org.joml.Vector3f;
 import proj.pos.bomberman.engine.GameItem;
 import proj.pos.bomberman.engine.graphics.Camera;
 
+/**
+ * @author Robert Schmölzer
+ * @since 05.05.2018
+ */
 public class Transformation {
 
   private static Transformation instance;
