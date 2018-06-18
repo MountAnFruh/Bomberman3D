@@ -32,7 +32,7 @@ public class Minimap implements IHud {
 
   private final TextItem[] powerupTextItems;
   private final TextItem minimapText;
-  private final TextItem deathTextItem;
+  private final TextItem middleTextItem;
   private final TextItem coordinateText;
   private final GameItem compassItem;
   private final List<GameItem> compassItemEnemies = new ArrayList<>();
@@ -67,7 +67,7 @@ public class Minimap implements IHud {
     this.movedLevel = movedLevel;
     this.scaleLevel = scaleLevel;
     this.mainPlayer = mainPlayer;
-    this.enemyPlayers = new ArrayList<>(enemyPlayers);
+    this.enemyPlayers = enemyPlayers;
 
     // Create compass
     Mesh mesh = OBJLoader.loadMesh("/models/compass.obj");
@@ -106,7 +106,7 @@ public class Minimap implements IHud {
     this.liveText = new TextItem(mainPlayer.getHealth() + " / " + mainPlayer.getMaxHealth(), fontTexture);
     this.minimapText = new TextItem("Minimap: ", fontTexture);
     this.coordinateText = new TextItem("Coordinates: ", fontTexture);
-    this.deathTextItem = new TextItem("You are Dead", fontTexture);
+    this.middleTextItem = new TextItem("You are Dead", fontTexture);
 
     powerupTextItems = new TextItem[3];
     this.powerupTextItems[0] = new TextItem("x0 ", fontTexture);
@@ -149,7 +149,7 @@ public class Minimap implements IHud {
     powerupAnz[1] = 0;
     powerupAnz[2] = 0;
 
-    deathTextItem.setScale(10f);
+    middleTextItem.setScale(10f);
 
     this.minimapText.getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
     this.powerupTextItems[0].getMesh().getMaterial().setAmbientColor(new Vector4f(0, 0, 0, 1));
@@ -227,7 +227,7 @@ public class Minimap implements IHud {
     gameItems.add(liveText);
     gameItems.add(coordinateText);
     gameItems.add(playerAvatar);
-    gameItems.add(deathTextItem);
+    gameItems.add(middleTextItem);
     gameItems.add(powerupTextItems[0]);
     gameItems.add(powerupTextItems[1]);
     gameItems.add(powerupTextItems[2]);
@@ -235,10 +235,14 @@ public class Minimap implements IHud {
     gameItems.add(powerupItemImg[1]);
     gameItems.add(powerupItemImg[2]);
 
-    if (mainPlayer.isDead()) {
-      gameItems.add(deathTextItem);
+    if(mainPlayer.isDead()) {
+      middleTextItem.setText("You are Dead");
+      gameItems.add(middleTextItem);
+    } else if(level.getPlayers().size() == 1 && level.getPlayers().get(0) == mainPlayer) {
+      middleTextItem.setText("You won");
+      gameItems.add(middleTextItem);
     } else {
-      gameItems.remove(deathTextItem);
+      gameItems.remove(middleTextItem);
     }
 
     // Create blocks
@@ -324,8 +328,8 @@ public class Minimap implements IHud {
     this.powerupItemImg[0].setPosition(posX+90, posY+60, 0);
     this.powerupItemImg[1].setPosition(posX+90, posY+60+100, 0);
     this.powerupItemImg[2].setPosition(posX+90, posY+60+200, 0);
-    this.deathTextItem.setPosition(window.getWidth() / 2 - this.deathTextItem.getBoundingBox().getSize().x / 2
-            , window.getHeight() / 2 - this.deathTextItem.getBoundingBox().getSize().y / 2, 0);
+    this.middleTextItem.setPosition(window.getWidth() / 2 - this.middleTextItem.getBoundingBox().getSize().x / 2
+            , window.getHeight() / 2 - this.middleTextItem.getBoundingBox().getSize().y / 2, 0);
     this.coordinateText.setPosition(10f, 30f, 0);
     this.liveText.setPosition(20f, window.getHeight() - 80f, 0.999f);
     this.playerAvatar.setPosition(window.getWidth() - AVATARSCALE - 20f, AVATARSCALE + 20f, 0.999f);
