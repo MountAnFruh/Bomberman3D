@@ -52,7 +52,7 @@ public class EnemyPlayer extends Player {
 //      float offsetZ = movementVec.z * speed;
 //
 //      this.movePositionFromRotation(offsetX, offsetY, offsetZ);
-      this.placeBomb();
+
       if (willBeHitByExplosion(this.getPosition())) {
         Vector3f safeSpot = searchNearestSafeSpot(this.getPosition());
         if (safeSpot != null) {
@@ -65,6 +65,8 @@ public class EnemyPlayer extends Player {
           float offsetZ = movementVec.z * speed;
           this.movePositionFromRotation(offsetX, offsetY, offsetZ);
         }
+      } else {
+        this.placeBomb();
       }
     } else {
       this.getMovementVec().set(-1, 0, 0);
