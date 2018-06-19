@@ -53,6 +53,7 @@ public class Level {
 
   private Vector3f moved;
   private float scale;
+  private boolean mainPlayerDead = false;
 
 
   private List<GameItem> gameItemsLevel = new ArrayList<>();
@@ -216,25 +217,9 @@ public class Level {
         if (!explode(bomb, xLevel, y)) break;
       }
     }
-    soundManager.playSoundSource(BombermanGame.Sounds.EXPLOSION.name());
-    //explodeSound();
-  }
 
-  public void explodeSound() {
-    try {
-
-      float newVolume = 1f;
-      String name = BombermanGame.Sounds.EXPLOSION.toString()+rand.nextInt();
-      SoundBuffer bufferExplosion = new SoundBuffer("/sounds/explosion.ogg");
-      soundManager.addSoundBuffer(bufferExplosion);
-      SoundSource sourceExplosion = new SoundSource(false, true);
-      sourceExplosion.setBuffer(bufferExplosion.getBufferId());
-      soundManager.addSoundSource(name, sourceExplosion);
-      //Sets the effect volume
-      alSourcef(sourceExplosion.getSourceId(), AL_GAIN, newVolume);
-      soundManager.playSoundSource(name);
-    } catch (IOException e) {
-      e.printStackTrace();
+    if(!mainPlayerDead){
+      soundManager.playSoundSource(BombermanGame.Sounds.EXPLOSION.name());
     }
   }
 
@@ -385,6 +370,10 @@ public class Level {
 
   public Map<Player, List<Bomb>> getPlacedBombs() {
     return placedBombs;
+  }
+
+  public void setMainPlayerDead(boolean mainPlayerDead) {
+    this.mainPlayerDead = mainPlayerDead;
   }
 
   public List<Player> getPlayers() {

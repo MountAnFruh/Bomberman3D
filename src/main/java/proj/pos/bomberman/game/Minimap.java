@@ -6,6 +6,7 @@ import proj.pos.bomberman.engine.GameItem;
 import proj.pos.bomberman.engine.IHud;
 import proj.pos.bomberman.engine.graphics.*;
 import proj.pos.bomberman.engine.graphics.Window;
+import proj.pos.bomberman.engine.sound.SoundManager;
 
 import java.awt.*;
 import java.io.IOException;
@@ -35,9 +36,9 @@ public class Minimap implements IHud {
   private final List<GameItem> gameItems = new ArrayList<>();
 
   private final TextItem[] powerupTextItems;
-  private final TextItem minimapText;
+  //private final TextItem minimapText;
   private final TextItem middleTextItem;
-  private final TextItem coordinateText;
+  //private final TextItem coordinateText;
   private final GameItem compassItem;
   private final List<GameItem> compassItemEnemies = new ArrayList<>();
   private final GameItem playerAvatar;
@@ -63,6 +64,8 @@ public class Minimap implements IHud {
   private GameItem[][] specialItems;
   private GameItem[][] explosionItems;
   private int[] powerupAnz;
+
+  private SoundManager soundManager;
 
   public Minimap(Level level, Vector3f movedLevel, float scaleLevel, MainPlayer mainPlayer, List<EnemyPlayer> enemyPlayers) throws IOException {
     FontTexture fontTexture = new FontTexture(FONT, CHARSET);
@@ -108,8 +111,8 @@ public class Minimap implements IHud {
 
     //Create TextItems
     this.liveText = new TextItem(mainPlayer.getHealth() + " / " + mainPlayer.getMaxHealth(), fontTexture);
-    this.minimapText = new TextItem("Minimap: ", fontTexture);
-    this.coordinateText = new TextItem("Coordinates: ", fontTexture);
+    //this.minimapText = new TextItem("Minimap: ", fontTexture);
+    //this.coordinateText = new TextItem("Coordinates: ", fontTexture);
     this.middleTextItem = new TextItem("You are Dead", fontTexture);
 
     powerupTextItems = new TextItem[3];
@@ -155,19 +158,19 @@ public class Minimap implements IHud {
 
     middleTextItem.setScale(10f);
 
-    this.minimapText.getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
+    //this.minimapText.getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
     this.powerupTextItems[0].getMesh().getMaterial().setAmbientColor(new Vector4f(0, 0, 0, 1));
     this.powerupTextItems[1].getMesh().getMaterial().setAmbientColor(new Vector4f(0, 0, 0, 1));
     this.powerupTextItems[2].getMesh().getMaterial().setAmbientColor(new Vector4f(0, 0, 0, 1));
     this.powerupItemImg[0].getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
     this.powerupItemImg[1].getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
     this.powerupItemImg[2].getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
-    this.coordinateText.getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
+    //this.coordinateText.getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
     this.liveText.getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
     this.liveText.setScale(3f);
 
-    gameItems.add(minimapText);
-    gameItems.add(coordinateText);
+    //gameItems.add(minimapText);
+    //gameItems.add(coordinateText);
     gameItems.add(liveText);
     gameItems.add(powerupTextItems[0]);
     gameItems.add(powerupTextItems[1]);
@@ -227,9 +230,9 @@ public class Minimap implements IHud {
 
   public void doDrawing() {
     gameItems.clear();
-    gameItems.add(minimapText);
+    //gameItems.add(minimapText);
     gameItems.add(liveText);
-    gameItems.add(coordinateText);
+    //gameItems.add(coordinateText);
     gameItems.add(playerAvatar);
     gameItems.add(middleTextItem);
     gameItems.add(powerupTextItems[0]);
@@ -242,8 +245,10 @@ public class Minimap implements IHud {
     if(mainPlayer.isDead()) {
       middleTextItem.setText("You are Dead");
       gameItems.add(middleTextItem);
+      level.setMainPlayerDead(true);
     } else if(level.getPlayers().size() == 1 && level.getPlayers().get(0) == mainPlayer) {
       middleTextItem.setText("You won");
+      soundManager.playSoundSource(BombermanGame.Sounds.WIN.name());
       gameItems.add(middleTextItem);
     } else {
       gameItems.remove(middleTextItem);
@@ -325,7 +330,7 @@ public class Minimap implements IHud {
     int[][] layout = level.getLayout();
     float posX = windowX-210;
     float posY = windowY-300;
-    this.minimapText.setPosition(10f, 10f, 0);
+    //this.minimapText.setPosition(10f, 10f, 0);
     this.powerupTextItems[0].setPosition(posX, posY, 0);
     this.powerupTextItems[1].setPosition(posX, posY+100, 0);
     this.powerupTextItems[2].setPosition(posX, posY+200, 0);
@@ -334,12 +339,12 @@ public class Minimap implements IHud {
     this.powerupItemImg[2].setPosition(posX+90, posY+60+200, 0);
     this.middleTextItem.setPosition(window.getWidth() / 2 - this.middleTextItem.getBoundingBox().getSize().x / 2
             , window.getHeight() / 2 - this.middleTextItem.getBoundingBox().getSize().y / 2, 0);
-    this.coordinateText.setPosition(10f, 30f, 0);
+   // this.coordinateText.setPosition(10f, 30f, 0);
     this.liveText.setPosition(20f, window.getHeight() - 80f, 0.999f);
     this.playerAvatar.setPosition(window.getWidth() - AVATARSCALE - 20f, AVATARSCALE + 20f, 0.999f);
     this.liveText.setText(mainPlayer.getHealth() + " / " + mainPlayer.getMaxHealth());
 
-    this.coordinateText.setText("Coordinates: " + mainPlayer.getPosition().toString());
+   // this.coordinateText.setText("Coordinates: " + mainPlayer.getPosition().toString());
     for (int y = 0; y < blockItems.length; y++) {
       for (int x = 0; x < blockItems[y].length; x++) {
         if (blockItems[y][x] != null) {
@@ -400,6 +405,10 @@ public class Minimap implements IHud {
     this.powerupTextItems[0].getMesh().getMaterial().setAmbientColor(new Vector4f(0, 0, 0, 1));
     this.powerupTextItems[1].getMesh().getMaterial().setAmbientColor(new Vector4f(0, 0, 0, 1));
     this.powerupTextItems[2].getMesh().getMaterial().setAmbientColor(new Vector4f(0, 0, 0, 1));
+  }
+
+  public void setSoundManager(SoundManager soundManager) {
+    this.soundManager = soundManager;
   }
 
 }

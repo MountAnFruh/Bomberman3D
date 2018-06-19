@@ -20,6 +20,7 @@ import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.openal.AL10.AL_GAIN;
+import static org.lwjgl.openal.AL10.AL_PITCH;
 import static org.lwjgl.openal.AL10.alSourcef;
 
 /**
@@ -48,7 +49,7 @@ public class BombermanGame implements IGameLogic {
 
   private final SoundManager soundManager;
 
-  public static enum Sounds {MUSIC, EXPLOSION, DEATH};
+  public enum Sounds {MUSIC, EXPLOSION, DEATH, WIN};
 
   public BombermanGame() {
     this.renderer = new Renderer();
@@ -219,6 +220,7 @@ public class BombermanGame implements IGameLogic {
       this.soundManager.setAttenuationModel(AL11.AL_EXPONENT_DISTANCE);
       setupSound();
       level.setSoundManager(soundManager);
+      minimap.setSoundManager(soundManager);
       player.setSoundManager(soundManager);
 
     } catch (Exception ex) {
@@ -228,7 +230,8 @@ public class BombermanGame implements IGameLogic {
 
   private void setupSound() throws IOException {
     //Set Background-Music
-    float newVolume = 0.1f;
+    float newVolume = 0.05f;
+    float pitchVolume = 1.8f;
 
     SoundBuffer bufferBackground = new SoundBuffer("/sounds/8BitDespacito.ogg");
     soundManager.addSoundBuffer(bufferBackground);
@@ -237,12 +240,13 @@ public class BombermanGame implements IGameLogic {
     soundManager.addSoundSource(Sounds.MUSIC.toString(), sourceBackground);
     //Sets the Music volume
     alSourcef(sourceBackground.getSourceId(), AL_GAIN, newVolume);
+    alSourcef(sourceBackground.getSourceId(), AL_PITCH, pitchVolume);
     sourceBackground.play();
 
     //Set Bomb-explosion
-    newVolume = 1f;
+    newVolume = 0.3f;
 
-    SoundBuffer bufferExplosion = new SoundBuffer("/sounds/explosion.ogg");
+    SoundBuffer bufferExplosion = new SoundBuffer("/sounds/boom.ogg"); //explosion.ogg
     soundManager.addSoundBuffer(bufferExplosion);
     SoundSource sourceExplosion = new SoundSource(false, true);
     sourceExplosion.setBuffer(bufferExplosion.getBufferId());
@@ -250,15 +254,29 @@ public class BombermanGame implements IGameLogic {
     //Sets the effect volume
     alSourcef(sourceExplosion.getSourceId(), AL_GAIN, newVolume);
 
-    soundManager.setListener(new SoundListener(new Vector3f(0, 0, 0)));
+
+    //Set Death-Sound
+    newVolume = 0.5f;
 
     SoundBuffer bufferDeath = new SoundBuffer("/sounds/dead.ogg");
     soundManager.addSoundBuffer(bufferDeath);
-    SoundSource sourceDeath = new SoundSource(false, false);
+    SoundSource sourceDeath = new SoundSource(false,false);
     sourceDeath.setBuffer(bufferDeath.getBufferId());
     soundManager.addSoundSource(Sounds.DEATH.toString(), sourceDeath);
     //Sets the Music volume
     alSourcef(sourceDeath.getSourceId(), AL_GAIN, newVolume);
+
+    //Set Win-Sound
+
+    SoundBuffer bufferWin = new SoundBuffer("/sounds/win.ogg");
+    soundManager.addSoundBuffer(bufferWin);
+    SoundSource sourceWin = new SoundSource(false,false);
+    sourceWin.setBuffer(bufferWin.getBufferId());
+    soundManager.addSoundSource(Sounds.WIN.toString(), sourceWin);
+    //Sets the Music volume
+    alSourcef(sourceWin.getSourceId(), AL_GAIN, newVolume);
+
+    soundManager.setListener(new SoundListener(new Vector3f(0,0,0)));
   }
 
   @Override

@@ -3,7 +3,7 @@ package proj.pos.bomberman.engine.graphics;
 import org.joml.Vector3f;
 
 /**
- * @author lwjgldev (angepasst von Robert Schmölzer)
+ * @author lwjgldev (angepasst von Nico Prosser)
  * @since 25.04.2018
  */
 public class SceneLight {
